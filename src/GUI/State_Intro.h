@@ -26,4 +26,15 @@ private:
   sf::Text m_text;
 
   float m_timePassed;
+
+  std::vector<sf::Texture> m_textures;
+  std::vector<sf::Sprite> m_sprites;
+  std::vector<sf::Vector2i> m_increments;
+  sf::Time m_elapsed;
+  sf::Clock m_clock;
+  void MoveSprites();
+  void RestartClock();
+
+  static float m_AnimationTime;
+  static int m_SpritesSum;
 };

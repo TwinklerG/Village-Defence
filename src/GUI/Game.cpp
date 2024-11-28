@@ -1,5 +1,5 @@
 #include "Game.h"
-Game::Game() : m_window("Chapter 5", sf::Vector2u(800, 600)), m_stateManager(&m_context)
+Game::Game() : m_window("Lost Empire", sf::Vector2u(1920, 1080)), m_stateManager(&m_context)
 {
   m_context.m_wind = &m_window;
   m_context.m_eventManager = m_window.GetEventManager();

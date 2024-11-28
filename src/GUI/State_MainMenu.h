@@ -25,6 +25,8 @@ private:
   sf::Vector2f m_buttonSize;
   sf::Vector2f m_buttonPos;
   unsigned int m_buttonPadding;
-  sf::RectangleShape m_rects[3];
-  sf::Text m_labels[3];
+  std::vector<sf::RectangleShape> m_rects;
+  std::vector<sf::Text> m_labels;
+
+  static int m_ButtonSum;
 };

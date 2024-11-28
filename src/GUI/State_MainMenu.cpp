@@ -1,28 +1,35 @@
 #include "State_MainMenu.h"
 #include "StateManager.h"
 
+int State_MainMenu::m_ButtonSum = 4;
+
 State_MainMenu::State_MainMenu(StateManager *l_stateManager) : BaseState(l_stateManager) {}
 
 State_MainMenu::~State_MainMenu() {}
 
 void State_MainMenu::OnCreate()
 {
+  m_rects = std::vector<sf::RectangleShape>(State_MainMenu::m_ButtonSum);
+  m_labels = std::vector<sf::Text>(State_MainMenu::m_ButtonSum);
   m_font.loadFromFile("res/arial.ttf");
   m_text.setFont(m_font);
-  m_text.setString(sf::String("MAIN MENU:"));
-  m_text.setCharacterSize(18);
+  m_text.setString(sf::String("MAIN MENU"));
+  m_text.setCharacterSize(100);
   sf::FloatRect textRect = m_text.getLocalBounds();
   m_text.setOrigin(textRect.left + textRect.width / 2.0f,
                    textRect.top + textRect.height / 2.0f);
-  m_text.setPosition(400, 100);
-  m_buttonSize = sf::Vector2f(300.0f, 32.0f);
-  m_buttonPos = sf::Vector2f(400, 200);
+  m_text.setPosition(m_stateMgr->GetContext()->m_wind->GetWindowSize().x / 2,
+                     m_stateMgr->GetContext()->m_wind->GetWindowSize().y / 5 * 2);
+  m_buttonSize = sf::Vector2f(600.0f, 100.0f);
+  m_buttonPos = sf::Vector2f(m_stateMgr->GetContext()->m_wind->GetWindowSize().x / 2,
+                             m_stateMgr->GetContext()->m_wind->GetWindowSize().y / 20 * 11);
   m_buttonPadding = 4; // 4px.
-  std::string str[3];
-  str[0] = "PLAY";
-  str[1] = "CREDITS";
-  str[2] = "EXIT";
-  for (int i = 0; i < 3; ++i)
+  std::vector<std::string> str(m_ButtonSum);
+  str[0] = "NEW GAME";
+  str[1] = "LOAD SAVED";
+  str[2] = "ABOUT";
+  str[3] = "EXIT";
+  for (int i = 0; i < m_ButtonSum; ++i)
   {
     sf::Vector2f buttonPosition(m_buttonPos.x, m_buttonPos.y + (i * (m_buttonSize.y + m_buttonPadding)));
     m_rects[i].setSize(m_buttonSize);
@@ -31,7 +38,7 @@ void State_MainMenu::OnCreate()
     m_rects[i].setPosition(buttonPosition);
     m_labels[i].setFont(m_font);
     m_labels[i].setString(sf::String(str[i]));
-    m_labels[i].setCharacterSize(12);
+    m_labels[i].setCharacterSize(40);
     sf::FloatRect rect = m_labels[i].getLocalBounds();
     m_labels[i].setOrigin(rect.left + rect.width / 2.0f, rect.top + rect.height / 2.0f);
     m_labels[i].setPosition(buttonPosition);
@@ -61,7 +68,7 @@ void State_MainMenu::MouseClick(EventDetails *l_details)
   sf::Vector2i mousePos = l_details->m_mouse;
   float halfX = m_buttonSize.x / 2.0f;
   float halfY = m_buttonSize.y / 2.0f;
-  for (int i = 0; i < 3; ++i)
+  for (int i = 0; i < m_ButtonSum; ++i)
   {
     if (mousePos.x >= m_rects[i].getPosition().x - halfX && mousePos.x <= m_rects[i].getPosition().x + halfX && mousePos.y >= m_rects[i].getPosition().y - halfY && mousePos.y <= m_rects[i].getPosition().y + halfY)
     {
@@ -74,6 +81,9 @@ void State_MainMenu::MouseClick(EventDetails *l_details)
       }
       else if (i == 2)
       {
+      }
+      else if (i == 3)
+      {
         m_stateMgr->GetContext()->m_wind->Close();
       }
     }
@@ -84,7 +94,7 @@ void State_MainMenu::Draw()
 {
   sf::RenderWindow *window = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
   window->draw(m_text);
-  for (int i = 0; i < 3; ++i)
+  for (int i = 0; i < m_ButtonSum; ++i)
   {
     window->draw(m_rects[i]);
     window->draw(m_labels[i]);

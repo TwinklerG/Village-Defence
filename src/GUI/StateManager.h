@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "BaseState.h"
-#include "SharedContext.h"
+#include "SharedContext.hpp"
 #include "State_Intro.h"
 #include "State_MainMenu.h"
 #include "State_Game.h"

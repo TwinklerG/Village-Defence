@@ -4,10 +4,10 @@
 
 **Windows**
 
-```bat
-./debug.bat
+```cmd
+release.bat # or debug.bat
 ```
 
 ## Reference
 
-`./src/GUI`下的部分代码参考自*SFML Game Development By Example*(Raimondas Pupius)
+`src/GUI`下的部分基础框架代码参考自*SFML Game Development By Example*(Raimondas Pupius)
