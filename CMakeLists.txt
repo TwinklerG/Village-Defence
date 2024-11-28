@@ -17,6 +17,7 @@ aux_source_directory(${SOURCE_DIR} SRC_FILES)
 aux_source_directory(${SOURCE_DIR}/GUI GUI_FILES)
 add_executable(main ${SRC_FILES} ${GUI_FILES})
 file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/Debug)
+file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/Release)
 
 target_link_libraries(main PRIVATE sfml-graphics)
 target_compile_features(main PRIVATE cxx_std_17)

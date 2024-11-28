@@ -1,0 +1,18 @@
+image: ubuntu:latest
+stages:
+  - Linux GCC build Shared
+  - Linux GCC build Static
+before_script:
+  - apt-get update -y && apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype6-dev -y
+  - apt install gcc g++ cmake git -y 
+Linux GCC build Shared:
+  stage: Linux GCC build Shared
+  script:
+    - cmake -B build -DBUILD_SHARED_LIBS=TRUE
+    - cmake --build build --config Release
+
+Linux GCC build Static:
+  stage: Linux GCC build Static
+  script:
+    - cmake -B build -DBUILD_SHARED_LIBS=FALSE
+    - cmake --build build --config Release
