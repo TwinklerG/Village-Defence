@@ -114,8 +114,7 @@ void StateManager::ProcessRequests()
 void StateManager::SwitchTo(const StateType &l_type)
 {
   m_shared->m_eventManager->SetCurrentState(l_type);
-  for (auto itr = m_states.begin();
-       itr != m_states.end(); ++itr)
+  for (auto itr = m_states.begin(); itr != m_states.end(); ++itr)
   {
     if (itr->first == l_type)
     {

@@ -1,6 +1,10 @@
 #pragma once
 #include "BaseState.h"
 #include "EventManager.h"
+#include "../Utils/Place.h"
+#include "../Utils/Figure.h"
+
+using Textures = std::unordered_map<std::string, sf::Texture>;
 
 class State_Game : public BaseState
 {
@@ -22,7 +26,6 @@ public:
   void Pause(EventDetails *l_details);
 
 private:
-  sf::Texture m_texture;
-  sf::Sprite m_sprite;
-  sf::Vector2f m_increment;
+  std::vector<std::vector<Place*>> m_places;
+  Textures m_textures;
 };
