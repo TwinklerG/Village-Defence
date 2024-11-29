@@ -3,8 +3,8 @@
 #include "EventManager.h"
 #include "../Utils/Place.h"
 #include "../Utils/Figure.h"
+#include "../Utils/Map.h"
 
-using Textures = std::unordered_map<std::string, sf::Texture>;
 
 class State_Game : public BaseState
 {
@@ -26,6 +26,12 @@ public:
   void Pause(EventDetails *l_details);
 
 private:
-  std::vector<std::vector<Place*>> m_places;
-  Textures m_textures;
+  std::vector<std::vector<Place *>> m_places;
+  std::unordered_map<std::string, sf::Texture> m_textures;
+  static int m_XRange;
+  static int m_YRange;
+
+  std::vector<Figure *> m_figures;
+
+  Map m_map;
 };

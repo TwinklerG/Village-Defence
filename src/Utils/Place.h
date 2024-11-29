@@ -29,6 +29,15 @@ private:
   std::vector<Figure *> m_figures;
 };
 
+class HomeLand : public Place
+{
+  HomeLand(const sf::Texture &l_texture);
+
+  void OnCreate() override;
+  void Update() override;
+  void OnDestroy() override;
+};
+
 class Land : public Place
 {
 public:

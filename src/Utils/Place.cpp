@@ -20,6 +20,11 @@ bool Place::RemoveFigure(Figure *l_figure)
   }
   return false;
 }
+HomeLand::HomeLand(const sf::Texture &l_texture) : Place(l_texture) { OnCreate(); }
+void HomeLand::OnCreate() {}
+void HomeLand::Update() {}
+void HomeLand::OnDestroy() {}
+
 Land::Land(const sf::Texture &l_texture) : Place(l_texture) { OnCreate(); }
 void Land::OnCreate() {}
 void Land::Update() {}
