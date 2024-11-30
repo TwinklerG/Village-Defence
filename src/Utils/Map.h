@@ -9,15 +9,18 @@
 class Map
 {
 public:
-  Map(sf::RenderWindow* l_wind);
+  Map(sf::RenderWindow *l_wind);
   ~Map();
 
-  void OnCreate(sf::RenderWindow* l_wind);
+  void OnCreate(sf::RenderWindow *l_wind);
   void Update();
-  void Render(sf::RenderWindow* l_wind);
+  void Render(sf::RenderWindow *l_wind);
   void OnDestroy();
 
-  void LoadLogicMap(sf::RenderWindow* l_wind); // Load logic map from map.cfg
+  Map* AddFigure(Figure *);
+
+  void LoadLogicMap(sf::RenderWindow *l_wind); // Load logic map from map.cfg
+  std::vector<std::vector<Place *>> &GetPlaces() { return m_places; }
   sf::Time GetElapsed();
   void RestartClock();
 

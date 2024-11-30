@@ -39,11 +39,11 @@ void Map::OnCreate(sf::RenderWindow *l_wind)
   // }
   for (int k = 0; k < 200; ++k)
   {
-    m_figures.emplace_back(new Ordinary(m_places));
+    m_figures.emplace_back(new Ordinary(this));
   }
   for (int k = 0; k < 10; ++k)
   {
-    m_figures.emplace_back(new Guardian(m_places));
+    m_figures.emplace_back(new Guardian(this));
   }
 }
 
@@ -52,9 +52,10 @@ void Map::Update()
   RestartClock();
   if (m_elapsed >= sf::seconds(m_FrameTime))
   {
-    for (auto &l_fig : m_figures)
+    const int n = m_figures.size();
+    for (int i = 0; i < m_figures.size(); ++i)
     {
-      l_fig->Update(m_elapsed);
+      m_figures[i]->Update(m_elapsed);
     }
     m_elapsed -= sf::seconds(m_FrameTime);
   }
@@ -80,6 +81,12 @@ void Map::Render(sf::RenderWindow *l_wind)
 }
 
 void Map::OnDestroy() {}
+
+Map *Map::AddFigure(Figure *l_fig)
+{
+  m_figures.emplace_back(l_fig);
+  return this;
+}
 
 void Map::LoadLogicMap(sf::RenderWindow *l_wind)
 {
@@ -107,7 +114,6 @@ void Map::LoadLogicMap(sf::RenderWindow *l_wind)
       //   return;
       // }
       placeStream >> l_placeType;
-      std::cout << l_placeType << " ";
       if (std::stoi(l_placeType) == 0)
       {
         m_places[i][j] = new Land(m_textures["land"]);
@@ -118,7 +124,6 @@ void Map::LoadLogicMap(sf::RenderWindow *l_wind)
       }
       m_places[i][j]->GetSprite().setPosition(i * 80, l_wind->getSize().y / 3 + j * 80);
     }
-    std::cout << std::endl;
   }
 }
 

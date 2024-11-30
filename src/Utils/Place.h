@@ -22,12 +22,9 @@ public:
   virtual void OnDestroy() = 0;
 
   sf::Sprite &GetSprite();
-  void AddFigure(Figure *l_figure);
-  bool RemoveFigure(Figure *l_figure);
 
 private:
   sf::Sprite m_placeSprite;
-  std::vector<Figure *> m_figures;
 };
 
 class HomeLand : public Place
