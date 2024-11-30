@@ -2,6 +2,9 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include "Place.h"
 class Map
 {
@@ -14,12 +17,14 @@ public:
   void Render(sf::RenderWindow* l_wind);
   void OnDestroy();
 
+  void LoadLogicMap(sf::RenderWindow* l_wind); // Load logic map from map.cfg
   sf::Time GetElapsed();
   void RestartClock();
 
 private:
   std::vector<std::vector<Place *>> m_places;
   std::unordered_map<std::string, sf::Texture> m_textures;
+  std::vector<std::vector<int>> m_logicMap;
 
   std::vector<Figure *> m_figures;
 

@@ -1,7 +1,6 @@
 #pragma once
 #include "BaseState.h"
 #include "EventManager.h"
-#include "../Utils/Map.h"
 
 class State_Intro : public BaseState
 {
@@ -26,7 +25,7 @@ private:
   sf::Font m_font;
   sf::Text m_text;
 
-  float m_timePassed;
+  float m_timePassed{};
 
   std::vector<sf::Texture> m_textures;
   std::vector<sf::Sprite> m_sprites;

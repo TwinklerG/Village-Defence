@@ -101,5 +101,24 @@ void State_MainMenu::Draw()
   }
 }
 
-void State_MainMenu::Update(const sf::Time &l_time) {}
+void State_MainMenu::Update(const sf::Time &l_time)
+{
+  for (int i = 0; i < m_ButtonSum; ++i)
+  {
+    sf::Vector2i l_pos = sf::Mouse::getPosition(*m_stateMgr->GetContext()->m_wind->GetRenderWindow());
+    if (l_pos.x >= m_rects[i].getPosition().x - m_rects[i].getSize().x / 2 &&
+        l_pos.x <= m_rects[i].getPosition().x + m_rects[i].getSize().x / 2 &&
+        l_pos.y >= m_rects[i].getPosition().y - m_rects[i].getSize().y / 2 &&
+        l_pos.y <= m_rects[i].getPosition().y + m_rects[i].getSize().y / 2)
+    {
+      m_rects[i].setFillColor(sf::Color::White);
+      m_labels[i].setFillColor(sf::Color::Black);
+    }
+    else
+    {
+      m_rects[i].setFillColor(sf::Color::Red);
+      m_labels[i].setFillColor(sf::Color::White);
+    }
+  }
+}
 void State_MainMenu::Deactivate() {}

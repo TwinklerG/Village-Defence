@@ -1,26 +1,23 @@
 #pragma once
 #include "BaseState.h"
 #include "EventManager.h"
-#include "../Utils/Place.h"
-#include "../Utils/Figure.h"
 #include "../Utils/Map.h"
 
 
-class State_Game : public BaseState
+class State_Game final : public BaseState
 {
 public:
-  State_Game(StateManager *l_stateManager);
-  ~State_Game();
+  explicit State_Game(StateManager *l_stateManager);
+  ~State_Game() override;
 
-  void OnCreate();
-  void OnDestroy();
+  void OnCreate() override;
+  void OnDestroy() override;
 
-  void Activate();
-  void Deactivate();
+  void Activate() override;
+  void Deactivate() override;
 
-  void Update(const sf::Time &l_time);
-  void MoveSprite(EventDetails *l_details);
-  void Draw();
+  void Update(const sf::Time &l_time) override;
+  void Draw() override;
 
   void MainMenu(EventDetails *l_details);
   void Pause(EventDetails *l_details);

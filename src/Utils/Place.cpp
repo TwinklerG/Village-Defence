@@ -42,6 +42,7 @@ void Ice::OnCreate() {}
 void Ice::Update() {}
 void Ice::OnDestroy() {}
 
+Stone::Stone(const sf::Texture &l_texture) : Place(l_texture) { OnCreate(); }
 void Stone::OnCreate() {}
 void Stone::Update() {}
 void Stone::OnDestroy() {}

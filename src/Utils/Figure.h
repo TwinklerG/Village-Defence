@@ -1,9 +1,11 @@
 #pragma once
+#include <random>
 #include <SFML/Graphics.hpp>
+class Place;
 class Figure
 {
 public:
-  Figure(const int &l_headlthPoint, const int &l_attackPoint);
+  Figure(const int &l_headlthPoint, const int &l_attackPoint, std::vector<std::vector<Place *>> &l_places);
   ~Figure();
   virtual void OnCreate() = 0;
   virtual void Update(const sf::Time &l_elapsed) = 0;
@@ -21,12 +23,14 @@ protected:
   sf::Vector2f m_position;
   int m_healthPoint;
   int m_attackPoint;
+
+  std::vector<std::vector<Place *>> m_places;
 };
 
 class Ordinary : public Figure
 {
 public:
-  Ordinary();
+  Ordinary(std::vector<std::vector<Place *>>);
   ~Ordinary();
   void OnCreate() override;
   void Update(const sf::Time &l_elapsed) override;
@@ -34,4 +38,14 @@ public:
 
 private:
   sf::Vector2f m_increment;
+};
+
+class Guardian : public Figure
+{
+public:
+  Guardian(std::vector<std::vector<Place *>>);
+  ~Guardian();
+  void OnCreate() override;
+  void Update(const sf::Time &l_elapsed) override;
+  void OnDestroy() override;
 };

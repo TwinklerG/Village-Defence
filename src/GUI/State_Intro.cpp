@@ -1,17 +1,17 @@
 #include "State_Intro.h"
 #include "StateManager.h"
-#include <random>
 
-float State_Intro::m_AnimationTime = 1.0f;
-int State_Intro::m_SpritesSum = 20;
-
+// Random Int Generator
 std::random_device rd;
-std::mt19937 gen;
-int randint(int low, int high)
+std::mt19937 gen(rd());
+int randint(const int low, const int high)
 {
   std::uniform_int_distribution<> dist(low, high);
   return dist(gen);
 }
+
+float State_Intro::m_AnimationTime = 1.0f;
+int State_Intro::m_SpritesSum = 20;
 
 State_Intro::State_Intro(StateManager *l_stateManager)
     : BaseState(l_stateManager) {}

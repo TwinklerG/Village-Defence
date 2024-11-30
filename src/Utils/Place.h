@@ -77,6 +77,8 @@ public:
 class Stone : public Place
 {
 public:
+  Stone(const sf::Texture &l_texture);
+  
   void OnCreate() override;
   void Update() override;
   void OnDestroy() override;
