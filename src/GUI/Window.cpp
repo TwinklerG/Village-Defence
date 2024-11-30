@@ -20,7 +20,7 @@ void Window::Setup(const std::string &l_title, const sf::Vector2u &l_size)
 
 void Window::Create()
 {
-  auto style = (m_isFullscreen ? sf::Style::Fullscreen : sf::Style::Default);
+  auto style = (m_isFullscreen ? sf::Style::Fullscreen : sf::Style::Close);
   m_window.create({m_windowSize.x, m_windowSize.y, 32}, m_windowTitle, style);
 }
 void Window::Destroy() { m_window.close(); }
@@ -57,6 +57,7 @@ void Window::EndDraw() { m_window.display(); }
 
 bool Window::IsDone() { return m_isDone; }
 bool Window::IsFullscreen() { return m_isFullscreen; }
+bool Window::IsFocused() { return m_isFocused; }
 sf::Vector2u Window::GetWindowSize() { return m_windowSize; }
 sf::RenderWindow *Window::GetRenderWindow() { return &m_window; }
 EventManager *Window::GetEventManager() { return &m_eventManager; }

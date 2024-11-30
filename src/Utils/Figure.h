@@ -8,12 +8,17 @@ public:
   virtual void OnCreate() = 0;
   virtual void Update(const sf::Time &l_elapsed) = 0;
   virtual void OnDestroy() = 0;
+  virtual void Render(sf::RenderWindow *l_wind);
 
   sf::Sprite &GetSprite();
+  sf::Vector2f GetPosition();
+  void SetPosition(sf::Vector2f l_pos);
 
 protected:
-  sf::Texture m_texture;
-  sf::Sprite m_sprite;
+  std::vector<sf::Texture> m_textures;
+  std::vector<sf::Sprite> m_sprites;
+  int m_curSpriteIndex;
+  sf::Vector2f m_position;
   int m_healthPoint;
   int m_attackPoint;
 };

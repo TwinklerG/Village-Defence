@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Figure.h"
+class StateManager;
 enum class PlaceType
 {
   Land,
@@ -31,6 +32,7 @@ private:
 
 class HomeLand : public Place
 {
+public:
   HomeLand(const sf::Texture &l_texture);
 
   void OnCreate() override;
