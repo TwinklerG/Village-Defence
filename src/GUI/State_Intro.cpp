@@ -1,5 +1,6 @@
 #include "State_Intro.h"
 #include "StateManager.h"
+#include <random>
 
 // Random Int Generator
 std::random_device rd;

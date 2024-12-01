@@ -19,7 +19,7 @@ void State_Game::OnDestroy()
 
 void State_Game::Update(const sf::Time &l_time)
 {
-  m_map.Update();
+  m_map.Update(m_stateMgr->GetContext()->m_wind->GetRenderWindow());
 }
 
 
