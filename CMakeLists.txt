@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(CMakeSFMLProject LANGUAGES CXX)
+project(VillegeDefence LANGUAGES CXX)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 

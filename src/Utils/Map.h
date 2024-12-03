@@ -4,27 +4,24 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <memory>
 #include <cmath>
 #include <SFML/Graphics.hpp>
 #include <algorithm>
+#include <cassert>
+#include <unordered_set>
+#include <functional>
 #include "Place.h"
 #include "Figure.h"
+#include "StartPoint.h"
 
-enum class Direction
-{
-  Up = 0,
-  Down,
-  Right,
-  Left,
-};
-
-enum class PlaceType
-{
-  Empty,
-  Road,
-};
+// enum class Direction
+// {
+//   Up = 0,
+//   Down,
+//   Right,
+//   Left,
+// };
 
 class Map
 {
@@ -37,17 +34,19 @@ public:
   void Render(sf::RenderWindow *l_wind);
   void OnDestroy();
 
-  void LoadLogicMap(); // Load logic map from map.cfg
+  void LoadMap();
   sf::Time GetElapsed();
   void RestartClock();
 
 private:
   sf::RenderWindow *m_wind;
-  std::vector<Figure> m_figures;
-  // std::unique_ptr<sf::RectangleShape> m_selected;
-  Tower* m_selectedItem;
-  std::vector<std::vector<int>> m_places;
-  std::vector<std::vector<Place>> m_placesSprite;
+  std::vector<Figure*> m_figures;
+  Tower *m_selectedItem;
+  std::vector<std::vector<Place>> m_places;
+  std::vector<std::pair<int, int>> m_startPointss;
+  std::vector<StartPoint> m_startPoints;
+  std::vector<std::pair<int, int>> m_endPoints;
+  std::vector<std::pair<std::pair<int, int>, std::vector<Direction>>> m_roads;
   std::vector<std::pair<sf::CircleShape, Figure *>> m_bullets;
   std::unordered_map<std::string, sf::Texture> m_textures;
   sf::Clock m_clock;
