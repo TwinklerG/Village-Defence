@@ -14,6 +14,8 @@
 #include "Place.h"
 #include "Figure.h"
 #include "StartPoint.h"
+#include "EndPoint.h"
+#include "../GUI/Textbox.h"
 
 // enum class Direction
 // {
@@ -40,14 +42,14 @@ public:
 
 private:
   sf::RenderWindow *m_wind;
-  std::vector<Figure*> m_figures;
+  std::vector<Figure *> m_figures;
   Tower *m_selectedItem;
   std::vector<std::vector<Place>> m_places;
-  std::vector<std::pair<int, int>> m_startPointss;
   std::vector<StartPoint> m_startPoints;
-  std::vector<std::pair<int, int>> m_endPoints;
+  std::vector<EndPoint> m_endPoints;
   std::vector<std::pair<std::pair<int, int>, std::vector<Direction>>> m_roads;
   std::vector<std::pair<sf::CircleShape, Figure *>> m_bullets;
+  Textbox m_textbox;
   std::unordered_map<std::string, sf::Texture> m_textures;
   sf::Clock m_clock;
   sf::Time m_elapsed;

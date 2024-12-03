@@ -31,6 +31,8 @@ Map::~Map() = default;
 
 void Map::OnCreate(sf::RenderWindow *l_wind)
 {
+  m_textbox.Setup(5, 14, 350, sf::Vector2f(225, 0));
+  m_textbox.Add("Welcome to Villege Defence");
   m_selectedItem = nullptr;
   m_wind = l_wind;
   LoadMap();
@@ -172,12 +174,14 @@ void Map::Render(sf::RenderWindow *l_wind)
       }
       sf::Sprite l_sp(m_textures["tower0"]);
       l_sp.setOrigin(m_textures["tower0"].getSize().x / 2, m_textures["tower0"].getSize().y / 2);
+      l_sp.setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
       m_selectedItem = new Tower(l_sp, m_textures["tower0"].getSize());
       sf::CircleShape l_circle(400);
       l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
       l_circle.setFillColor(sf::Color(0, 0, 0, 0));
       l_circle.setOutlineColor(sf::Color::Red);
       l_circle.setOutlineThickness(1.0f);
+      l_circle.setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
       m_selectedItem->SetCircle(l_circle);
     }
   }
@@ -185,6 +189,18 @@ void Map::Render(sf::RenderWindow *l_wind)
   {
     for (int j = 0; j < m_YRange; j++)
     {
+      if (m_places[i][j].GetPlaceType() == PlaceType::End)
+      {
+        for (const auto &l_ep : m_endPoints)
+        {
+          if (l_ep.GetCordinate() == std::make_pair(i, j))
+          {
+            l_ep.Render(l_wind);
+            break;
+          }
+        }
+        continue;
+      }
       m_places[i][j].Render(l_wind);
     }
   }
@@ -200,6 +216,7 @@ void Map::Render(sf::RenderWindow *l_wind)
   {
     m_selectedItem->Render(l_wind);
   }
+  m_textbox.Render(*l_wind);
 }
 
 void Map::OnDestroy() {}
@@ -210,7 +227,7 @@ void Map::LoadMap()
   in.open("res/map0.cfg");
   if (!in.is_open())
   {
-    assert(false);
+    // assert(false);
   }
   m_places = std::vector<std::vector<Place>>(m_XRange, std::vector<Place>(m_YRange));
   auto l_placesType = std::vector<std::vector<int>>(m_XRange, std::vector<int>(m_YRange));
@@ -253,7 +270,6 @@ void Map::LoadMap()
         l_sp.setOrigin(m_textures["startPoint"].getSize().x / 2, m_textures["startPoint"].getSize().y / 2);
         l_sp.setPosition(45 + 90 * i, 405 + 90 * j);
         m_places[i][j] = Place(l_sp, m_textures["startPoint"].getSize(), PlaceType::Road);
-        m_startPointss.emplace_back(i, j);
         m_startPoints.emplace_back(StartPoint(l_sp, m_textures["startpoint"].getSize(), std::make_pair(i, j), sf::seconds(1)));
       }
       else if (l_placeType == 4)
@@ -262,10 +278,18 @@ void Map::LoadMap()
         {
           m_textures["endPoint"].loadFromFile("res/endPoint.png");
         }
-        sf::Sprite l_sp(m_textures["endPoint"]);
-        l_sp.setOrigin(m_textures["endPoint"].getSize().x / 2, m_textures["endPoint"].getSize().y / 2);
+        sf::Sprite l_esp(m_textures["endPoint"]);
+        l_esp.setOrigin(m_textures["endPoint"].getSize().x / 2, m_textures["endPoint"].getSize().y / 2);
+        l_esp.setPosition(45 + 90 * i, 405 + 90 * j);
+        if (m_textures.find("grass2") == m_textures.end())
+        {
+          m_textures["grass2"].loadFromFile("res/grass2.png");
+        }
+        sf::Sprite l_sp(m_textures["grass2"]);
+        l_sp.setOrigin(m_textures["grass2"].getSize().x / 2, m_textures["grass2"].getSize().y / 2);
         l_sp.setPosition(45 + 90 * i, 405 + 90 * j);
-        m_places[i][j] = Place(l_sp, m_textures["endPoint"].getSize(), PlaceType::End);
+        m_places[i][j] = Place(l_sp, m_textures["grass2"].getSize(), PlaceType::End);
+        m_endPoints.emplace_back(EndPoint(l_sp, m_textures["grass2"].getSize(), l_esp, std::make_pair(i, j)));
       }
     }
   }
@@ -314,7 +338,7 @@ void Map::LoadMap()
         l_road.emplace_back(Direction::Right);
         break;
       default:
-        assert(false);
+        // assert(false);
         break;
       }
       dfs(ti, tj, l_road);
@@ -323,9 +347,9 @@ void Map::LoadMap()
     st.erase(y * Map::m_XRange + x);
   };
   std::vector<Direction> l_road{};
-  for (const auto &l_sp : m_startPointss)
+  for (const auto &l_sp : m_startPoints)
   {
-    dfs(l_sp.first, l_sp.second, l_road);
+    dfs(l_sp.GetCordinate().first, l_sp.GetCordinate().second, l_road);
   }
 }
 
