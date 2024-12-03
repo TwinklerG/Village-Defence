@@ -9,7 +9,17 @@ enum class Direction
 };
 
 Figure::Figure() {}
-Figure::Figure(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::vector<int> &l_increments) : Element(l_sp, l_size), m_mileage(0), m_increments(l_increments) {}
+Figure::Figure(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::vector<int> &l_increments, int l_lives) : Element(l_sp, l_size), m_mileage(0), m_increments(l_increments), m_lives(l_lives)
+{
+  m_livesBar = sf::RectangleShape(sf::Vector2f(m_size.x, 10));
+  m_livesBar.setPosition(getPosition().x - m_size.x / 2, getPosition().y - m_size.y / 2);
+  m_livesBar.setFillColor(sf::Color::Red);
+}
+void Figure::Render(sf::RenderWindow *l_wind) const
+{
+  l_wind->draw(m_sprite);
+  l_wind->draw(m_livesBar);
+}
 void Figure::Update(const sf::Time &elapsed)
 {
   if (m_mileage / 90 >= m_increments.size())
@@ -20,17 +30,27 @@ void Figure::Update(const sf::Time &elapsed)
   {
   case 0:
     m_sprite.setPosition(m_sprite.getPosition().x + elapsed.asSeconds() * 90, m_sprite.getPosition().y);
+    m_livesBar.setPosition(m_livesBar.getPosition().x + elapsed.asSeconds() * 90, m_livesBar.getPosition().y);
     break;
   case 1:
     m_sprite.setPosition(m_sprite.getPosition().x, m_sprite.getPosition().y + elapsed.asSeconds() * 90);
+    m_livesBar.setPosition(m_livesBar.getPosition().x, m_livesBar.getPosition().y + elapsed.asSeconds() * 90);
     break;
   case 2:
     m_sprite.setPosition(m_sprite.getPosition().x - elapsed.asSeconds() * 90, m_sprite.getPosition().y);
+    m_livesBar.setPosition(m_livesBar.getPosition().x - elapsed.asSeconds() * 90, m_livesBar.getPosition().y);
     break;
   case 3:
-    m_sprite.setPosition(m_sprite.getPosition().x, m_sprite.getPosition().y + elapsed.asSeconds() * 90);
+    m_sprite.setPosition(m_sprite.getPosition().x, m_sprite.getPosition().y - elapsed.asSeconds() * 90);
+    m_livesBar.setPosition(m_livesBar.getPosition().x, m_livesBar.getPosition().y - elapsed.asSeconds() * 90);
   default:
     break;
   }
   m_mileage += elapsed.asSeconds() * 90;
+}
+int Figure::GetLives() { return m_lives; }
+void Figure::SetLives(int l_lives)
+{
+  m_livesBar.setSize(sf::Vector2f(m_size.x / m_lives, 10));
+  m_lives = l_lives;
 }

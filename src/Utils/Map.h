@@ -44,13 +44,11 @@ public:
 private:
   sf::RenderWindow *m_wind;
   std::vector<Figure> m_figures;
-  std::vector<std::pair<std::shared_ptr<sf::RectangleShape>, double>> m_figuress;
-  std::unordered_map<std::shared_ptr<sf::RectangleShape>, std::vector<int>> m_figureIncrementMap;
-  std::unique_ptr<sf::RectangleShape> m_selected;
+  // std::unique_ptr<sf::RectangleShape> m_selected;
+  Tower* m_selectedItem;
   std::vector<std::vector<int>> m_places;
   std::vector<std::vector<Place>> m_placesSprite;
-  std::vector<std::pair<sf::CircleShape, std::shared_ptr<sf::RectangleShape>>> m_bulletss;
-  std::vector<std::pair<sf::CircleShape, Figure*>> m_bullets;
+  std::vector<std::pair<sf::CircleShape, Figure *>> m_bullets;
   std::unordered_map<std::string, sf::Texture> m_textures;
   sf::Clock m_clock;
   sf::Time m_elapsed;
