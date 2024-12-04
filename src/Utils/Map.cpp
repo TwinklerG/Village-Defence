@@ -31,20 +31,19 @@ Map::~Map() = default;
 
 void Map::OnCreate(sf::RenderWindow *l_wind)
 {
+  if (m_textures.find("grass0") == m_textures.end())
+  {
+    m_textures["grass0"].loadFromFile("res/grass0.png");
+  }
+  sf::Sprite l_sp(m_textures["grass0"]);
+  l_sp.setOrigin(m_textures["grass0"].getSize().x / 2, m_textures["grass0"].getSize().y / 2);
+  l_sp.setPosition(sf::Vector2f(45, 45));
+  m_board.reset(new Board(l_sp, m_textures["grass0"].getSize()));
   m_textbox.Setup(5, 14, 350, sf::Vector2f(225, 0));
   m_textbox.Add("Welcome to Villege Defence");
   m_selectedItem = nullptr;
   m_wind = l_wind;
   LoadMap();
-  if (m_textures.find("ordinary0") == m_textures.end())
-  {
-    m_textures["ordinary0"].loadFromFile("res/ordinary0.png");
-  }
-  // sf::Sprite l_sp(m_textures["ordinary0"]);
-  // l_sp.setOrigin(m_textures["ordinary0"].getSize().x / 2, m_textures["ordinary0"].getSize().y / 2);
-  // l_sp.setPosition(45, 405);
-  // auto increments = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 1, 1, 0, 0, 1, 1, 1};
-  // m_figures.emplace_back(l_sp, m_textures["ordinary0"].getSize(), increments);
 }
 
 void Map::Update(sf::RenderWindow *l_wind)
@@ -91,6 +90,10 @@ void Map::Update(sf::RenderWindow *l_wind)
       }
       else
       {
+        if (m_textures.find("ordinary0") == m_textures.end())
+        {
+          m_textures["ordinary0"].loadFromFile("res/ordinary0.png");
+        }
         sf::Sprite l_sp(m_textures["ordinary0"]);
         l_sp.setOrigin(m_textures["ordinary0"].getSize().x / 2, m_textures["ordinary0"].getSize().y / 2);
         l_sp.setPosition(45, 405);
@@ -136,11 +139,23 @@ void Map::Update(sf::RenderWindow *l_wind)
       if (checkCollision(l_b.first, *(l_b.second)))
       {
         std::vector<Figure *> next_figures;
-        std::copy_if(m_figures.begin(), m_figures.end(), std::back_inserter(next_figures), [&](Figure *&l_fig)
-                     {
-          if (l_fig != l_b.second) {return true;}
+        for (Figure *&l_fig : m_figures)
+        {
+          if (l_fig != l_b.second)
+          {
+            next_figures.emplace_back(l_fig);
+            continue;
+          }
           l_fig->SetLives(l_fig->GetLives() - 1);
-          return l_fig->GetLives() > 0; });
+          if (l_fig->GetLives() > 0)
+          {
+            next_figures.emplace_back(l_fig);
+            continue;
+          }
+          // TODO: solve memory leak
+          // delete l_fig;
+          // l_fig = nullptr; // impact other bullets
+        }
         m_figures = next_figures;
         continue;
       }
@@ -155,10 +170,6 @@ void Map::Update(sf::RenderWindow *l_wind)
 }
 void Map::Render(sf::RenderWindow *l_wind)
 {
-  sf::RectangleShape rs(sf::Vector2f(180, 90));
-  rs.setPosition(0, 0);
-  rs.setFillColor(sf::Color::Magenta);
-  l_wind->draw(rs);
   for (int i = 2; i < 3; ++i)
   {
     sf::RectangleShape rs(sf::Vector2f(89, 90));
@@ -217,6 +228,7 @@ void Map::Render(sf::RenderWindow *l_wind)
     m_selectedItem->Render(l_wind);
   }
   m_textbox.Render(*l_wind);
+  m_board->Render(l_wind);
 }
 
 void Map::OnDestroy() {}

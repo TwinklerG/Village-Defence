@@ -15,15 +15,8 @@
 #include "Figure.h"
 #include "StartPoint.h"
 #include "EndPoint.h"
+#include "Board.h"
 #include "../GUI/Textbox.h"
-
-// enum class Direction
-// {
-//   Up = 0,
-//   Down,
-//   Right,
-//   Left,
-// };
 
 class Map
 {
@@ -41,6 +34,7 @@ public:
   void RestartClock();
 
 private:
+  std::unique_ptr<Board> m_board;
   sf::RenderWindow *m_wind;
   std::vector<Figure *> m_figures;
   Tower *m_selectedItem;
