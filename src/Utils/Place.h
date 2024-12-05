@@ -6,15 +6,25 @@ class Tower : public Element
 public:
   Tower();
   Tower(const sf::Sprite &, const sf::Vector2u &);
+  Tower(const sf::Sprite &, const sf::Vector2u &, const sf::Time &, int = 1, float = 180);
   void Render(sf::RenderWindow *l_wind) const override;
   void SetCalmTime(const sf::Time &l_time);
-  const sf::Time &GetCalmTime();
-  sf::CircleShape &GetCircle();
-  void SetCircle(const sf::CircleShape &l_circle);
+  const sf::Time GetCalmTime() const;
+  sf::CircleShape *GetCircle() const;
+  void SetCircle(const sf::CircleShape *l_circle);
+  const sf::Time GetClickCalmTime() const;
+  void SetClickCalmTime(const sf::Time &l_time);
+  const int &GetAttackPoint() const;     
+
+  static sf::Time m_totalClickCalmTime;
+  sf::Time m_totalCalmTime;
 
 private:
   sf::Time m_clamTime;
+  int m_attackPoint;
   sf::CircleShape *m_circle;
+  sf::Time m_clickCalmTime;
+  float m_bulletSpeed;
 };
 
 enum class PlaceType

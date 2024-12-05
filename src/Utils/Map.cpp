@@ -18,11 +18,11 @@ bool checkInRange(T source, F target, double range)
 template <class F>
 bool checkCollision(sf::CircleShape source, F target)
 {
-  return (source.getPosition().x - target.getPosition().x) * (source.getPosition().x - target.getPosition().x) + (source.getPosition().y - target.getPosition().y) * (source.getPosition().y - target.getPosition().y) <= (source.getRadius() + target.getSize().x) * (source.getRadius() + target.getSize().x) / 4 + (source.getRadius() + target.getSize().y) * (source.getRadius() + target.getSize().y) / 4;
+  return (source.getPosition().x - target.getPosition().x) * (source.getPosition().x - target.getPosition().x) + (source.getPosition().y - target.getPosition().y) * (source.getPosition().y - target.getPosition().y) <= (source.getRadius() + target.getSize().x) * (source.getRadius() + target.getSize().x) / 8 + (source.getRadius() + target.getSize().y) * (source.getRadius() + target.getSize().y) / 8;
 }
 
-int Map::m_XRange = 9;
-int Map::m_YRange = 6;
+int Map::m_XRange = 21;
+int Map::m_YRange = 9;
 float Map::m_FrameTime = 1.0f / 60.0f;
 
 Map::Map(sf::RenderWindow *l_wind) { OnCreate(l_wind); }
@@ -54,29 +54,61 @@ void Map::Update(sf::RenderWindow *l_wind)
     if (m_selectedItem)
     {
       m_selectedItem->GetSprite().setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
-      m_selectedItem->GetCircle().setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
+      m_selectedItem->GetCircle()->setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-      if (m_selectedItem)
+      for (int i = 0; i < m_XRange; i++)
       {
-        for (int i = 0; i < m_XRange; i++)
+        for (int j = 0; j < m_YRange; j++)
         {
-          for (int j = 0; j < m_YRange; j++)
+          if (checkMouseSelect(m_places[i][j], m_wind))
           {
-            if (checkMouseSelect(m_places[i][j], m_wind))
+            if (m_selectedItem)
             {
-              if (m_textures.find("tower0") == m_textures.end())
+              if (m_board->GetMoney() >= 50)
               {
-                m_textures["tower0"].loadFromFile("res/tower0.png");
+                if (m_textures.find("tower0") == m_textures.end())
+                {
+                  m_textures["tower0"].loadFromFile("res/tower0.png");
+                }
+                sf::Sprite l_sp(m_textures["tower0"]);
+                l_sp.setOrigin(m_textures["tower0"].getSize().x / 2, m_textures["tower0"].getSize().y / 2);
+                l_sp.setPosition(45 + 90 * i, 405 + 90 * j);
+                Tower t(l_sp, m_textures["tower0"].getSize());
+                m_places[i][j].SetTower(t);
+                m_places[i][j].SetPlaceType(PlaceType::Tower);
+                m_board->SetMoney(m_board->GetMoney() - 50);
               }
-              sf::Sprite l_sp(m_textures["tower0"]);
-              l_sp.setOrigin(m_textures["tower0"].getSize().x / 2, m_textures["tower0"].getSize().y / 2);
-              l_sp.setPosition(45 + 90 * i, 405 + 90 * j);
-              Tower t(l_sp, m_textures["tower0"].getSize());
-              m_places[i][j].SetTower(t);
-              m_places[i][j].SetPlaceType(PlaceType::Tower);
               m_selectedItem = nullptr;
+            }
+            else
+            {
+              if (m_places[i][j].GetPlaceType() == PlaceType::Tower)
+              {
+                // if (m_places[i][j].GetTower().GetClickCalmTime().asSeconds() > 0)
+                // {
+                //   m_places[i][j].GetTower().SetClickCalmTime(m_places[i][j].GetTower().GetClickCalmTime() - sf::seconds(m_FrameTime));
+                // }
+                // else
+                // {
+                //   if (!m_places[i][j].GetTower().GetCircle())
+                //   {
+                //     sf::CircleShape l_cs(400);
+                //     l_cs.setPosition(sf::Vector2f(45 + 90 * i, 405 + 90 * j));
+                //     l_cs.setOrigin(l_cs.getRadius(), l_cs.getRadius());
+                //     l_cs.setFillColor(sf::Color(0, 0, 0, 0));
+                //     l_cs.setOutlineColor(sf::Color::Red);
+                //     l_cs.setOutlineThickness(1.0f);
+                //     m_places[i][j].GetTower().SetCircle(&l_cs);
+                //   }
+                //   else
+                //   {
+                //     m_places[i][j].GetTower().SetCircle(nullptr);
+                //   }
+                //   m_places[i][j].GetTower().SetClickCalmTime(Tower::m_totalClickCalmTime);
+                // }
+              }
             }
           }
         }
@@ -120,11 +152,23 @@ void Map::Update(sf::RenderWindow *l_wind)
           {
             if (checkInRange(*l_fig, m_places[i][j], 400))
             {
+              int cnt = 0;
+              for (auto &l_b : m_bullets)
+              {
+                if (l_b.GetTargetFigure() == l_fig)
+                {
+                  ++cnt;
+                }
+              }
+              if (cnt >= l_fig->GetLives())
+              {
+                continue;
+              }
               sf::CircleShape cs(10);
               cs.setFillColor(sf::Color::Yellow);
               cs.setPosition(m_places[i][j].getPosition());
               cs.setOrigin(cs.getRadius(), cs.getRadius());
-              m_bullets.emplace_back(cs, l_fig);
+              m_bullets.push_back(Bullet(cs, l_fig, 360));
               break;
             }
           }
@@ -132,16 +176,15 @@ void Map::Update(sf::RenderWindow *l_wind)
         }
       }
     }
-    auto prev_bullets(m_bullets);
-    m_bullets.clear();
-    for (auto &l_b : prev_bullets)
+    std::vector<Bullet> next_bullets{};
+    for (auto &l_b : m_bullets)
     {
-      if (checkCollision(l_b.first, *(l_b.second)))
+      if (checkCollision(l_b.GetCircle(), *l_b.GetTargetFigure()))
       {
         std::vector<Figure *> next_figures;
         for (Figure *&l_fig : m_figures)
         {
-          if (l_fig != l_b.second)
+          if (l_fig != l_b.GetTargetFigure())
           {
             next_figures.emplace_back(l_fig);
             continue;
@@ -153,17 +196,27 @@ void Map::Update(sf::RenderWindow *l_wind)
             continue;
           }
           // TODO: solve memory leak
-          // delete l_fig;
-          // l_fig = nullptr; // impact other bullets
+          delete l_fig;
+          l_fig = nullptr; // impact other bullets
         }
         m_figures = next_figures;
         continue;
       }
-      double dx = -l_b.first.getPosition().x + l_b.second->getPosition().x;
-      double dy = -l_b.first.getPosition().y + l_b.second->getPosition().y;
+      double dx = -l_b.GetCircle().getPosition().x + l_b.GetTargetFigure()->getPosition().x;
+      double dy = -l_b.GetCircle().getPosition().y + l_b.GetTargetFigure()->getPosition().y;
       double d = sqrt(dx * dx + dy * dy);
-      l_b.first.setPosition(l_b.first.getPosition().x + 160 / d * m_FrameTime * dx, l_b.first.getPosition().y + 160 / d * m_FrameTime * dy);
-      m_bullets.emplace_back(l_b);
+      l_b.GetCircle().setPosition(l_b.GetCircle().getPosition().x + l_b.GetSpeed() / d * m_FrameTime * dx, l_b.GetCircle().getPosition().y + l_b.GetSpeed() / d * m_FrameTime * dy);
+      next_bullets.emplace_back(l_b);
+    }
+    m_bullets = next_bullets;
+    if (m_board->GetCalmTime().asSeconds() > 0)
+    {
+      m_board->SetCalmTime(m_board->GetCalmTime() - m_elapsed);
+    }
+    else
+    {
+      m_board->SetMoney(m_board->GetMoney() + 50);
+      m_board->SetCalmTime(sf::seconds(3));
     }
     m_elapsed -= sf::seconds(m_FrameTime);
   }
@@ -193,7 +246,7 @@ void Map::Render(sf::RenderWindow *l_wind)
       l_circle.setOutlineColor(sf::Color::Red);
       l_circle.setOutlineThickness(1.0f);
       l_circle.setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
-      m_selectedItem->SetCircle(l_circle);
+      m_selectedItem->SetCircle(&l_circle);
     }
   }
   for (int i = 0; i < m_XRange; i++)
@@ -215,9 +268,9 @@ void Map::Render(sf::RenderWindow *l_wind)
       m_places[i][j].Render(l_wind);
     }
   }
-  for (const auto &l_b : m_bullets)
+  for (auto &l_b : m_bullets)
   {
-    l_wind->draw(l_b.first);
+    l_wind->draw(l_b.GetCircle());
   }
   for (Figure *l_fig : m_figures)
   {

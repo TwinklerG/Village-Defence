@@ -1,5 +1,5 @@
 #include "Game.h"
-Game::Game() : m_window("Villege Defence", sf::Vector2u(1920, 1080)), m_stateManager(&m_context)
+Game::Game() : m_window("Villege Defence", sf::Vector2u(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height)), m_stateManager(&m_context)
 {
   m_context.m_wind = &m_window;
   m_context.m_eventManager = m_window.GetEventManager();

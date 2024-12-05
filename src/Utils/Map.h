@@ -12,10 +12,10 @@
 #include <unordered_set>
 #include <functional>
 #include "Place.h"
-#include "Figure.h"
 #include "StartPoint.h"
 #include "EndPoint.h"
 #include "Board.h"
+#include "Bullet.h"
 #include "../GUI/Textbox.h"
 
 class Map
@@ -42,7 +42,7 @@ private:
   std::vector<StartPoint> m_startPoints;
   std::vector<EndPoint> m_endPoints;
   std::vector<std::pair<std::pair<int, int>, std::vector<Direction>>> m_roads;
-  std::vector<std::pair<sf::CircleShape, Figure *>> m_bullets;
+  std::vector<Bullet> m_bullets;
   Textbox m_textbox;
   std::unordered_map<std::string, sf::Texture> m_textures;
   sf::Clock m_clock;
