@@ -55,7 +55,7 @@ void State_MainMenu::OnDestroy()
 
 void State_MainMenu::Activate()
 {
-  if (m_stateMgr->HasState(StateType::Game) && m_labels[0].getString() == "PLAY")
+  if (m_stateMgr->HasState(StateType::Game) && m_labels[0].getString() == "NEW GAME")
   {
     m_labels[0].setString(sf::String("RESUME"));
     sf::FloatRect rect = m_labels[0].getLocalBounds();
@@ -78,9 +78,11 @@ void State_MainMenu::MouseClick(EventDetails *l_details)
       }
       else if (i == 1)
       {
+        m_stateMgr->SwitchTo(StateType::Levels);
       }
       else if (i == 2)
       {
+        m_stateMgr->SwitchTo(StateType::About);
       }
       else if (i == 3)
       {

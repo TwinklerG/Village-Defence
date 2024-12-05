@@ -32,8 +32,11 @@ public:
   void LoadMap();
   sf::Time GetElapsed();
   void RestartClock();
+  int GetLives() const;
 
 private:
+  int m_lives;
+  sf::RectangleShape m_backup;
   std::unique_ptr<Board> m_board;
   sf::RenderWindow *m_wind;
   std::vector<Figure *> m_figures;

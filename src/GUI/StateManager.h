@@ -6,15 +6,19 @@
 #include "State_MainMenu.h"
 #include "State_Game.h"
 #include "State_Paused.h"
+#include "State_Levels.h"
+#include "State_About.h"
 
 enum class StateType
 {
   Intro = 1,
   MainMenu,
+  Levels,
   Game,
   Paused,
   GameOver,
-  Credits
+  Credits,
+  About,
 };
 
 using StateContainer = std::vector<std::pair<StateType, BaseState *>>;

@@ -22,7 +22,7 @@ bool checkCollision(sf::CircleShape source, F target)
 }
 
 int Map::m_XRange = 21;
-int Map::m_YRange = 9;
+int Map::m_YRange = 8;
 float Map::m_FrameTime = 1.0f / 60.0f;
 
 Map::Map(sf::RenderWindow *l_wind) { OnCreate(l_wind); }
@@ -31,15 +31,19 @@ Map::~Map() = default;
 
 void Map::OnCreate(sf::RenderWindow *l_wind)
 {
-  if (m_textures.find("grass0") == m_textures.end())
+  m_lives = 10;
+  // rgb(120, 120, 0)
+  m_backup = sf::RectangleShape(sf::Vector2f(l_wind->getSize().x, l_wind->getSize().y));
+  m_backup.setFillColor(sf::Color(120, 120, 0));
+  if (m_textures.find("board") == m_textures.end())
   {
-    m_textures["grass0"].loadFromFile("res/grass0.png");
+    m_textures["board"].loadFromFile("res/imgs/board.png");
   }
-  sf::Sprite l_sp(m_textures["grass0"]);
-  l_sp.setOrigin(m_textures["grass0"].getSize().x / 2, m_textures["grass0"].getSize().y / 2);
+  sf::Sprite l_sp(m_textures["board"]);
+  l_sp.setOrigin(m_textures["board"].getSize().x / 2, m_textures["board"].getSize().y / 2);
   l_sp.setPosition(sf::Vector2f(45, 45));
-  m_board.reset(new Board(l_sp, m_textures["grass0"].getSize()));
-  m_textbox.Setup(5, 14, 350, sf::Vector2f(225, 0));
+  m_board.reset(new Board(l_sp, m_textures["board"].getSize()));
+  m_textbox.Setup(10, 24, 600, sf::Vector2f(1920, 0));
   m_textbox.Add("Welcome to Villege Defence");
   m_selectedItem = nullptr;
   m_wind = l_wind;
@@ -53,8 +57,15 @@ void Map::Update(sf::RenderWindow *l_wind)
   {
     if (m_selectedItem)
     {
-      m_selectedItem->GetSprite().setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
-      m_selectedItem->GetCircle()->setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
+      if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+      {
+        m_selectedItem = nullptr;
+      }
+      else
+      {
+        m_selectedItem->GetSprite().setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
+        m_selectedItem->GetCircle()->setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
+      }
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
@@ -66,50 +77,30 @@ void Map::Update(sf::RenderWindow *l_wind)
           {
             if (m_selectedItem)
             {
-              if (m_board->GetMoney() >= 50)
+              if (m_textures.find("tower0") == m_textures.end())
               {
-                if (m_textures.find("tower0") == m_textures.end())
-                {
-                  m_textures["tower0"].loadFromFile("res/tower0.png");
-                }
-                sf::Sprite l_sp(m_textures["tower0"]);
-                l_sp.setOrigin(m_textures["tower0"].getSize().x / 2, m_textures["tower0"].getSize().y / 2);
-                l_sp.setPosition(45 + 90 * i, 405 + 90 * j);
-                Tower t(l_sp, m_textures["tower0"].getSize());
-                m_places[i][j].SetTower(t);
-                m_places[i][j].SetPlaceType(PlaceType::Tower);
-                m_board->SetMoney(m_board->GetMoney() - 50);
+                m_textures["tower0"].loadFromFile("res/tower0.png");
               }
+              sf::Sprite l_sp(m_textures["tower0"]);
+              l_sp.setOrigin(m_textures["tower0"].getSize().x / 2, m_textures["tower0"].getSize().y / 2);
+              l_sp.setPosition(45 + 90 * i, 405 + 90 * j);
+              Tower t(l_sp, m_textures["tower0"].getSize());
+              m_places[i][j].SetTower(t);
+              m_places[i][j].SetPlaceType(PlaceType::Tower);
+              m_board->SetMoney(m_board->GetMoney() - 50);
               m_selectedItem = nullptr;
             }
-            else
-            {
-              if (m_places[i][j].GetPlaceType() == PlaceType::Tower)
-              {
-                // if (m_places[i][j].GetTower().GetClickCalmTime().asSeconds() > 0)
-                // {
-                //   m_places[i][j].GetTower().SetClickCalmTime(m_places[i][j].GetTower().GetClickCalmTime() - sf::seconds(m_FrameTime));
-                // }
-                // else
-                // {
-                //   if (!m_places[i][j].GetTower().GetCircle())
-                //   {
-                //     sf::CircleShape l_cs(400);
-                //     l_cs.setPosition(sf::Vector2f(45 + 90 * i, 405 + 90 * j));
-                //     l_cs.setOrigin(l_cs.getRadius(), l_cs.getRadius());
-                //     l_cs.setFillColor(sf::Color(0, 0, 0, 0));
-                //     l_cs.setOutlineColor(sf::Color::Red);
-                //     l_cs.setOutlineThickness(1.0f);
-                //     m_places[i][j].GetTower().SetCircle(&l_cs);
-                //   }
-                //   else
-                //   {
-                //     m_places[i][j].GetTower().SetCircle(nullptr);
-                //   }
-                //   m_places[i][j].GetTower().SetClickCalmTime(Tower::m_totalClickCalmTime);
-                // }
-              }
-            }
+            // else if (m_places[i][j].GetPlaceType() == PlaceType::Tower)
+            // {
+            //   m_selectedItem = &m_places[i][j].GetTower();
+            //   sf::CircleShape l_circle(400);
+            //   l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
+            //   l_circle.setFillColor(sf::Color(0, 0, 0, 0));
+            //   l_circle.setOutlineColor(sf::Color::Red);
+            //   l_circle.setOutlineThickness(1.0f);
+            //   l_circle.setPosition(45 + 90 * i, 405 + 90 * j);
+            //   m_selectedItem->SetCircle(&l_circle);
+            // }
           }
         }
       }
@@ -211,7 +202,7 @@ void Map::Update(sf::RenderWindow *l_wind)
     m_bullets = next_bullets;
     if (m_board->GetCalmTime().asSeconds() > 0)
     {
-      m_board->SetCalmTime(m_board->GetCalmTime() - m_elapsed);
+      m_board->SetCalmTime(m_board->GetCalmTime() - sf::seconds(m_FrameTime));
     }
     else
     {
@@ -219,10 +210,28 @@ void Map::Update(sf::RenderWindow *l_wind)
       m_board->SetCalmTime(sf::seconds(3));
     }
     m_elapsed -= sf::seconds(m_FrameTime);
+    std::vector<Figure *> next_figures{};
+    for (const auto &l_fig : m_figures)
+    {
+      for (const auto &l_ep : m_endPoints)
+      {
+        if (checkInRange(*l_fig, l_ep, l_fig->getSize().x / 2 + l_ep.getSize().x / 2))
+        {
+          --m_lives;
+          m_textbox.Add("Villege has been invaded. You have " + std::to_string(m_lives) + " lives currently!!!");
+        }
+        else
+        {
+          next_figures.emplace_back(l_fig);
+        }
+      }
+    }
+    m_figures = next_figures;
   }
 }
 void Map::Render(sf::RenderWindow *l_wind)
 {
+  m_wind->draw(m_backup);
   for (int i = 2; i < 3; ++i)
   {
     sf::RectangleShape rs(sf::Vector2f(89, 90));
@@ -230,7 +239,7 @@ void Map::Render(sf::RenderWindow *l_wind)
     rs.setOrigin(rs.getSize().x / 2, rs.getSize().y / 2);
     rs.setFillColor(sf::Color::Blue);
     l_wind->draw(rs);
-    if (checkMouseSelect<sf::RectangleShape>(rs, m_wind) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    if (checkMouseSelect<sf::RectangleShape>(rs, m_wind) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_board->GetMoney() >= 50)
     {
       if (m_textures.find("tower0") == m_textures.end())
       {
@@ -291,8 +300,7 @@ void Map::LoadMap()
   std::ifstream in;
   in.open("res/map0.cfg");
   if (!in.is_open())
-  {
-    // assert(false);
+  { // assert(false);
   }
   m_places = std::vector<std::vector<Place>>(m_XRange, std::vector<Place>(m_YRange));
   auto l_placesType = std::vector<std::vector<int>>(m_XRange, std::vector<int>(m_YRange));
@@ -316,14 +324,14 @@ void Map::LoadMap()
       }
       else if (l_placeType == 1)
       {
-        if (m_textures.find("grass1") == m_textures.end())
+        if (m_textures.find("road") == m_textures.end())
         {
-          m_textures["grass1"].loadFromFile("res/grass1.png");
+          m_textures["road"].loadFromFile("res/imgs/road.png");
         }
-        sf::Sprite l_sp(m_textures["grass1"]);
-        l_sp.setOrigin(m_textures["grass1"].getSize().x / 2, m_textures["grass1"].getSize().y / 2);
+        sf::Sprite l_sp(m_textures["road"]);
+        l_sp.setOrigin(m_textures["road"].getSize().x / 2, m_textures["road"].getSize().y / 2);
         l_sp.setPosition(45 + 90 * i, 405 + 90 * j);
-        m_places[i][j] = Place(l_sp, m_textures["grass1"].getSize(), PlaceType::Road);
+        m_places[i][j] = Place(l_sp, m_textures["road"].getSize(), PlaceType::Road);
       }
       else if (l_placeType == 3)
       {
@@ -421,3 +429,5 @@ void Map::LoadMap()
 sf::Time Map::GetElapsed() { return m_elapsed; }
 
 void Map::RestartClock() { m_elapsed += m_clock.restart(); }
+
+int Map::GetLives() const { return m_lives; }

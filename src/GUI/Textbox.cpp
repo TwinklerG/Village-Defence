@@ -15,8 +15,9 @@ void Textbox::Setup(int l_visible, int l_charSize, int l_width, const sf::Vector
   m_content.setString("");
   m_content.setCharacterSize(l_charSize);
   m_content.setColor(sf::Color::White);
-  m_content.setPosition(l_screenPos + l_offset);
+  m_content.setPosition(sf::Vector2f(l_screenPos.x + l_offset.x - l_width, l_offset.y));
 
+  m_backup.setOrigin(l_width, 0);
   m_backup.setSize(sf::Vector2f(l_width, (l_visible * l_charSize * 1.2f)));
   m_backup.setFillColor(sf::Color(90, 90, 90, 90));
   m_backup.setPosition(l_screenPos);
@@ -25,7 +26,7 @@ void Textbox::Setup(int l_visible, int l_charSize, int l_width, const sf::Vector
 void Textbox::Add(const std::string &l_message)
 {
   m_messages.emplace_back(l_message);
-  if (m_messages.size() < m_numVisible)
+  if (m_messages.size() <= m_numVisible)
   {
     return;
   }

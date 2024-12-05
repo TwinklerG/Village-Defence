@@ -9,6 +9,7 @@ Board::Board(const sf::Sprite &l_sp, const sf::Vector2u &l_size) : Element(l_sp,
   m_money = 100;
   m_moneyText.setColor(sf::Color::White);
   m_moneyText.setCharacterSize(20);
+  m_moneyText.setPosition(sf::Vector2f(20, 40));
 }
 void Board::Render(sf::RenderWindow *l_wind)
 {
