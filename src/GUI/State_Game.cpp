@@ -19,13 +19,13 @@ void State_Game::OnDestroy()
 
 void State_Game::Update(const sf::Time &l_time)
 {
-  m_map.Update(m_stateMgr->GetContext()->m_wind->GetRenderWindow());
-  if (m_map.GetLives() <= 0) {
+  m_map.Update(m_stateMgr->GetContext()->m_wind->GetRenderWindow(), l_time);
+  if (m_map.GetLives() <= 0)
+  {
     m_stateMgr->Remove(StateType::Game);
     m_stateMgr->SwitchTo(StateType::MainMenu);
   }
 }
-
 
 void State_Game::Draw()
 {

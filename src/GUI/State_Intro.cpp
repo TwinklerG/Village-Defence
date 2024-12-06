@@ -23,17 +23,18 @@ void State_Intro::OnCreate()
 {
   m_timePassed = 0.0f;
   sf::Vector2u windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_introTexture.loadFromFile("res/intro.png");
-  m_introSprite.setTexture(m_introTexture);
-  m_introSprite.setOrigin(m_introTexture.getSize().x / 2.0f, m_introTexture.getSize().y / 2.0f);
-  m_introSprite.setPosition(windowSize.x / 2.0f, 0);
-  m_font.loadFromFile("res/arial.ttf");
+  m_font.loadFromFile("res/fonts/CONSOLAZ.TTF");
   m_text.setFont(m_font);
   m_text.setString({"Press SPACE to continue"});
   m_text.setCharacterSize(20);
   sf::FloatRect textRect = m_text.getLocalBounds();
   m_text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
   m_text.setPosition(windowSize.x / 2.0f, windowSize.y / 3.0f * 2);
+  m_title.setFont(m_font);
+  m_title.setString("Village Defence");
+  m_title.setCharacterSize(160);
+  m_title.setOrigin(m_title.getLocalBounds().width / 2, m_title.getLocalBounds().height);
+  m_title.setPosition(windowSize.x / 2, 0);
   EventManager *evMgr = m_stateMgr->GetContext()->m_eventManager;
   evMgr->AddCallback(StateType::Intro, "Intro_Continue", &State_Intro::Continue, this);
 
@@ -60,7 +61,7 @@ void State_Intro::Update(const sf::Time &l_time)
   if (m_timePassed < m_AnimationTime)
   { // Less than five seconds.
     m_timePassed += l_time.asSeconds();
-    m_introSprite.setPosition(m_introSprite.getPosition().x, m_introSprite.getPosition().y + (m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize().y / (m_AnimationTime * 2) * l_time.asSeconds()));
+    m_title.setPosition(m_title.getPosition().x, m_title.getPosition().y + (m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize().y / (m_AnimationTime * 2) * l_time.asSeconds()));
   }
 }
 
@@ -71,7 +72,7 @@ void State_Intro::Draw()
   {
     window->draw(l_sp);
   }
-  window->draw(m_introSprite);
+  window->draw(m_title);
   if (m_timePassed >= m_AnimationTime)
   {
     window->draw(m_text);

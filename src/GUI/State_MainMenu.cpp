@@ -11,7 +11,7 @@ void State_MainMenu::OnCreate()
 {
   m_rects = std::vector<sf::RectangleShape>(State_MainMenu::m_ButtonSum);
   m_labels = std::vector<sf::Text>(State_MainMenu::m_ButtonSum);
-  m_font.loadFromFile("res/arial.ttf");
+  m_font.loadFromFile("res/fonts/CONSOLAB.TTF");
   m_text.setFont(m_font);
   m_text.setString(sf::String("MAIN MENU"));
   m_text.setCharacterSize(100);

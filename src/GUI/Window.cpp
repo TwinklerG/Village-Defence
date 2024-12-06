@@ -11,7 +11,6 @@ void Window::Setup(const std::string &l_title, const sf::Vector2u &l_size)
   m_isFullscreen = false;
   m_isDone = false;
   m_isFocused = true; // Default value for focused flag.
-  m_window.setFramerateLimit(60);
   m_eventManager.AddCallback(StateType(0), "Fullscreen_toggle", &Window::ToggleFullscreen, this);
   m_eventManager.AddCallback(StateType(0), "Window_close", &Window::Close, this);
 

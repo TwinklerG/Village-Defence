@@ -14,7 +14,7 @@ void Textbox::Setup(int l_visible, int l_charSize, int l_width, const sf::Vector
   m_content.setFont(m_font);
   m_content.setString("");
   m_content.setCharacterSize(l_charSize);
-  m_content.setColor(sf::Color::White);
+  m_content.setFillColor(sf::Color::White);
   m_content.setPosition(sf::Vector2f(l_screenPos.x + l_offset.x - l_width, l_offset.y));
 
   m_backup.setOrigin(l_width, 0);

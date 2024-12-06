@@ -13,9 +13,9 @@ void State_About::OnCreate()
 
   m_font.loadFromFile("res/fonts/CONSOLAZ.TTF");
   m_content.setFont(m_font);
-  m_content.setString("Vellege Defence\n\nCopyright GeLU & Powered by SFML\n");
+  m_content.setString("Village Defence\n\nCreated By Liang Gong & Powered by SFML\n");
   m_content.setCharacterSize(44);
-  m_content.setColor(sf::Color::White);
+  m_content.setFillColor(sf::Color::White);
   m_content.setPosition((1920 - m_content.getLocalBounds().width) / 2, 1080);
 }
 

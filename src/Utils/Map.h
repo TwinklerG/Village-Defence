@@ -25,19 +25,18 @@ public:
   ~Map();
 
   void OnCreate(sf::RenderWindow *l_wind);
-  void Update(sf::RenderWindow *l_wind);
+  void Update(sf::RenderWindow *l_wind, const sf::Time &l_time);
   void Render(sf::RenderWindow *l_wind);
   void OnDestroy();
 
   void LoadMap();
-  sf::Time GetElapsed();
-  void RestartClock();
   int GetLives() const;
 
 private:
   int m_lives;
   sf::RectangleShape m_backup;
   std::unique_ptr<Board> m_board;
+  std::vector<std::pair<sf::Sprite, sf::Text>> m_choices;
   sf::RenderWindow *m_wind;
   std::vector<Figure *> m_figures;
   Tower *m_selectedItem;
@@ -47,10 +46,9 @@ private:
   std::vector<std::pair<std::pair<int, int>, std::vector<Direction>>> m_roads;
   std::vector<Bullet> m_bullets;
   Textbox m_textbox;
+  std::unordered_map<std::string, sf::Font> m_fonts;
   std::unordered_map<std::string, sf::Texture> m_textures;
   sf::Clock m_clock;
-  sf::Time m_elapsed;
   static int m_XRange;
   static int m_YRange;
-  static float m_FrameTime;
 };
