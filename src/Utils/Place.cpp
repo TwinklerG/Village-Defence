@@ -26,13 +26,17 @@ Tower::Tower(const sf::Sprite &l_sp, const sf::Vector2u &l_size)
       m_totalCalmTime(sf::seconds(1)),
       m_attackPoint(1),
       m_bulletSpeed(180) {}
-Tower::Tower(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const sf::Time &l_ct, int l_atk, float l_bspeed)
+Tower::Tower(const sf::Sprite &l_sp,
+             const sf::Vector2u &l_size,
+             const sf::Time &l_ct, int l_atk, float l_bspeed, int l_range, int l_cost)
     : Element(l_sp, l_size),
       m_circle(nullptr),
       m_clamTime(sf::seconds(0)),
       m_totalCalmTime(l_ct),
       m_attackPoint(l_atk),
-      m_bulletSpeed(l_bspeed) {}
+      m_bulletSpeed(l_bspeed),
+      m_range(l_range),
+      m_cost(l_cost) {}
 void Tower::SetCalmTime(const sf::Time &l_t) { m_clamTime = l_t; }
 const sf::Time Tower::GetCalmTime() const { return m_clamTime; }
 sf::CircleShape *Tower::GetCircle() const { return m_circle; }
@@ -59,3 +63,6 @@ void Tower::Render(sf::RenderWindow *l_wind) const
 const sf::Time Tower::GetClickCalmTime() const { return m_clickCalmTime; }
 void Tower::SetClickCalmTime(const sf::Time &l_time) { m_clickCalmTime = l_time; }
 const int &Tower::GetAttackPoint() const { return m_attackPoint; }
+const float &Tower::GetBulletSpeed() const { return m_bulletSpeed; }
+const int &Tower::GetCost() const { return m_cost; }
+const int &Tower::GetRange() const { return m_range; }

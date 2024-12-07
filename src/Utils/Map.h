@@ -36,7 +36,7 @@ private:
   int m_lives;
   sf::RectangleShape m_backup;
   std::unique_ptr<Board> m_board;
-  std::vector<std::pair<sf::Sprite, sf::Text>> m_choices;
+  std::vector<std::pair<std::pair<sf::Sprite, sf::Text>, TowerInfo>> m_choices;
   sf::RenderWindow *m_wind;
   std::vector<Figure *> m_figures;
   Tower *m_selectedItem;
