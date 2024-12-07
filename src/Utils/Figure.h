@@ -10,6 +10,11 @@ enum class Direction
   Left,
 };
 
+struct FigureInfo {
+  int m_lives;
+  int m_speed;
+};
+
 class Figure : public Element
 {
 public:

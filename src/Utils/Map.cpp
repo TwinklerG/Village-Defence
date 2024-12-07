@@ -20,7 +20,7 @@ bool checkMouseSelectSprite(const sf::Sprite &l_sprite, sf::RenderWindow *l_wind
 template <class T, class F>
 bool checkInRange(T source, F target, double range)
 {
-  return ((double)source.getPosition().x - target.getPosition().x) * ((double)source.getPosition().x - target.getPosition().x) + ((double)source.getPosition().y - target.getPosition().y) * ((double)source.getPosition().y - target.getPosition().y) <= range * range;
+  return (source.getPosition().x - target.getPosition().x) * (source.getPosition().x - target.getPosition().x) + (source.getPosition().y - target.getPosition().y) * (source.getPosition().y - target.getPosition().y) <= range * range;
 }
 
 template <class F>
@@ -72,7 +72,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
       {
         if (checkMouseSelect(m_places[i][j], m_wind))
         {
-          if (m_selectedItem && m_places[i][j].GetPlaceType() != PlaceType::Tower)
+          if (m_selectedItem && m_places[i][j].GetPlaceType() == PlaceType::Land)
           {
             Tower t(*m_selectedItem);
             t.GetSprite().setPosition(45 + 90 * i, 405 + 90 * j);
@@ -88,21 +88,11 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
   }
   for (StartPoint &l_startpoint : m_startPoints)
   {
-    if (l_startpoint.GetCalmTime().asSeconds() > 0)
+    Figure *l_fig = l_startpoint.Update(l_time);
+    if (l_fig)
     {
-      l_startpoint.SetCalmTime(l_startpoint.GetCalmTime() - l_time);
-    }
-    else
-    {
-      if (m_textures.find("invader0") == m_textures.end())
-      {
-        m_textures["invader0"].loadFromFile("res/imgs/invader/invader0.png");
-      }
-      sf::Sprite l_sp(m_textures["invader0"]);
-      l_sp.setOrigin(m_textures["invader0"].getSize().x / 2, m_textures["invader0"].getSize().y / 2);
-      l_sp.setPosition(45, 405);
-      m_figures.emplace_back(new Figure(l_sp, m_textures["invader0"].getSize(), m_roads[rand() % m_roads.size()].second));
-      l_startpoint.RestartCalmTime();
+      std::cout << "A Figure Generated" << "\n";
+      m_figures.emplace_back(l_fig);
     }
   }
   for (Figure *&l_fig : m_figures)
@@ -202,7 +192,10 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
       }
       else
       {
-        next_figures.emplace_back(l_fig);
+        if (std::find(next_figures.begin(), next_figures.end(), l_fig) == next_figures.end())
+        {
+          next_figures.emplace_back(l_fig);
+        }
       }
     }
   }
@@ -242,20 +235,12 @@ void Map::Render(sf::RenderWindow *l_wind)
   {
     for (int j = 0; j < m_YRange; j++)
     {
-      if (m_places[i][j].GetPlaceType() == PlaceType::End)
-      {
-        for (const auto &l_ep : m_endPoints)
-        {
-          if (l_ep.GetCordinate() == std::make_pair(i, j))
-          {
-            l_ep.Render(l_wind);
-            break;
-          }
-        }
-        continue;
-      }
       m_places[i][j].Render(l_wind);
     }
+  }
+  for (const auto &l_ep : m_endPoints)
+  {
+    l_ep.Render(l_wind);
   }
   for (auto &l_b : m_bullets)
   {
@@ -309,6 +294,25 @@ void Map::LoadMap()
     m_choices[i].first.second.setPosition(m_choices[i].first.first.getPosition() + sf::Vector2f(0, m_choices[i].first.first.getTexture()->getSize().y / 2));
     m_choices[i].second = {cost, atk, range, calmTime, speed};
   }
+  // Load Invader Turns
+  std::vector<std::vector<std::pair<int, int>>> l_invaderTurns;
+  float l_calmTime;
+  in >> l_calmTime;
+  int l_turnSum;
+  in >> l_turnSum;
+  for (int i = 0; i < l_turnSum; ++i)
+  {
+    int l_typeSum;
+    in >> l_typeSum;
+    std::vector<std::pair<int, int>> l_turn(l_typeSum);
+    for (int j = 0; j < l_typeSum; ++j)
+    {
+      int type, count;
+      in >> type >> count;
+      l_turn[j] = {type, count};
+    }
+    l_invaderTurns.push_back(l_turn);
+  }
   // Load Map
   m_places = std::vector<std::vector<Place>>(m_XRange, std::vector<Place>(m_YRange));
   auto l_placesType = std::vector<std::vector<int>>(m_XRange, std::vector<int>(m_YRange));
@@ -351,7 +355,7 @@ void Map::LoadMap()
         l_sp.setOrigin(m_textures["startPoint"].getSize().x / 2, m_textures["startPoint"].getSize().y / 2);
         l_sp.setPosition(45 + 90 * i, 405 + 90 * j);
         m_places[i][j] = Place(l_sp, m_textures["startPoint"].getSize(), PlaceType::Road);
-        m_startPoints.emplace_back(StartPoint(l_sp, m_textures["startpoint"].getSize(), std::make_pair(i, j)));
+        m_startPoints.emplace_back(StartPoint(l_sp, m_textures["startpoint"].getSize(), std::make_pair(i, j), sf::seconds(l_calmTime), l_invaderTurns));
       }
       else if (l_placeType == 4)
       {
@@ -370,85 +374,99 @@ void Map::LoadMap()
         l_sp.setOrigin(m_textures["grass2"].getSize().x / 2, m_textures["grass2"].getSize().y / 2);
         l_sp.setPosition(45 + 90 * i, 405 + 90 * j);
         m_places[i][j] = Place(l_sp, m_textures["grass2"].getSize(), PlaceType::End);
-        m_endPoints.emplace_back(EndPoint(l_sp, m_textures["grass2"].getSize(), l_esp, std::make_pair(i, j)));
+        m_endPoints.push_back(EndPoint(l_esp, l_esp.getTexture()->getSize(), std::make_pair(i, j)));
       }
     }
   }
-  std::unordered_set<int> st;
-  std::function<void(int, int, std::vector<Direction> &)> dfs = [&](int x, int y, std::vector<Direction> &l_road)
+  struct State
   {
-    if (Map::m_places[x][y].GetPlaceType() == PlaceType::End)
+    int x;
+    int y;
+    std::vector<Direction> m_road;
+  };
+  for (const auto &l_sp : m_startPoints)
+  {
+    std::unordered_set<int> st;
+    std::queue<State> q;
+    q.push({l_sp.GetCordinate().first, l_sp.GetCordinate().second, {}});
+    while (!q.empty())
     {
-      int flag = 1;
-      std::transform(Map::m_roads.begin(), Map::m_roads.end(), Map::m_roads.begin(), [x, y, &l_road, &flag](const std::pair<std::pair<int, int>, std::vector<Direction>> &l_p)
-                     {if (l_p.first.first == x && l_p.first.second == y) {flag = 0;
-          return l_road.size() < l_p.second.size() ? std::make_pair(l_p.first, l_road) : l_p;
-        }return l_p; });
-      if (flag == 1)
-      {
-        Map::m_roads.push_back({{x, y}, l_road});
-      }
-      return;
-    }
-    if (st.count(y * Map::m_XRange + x))
-    {
-      return;
-    }
-    st.insert(y * Map::m_XRange + x);
-    int vect[4][2] = {{-1, 0}, {0, 1}, {0, -1}, {1, 0}};
-    for (int i = 0; i < 4; ++i)
-    {
-      int ti = x + vect[i][0], tj = y + vect[i][1];
-      if (ti < 0 || ti >= Map::m_XRange || tj < 0 || tj >= Map::m_YRange || st.count(tj * Map::m_XRange + ti) || (Map::m_places[ti][tj].GetPlaceType() != PlaceType::Road && Map::m_places[ti][tj].GetPlaceType() != PlaceType::End))
+      State s = q.front();
+      std::cout << s.x << " " << s.y << "\n";
+      q.pop();
+      if (st.count(s.y * m_XRange + s.x))
       {
         continue;
       }
-      switch (i)
+      st.insert(s.y * m_XRange + s.x);
+      if (m_places[s.x][s.y].GetPlaceType() == PlaceType::End)
       {
-      case 0:
-        l_road.emplace_back(Direction::Left);
-        break;
-      case 1:
-        l_road.emplace_back(Direction::Down);
-        break;
-      case 2:
-        l_road.emplace_back(Direction::Up);
-        break;
-      case 3:
-        l_road.emplace_back(Direction::Right);
-        break;
-      default:
-        // assert(false);
-        break;
+        // int flag = 1;
+        // for (auto &p : m_roads)
+        // {
+        //   if (p.first == std::make_pair(s.x, s.y))
+        //   {
+        //     flag = 0;
+        //     if (p.second.size() > s.m_road.size())
+        //     {
+        //       p.second = s.m_road;
+        //     }
+        //   }
+        // }
+        // if (flag)
+        // {
+        m_roads.push_back({{s.x, s.y}, s.m_road});
+        // }
+        continue;
       }
-      dfs(ti, tj, l_road);
-      l_road.pop_back();
+      int vect[4][2] = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+      for (int i = 0; i < 4; ++i)
+      {
+        int tx = s.x + vect[i][0], ty = s.y + vect[i][1];
+        if (tx < 0 || ty < 0 || tx >= m_XRange || ty >= m_YRange ||
+            st.count(ty * m_XRange + tx) ||
+            (m_places[tx][ty].GetPlaceType() != PlaceType::Road && m_places[tx][ty].GetPlaceType() != PlaceType::End))
+        {
+          continue;
+        }
+        std::vector<Direction> nxt(s.m_road);
+        switch (i)
+        {
+        case 0:
+          nxt.push_back(Direction::Left);
+          break;
+        case 1:
+          nxt.push_back(Direction::Right);
+          break;
+        case 2:
+          nxt.push_back(Direction::Down);
+          break;
+        case 3:
+          nxt.push_back(Direction::Up);
+          break;
+        default:
+          break;
+        }
+        q.push({tx, ty, nxt});
+      }
     }
-    st.erase(y * Map::m_XRange + x);
-  };
-  std::vector<Direction> l_road{};
-  for (const auto &l_sp : m_startPoints)
-  {
-    dfs(l_sp.GetCordinate().first, l_sp.GetCordinate().second, l_road);
   }
-  // Load Invader Turns
-  std::vector<std::vector<std::pair<int, int>>> l_invaderTurns;
-  float l_calmTime;
-  in >> l_calmTime;
-  int l_turnSum;
-  in >> l_turnSum;
-  for (int i = 0; i < l_turnSum; ++i)
+  std::cout << m_roads.size() << std::endl;
+  for (auto &r : m_roads)
   {
-    int l_typeSum;
-    in >> l_typeSum;
-    std::vector<std::pair<int, int>> l_turn(l_typeSum);
-    for (int j = 0; j < l_typeSum; ++j)
+    for (auto &d : r.second)
     {
-      int type, count;
-      in >> type >> count;
-      l_turn[j] = {type, count};
+      std::cout << (int)d << " ";
     }
-    l_invaderTurns.push_back(l_turn);
+    std::cout << "\n";
+  }
+  // TODO: IF THERE ARE TOW ROADS, the PROGRAM CRASHED!
+  std::vector<std::vector<Direction>> l_roads;
+  std::transform(m_roads.begin(), m_roads.end(), std::back_inserter(l_roads), [](const auto &p)
+                 { return p.second; });
+  for (auto &sp : m_startPoints)
+  {
+    sp.SetRoads(l_roads);
   }
   in.close();
 }

@@ -10,7 +10,7 @@ Figure::Figure(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::ve
       m_speed(l_speed)
 {
   m_livesBar = sf::RectangleShape(sf::Vector2f(m_size.x, 10));
-  m_livesBar.setPosition(getPosition().x - m_size.x / 2, getPosition().y - m_size.y / 2);
+  m_livesBar.setPosition(getPosition().x - m_size.x / 2, getPosition().y - m_size.y / 2 + (rand() % 21 - 10));
   m_livesBar.setFillColor(sf::Color::Red);
 }
 void Figure::Render(sf::RenderWindow *l_wind) const
@@ -27,24 +27,24 @@ void Figure::Update(const sf::Time &elapsed)
   switch (m_increments[m_mileage / 90])
   {
   case Direction::Right:
-    m_sprite.setPosition(m_sprite.getPosition().x + elapsed.asSeconds() * 90, m_sprite.getPosition().y);
-    m_livesBar.setPosition(m_livesBar.getPosition().x + elapsed.asSeconds() * 90, m_livesBar.getPosition().y);
+    m_sprite.setPosition(m_sprite.getPosition().x + elapsed.asSeconds() * m_speed, m_sprite.getPosition().y);
+    m_livesBar.setPosition(m_livesBar.getPosition().x + elapsed.asSeconds() * m_speed, m_livesBar.getPosition().y);
     break;
   case Direction::Down:
-    m_sprite.setPosition(m_sprite.getPosition().x, m_sprite.getPosition().y + elapsed.asSeconds() * 90);
-    m_livesBar.setPosition(m_livesBar.getPosition().x, m_livesBar.getPosition().y + elapsed.asSeconds() * 90);
+    m_sprite.setPosition(m_sprite.getPosition().x, m_sprite.getPosition().y + elapsed.asSeconds() * m_speed);
+    m_livesBar.setPosition(m_livesBar.getPosition().x, m_livesBar.getPosition().y + elapsed.asSeconds() * m_speed);
     break;
   case Direction::Left:
-    m_sprite.setPosition(m_sprite.getPosition().x - elapsed.asSeconds() * 90, m_sprite.getPosition().y);
-    m_livesBar.setPosition(m_livesBar.getPosition().x - elapsed.asSeconds() * 90, m_livesBar.getPosition().y);
+    m_sprite.setPosition(m_sprite.getPosition().x - elapsed.asSeconds() * m_speed, m_sprite.getPosition().y);
+    m_livesBar.setPosition(m_livesBar.getPosition().x - elapsed.asSeconds() * m_speed, m_livesBar.getPosition().y);
     break;
   case Direction::Up:
-    m_sprite.setPosition(m_sprite.getPosition().x, m_sprite.getPosition().y - elapsed.asSeconds() * 90);
-    m_livesBar.setPosition(m_livesBar.getPosition().x, m_livesBar.getPosition().y - elapsed.asSeconds() * 90);
+    m_sprite.setPosition(m_sprite.getPosition().x, m_sprite.getPosition().y - elapsed.asSeconds() * m_speed);
+    m_livesBar.setPosition(m_livesBar.getPosition().x, m_livesBar.getPosition().y - elapsed.asSeconds() * m_speed);
   default:
     break;
   }
-  m_mileage += elapsed.asSeconds() * 90;
+  m_mileage += elapsed.asSeconds() * m_speed;
 }
 int Figure::GetLives() { return m_lives; }
 void Figure::SetLives(int l_lives)

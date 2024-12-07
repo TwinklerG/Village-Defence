@@ -11,6 +11,7 @@
 #include <cassert>
 #include <unordered_set>
 #include <functional>
+#include <queue>
 #include "Place.h"
 #include "StartPoint.h"
 #include "EndPoint.h"

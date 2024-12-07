@@ -1,5 +1,7 @@
 #pragma once
 #include <fstream>
+#include <unordered_map>
+#include <numeric>
 #include "Element.h"
 #include "Figure.h"
 class StartPoint : public Element
@@ -13,6 +15,7 @@ public:
   const std::pair<int, int> GetCordinate() const;
   const sf::Time &GetCalmTime() const;
   void RestartCalmTime();
+  void SetRoads(const std::vector<std::vector<Direction>> &l_roads);
 
 private:
   sf::Time m_totalCalmTime;
@@ -20,7 +23,9 @@ private:
   std::pair<int, int> m_cordinate;
   std::vector<std::vector<std::pair<int, int>>> m_invaderTurns;
   std::vector<Figure> m_figures;
-  std::vector<Direction> m_roads;
+  std::vector<std::vector<Direction>> m_roads;
+  std::vector<FigureInfo> m_figureInfos;
+  std::unordered_map<std::string, sf::Texture> m_textures;
 
   static sf::Time m_BreakTime;
 };
