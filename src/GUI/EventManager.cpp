@@ -174,7 +174,7 @@ void EventManager::LoadBindings()
 {
   std::string delimiter = ":";
   std::ifstream bindings;
-  bindings.open("res/keys.cfg");
+  bindings.open("res/config/keys.cfg");
   if (!bindings.is_open())
   {
     std::cout << "! Failed loading keys.cfg." << std::endl;

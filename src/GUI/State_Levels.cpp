@@ -1,6 +1,7 @@
 #include "State_Levels.h"
 #include "StateManager.h"
 
+double State_Levels::m_CalmTime = 0.3;
 int State_Levels::m_LevelSum = 4;
 
 State_Levels::State_Levels(StateManager *l_stateManager) : BaseState(l_stateManager) {}
@@ -40,10 +41,18 @@ void State_Levels::OnCreate()
   envMgr->AddCallback(StateType::Levels, "Key_Escape", &State_Levels::MainMenu, this);
 }
 
-void State_Levels::OnDestroy() {}
+void State_Levels::OnDestroy()
+{
+  EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
+  envMgr->RemoveCallback(StateType::Levels, "Key_Escape");
+}
 
 void State_Levels::Update(const sf::Time &l_time)
 {
+  if (m_CalmTime > 0)
+  {
+    m_CalmTime -= l_time.asSeconds();
+  }
   for (int i = 0; i < m_LevelSum; ++i)
   {
     sf::Vector2i l_pos = sf::Mouse::getPosition(*m_stateMgr->GetContext()->m_wind->GetRenderWindow());
@@ -54,6 +63,15 @@ void State_Levels::Update(const sf::Time &l_time)
     {
       m_rects[i].setFillColor(sf::Color::White);
       m_labels[i].setFillColor(sf::Color::Black);
+      if (m_CalmTime <= 0 && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+      {
+        if (m_stateMgr->HasState(StateType::Game))
+        {
+          m_stateMgr->Remove(StateType::Game);
+        }
+        m_stateMgr->GetContext()->m_level = i;
+        m_stateMgr->SwitchTo(StateType::Game);
+      }
     }
     else
     {
@@ -76,9 +94,8 @@ void State_Levels::Draw()
 
 void State_Levels::MainMenu(EventDetails *l_details)
 {
-  m_stateMgr->Remove(StateType::About);
   m_stateMgr->SwitchTo(StateType::MainMenu);
 }
 
-void State_Levels::Activate() {}
+void State_Levels::Activate() { m_CalmTime = 0.3; }
 void State_Levels::Deactivate() {}

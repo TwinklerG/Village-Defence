@@ -42,7 +42,7 @@ void State_Intro::OnCreate()
   m_increments = std::vector<sf::Vector2i>(m_SpritesSum);
   for (int i = 0; i < m_SpritesSum; ++i)
   {
-    m_textures[i].loadFromFile("res/STATE_INTRO_file_1.png");
+    m_textures[i].loadFromFile("res/imgs/states/STATE_INTRO_file_0.png");
     m_sprites.emplace_back(sf::Sprite(m_textures[i]));
     m_increments[i] = sf::Vector2i(randint(100, 400), randint(100, 400));
   }

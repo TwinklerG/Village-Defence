@@ -22,7 +22,7 @@
 class Map
 {
 public:
-  Map(sf::RenderWindow *l_wind);
+  Map(sf::RenderWindow *l_wind, int l_level = 0);
   ~Map();
 
   void OnCreate(sf::RenderWindow *l_wind);
@@ -34,6 +34,7 @@ public:
   int GetLives() const;
 
 private:
+  const int m_level;
   int m_lives;
   sf::RectangleShape m_backup;
   std::unique_ptr<Board> m_board;

@@ -32,9 +32,9 @@ bool checkCollision(sf::CircleShape source, F target)
 int Map::m_XRange = 21;
 int Map::m_YRange = 8;
 
-Map::Map(sf::RenderWindow *l_wind) { OnCreate(l_wind); }
+Map::Map(sf::RenderWindow *l_wind, int l_level) : m_level(l_level) { OnCreate(l_wind); }
 
-Map::~Map() = default;
+Map::~Map() {}
 
 void Map::OnCreate(sf::RenderWindow *l_wind)
 {
@@ -91,7 +91,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
     Figure *l_fig = l_startpoint.Update(l_time);
     if (l_fig)
     {
-      std::cout << "A Figure Generated" << "\n";
+      // std::cout << "A Figure Generated" << "\n";
       m_figures.emplace_back(l_fig);
     }
   }
@@ -189,13 +189,16 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
       {
         --m_lives;
         m_textbox.Add("Villege has been invaded. You have " + std::to_string(m_lives) + " lives currently!!!");
-      }
-      else
-      {
-        if (std::find(next_figures.begin(), next_figures.end(), l_fig) == next_figures.end())
+        auto itr = std::find(next_figures.begin(), next_figures.end(), l_fig);
+        if (itr != next_figures.end())
         {
-          next_figures.emplace_back(l_fig);
+          next_figures.erase(itr);
         }
+        break;
+      }
+      else if (std::find(next_figures.begin(), next_figures.end(), l_fig) == next_figures.end())
+      {
+        next_figures.emplace_back(l_fig);
       }
     }
   }
@@ -262,10 +265,27 @@ void Map::OnDestroy() {}
 
 void Map::LoadMap()
 {
+  std::vector<TowerInfo> l_towerInfos;
+  std::ifstream inTower;
+  inTower.open("res/config/tower.cfg");
+  if (!inTower.is_open())
+  {
+    assert(false);
+  }
+  int towerSum;
+  inTower >> towerSum;
+  for (int i = 0; i < towerSum; ++i)
+  {
+    int tag, cost, atk, range;
+    double calmTime, speed;
+    inTower >> tag >> cost >> atk >> range >> calmTime >> speed;
+    l_towerInfos.push_back({cost, atk, range, calmTime, speed});
+  }
   std::ifstream in;
-  in.open("res/maps/map0.cfg");
+  in.open("res/config/map" + std::to_string(m_level) + ".cfg");
   if (!in.is_open())
-  { // assert(false);
+  {
+    assert(false);
   }
   // Load Choices
   int choiceSum;
@@ -273,14 +293,13 @@ void Map::LoadMap()
   m_choices = std::vector<std::pair<std::pair<sf::Sprite, sf::Text>, TowerInfo>>(choiceSum);
   for (int i = 0; i < choiceSum; ++i)
   {
-    int type, cost, atk, range;
-    double calmTime, speed;
-    in >> type >> cost >> atk >> range >> calmTime >> speed;
-    if (m_textures.find("tower" + std::to_string(type)) == m_textures.end())
+    int tag;
+    in >> tag;
+    if (m_textures.find("tower" + std::to_string(tag)) == m_textures.end())
     {
-      m_textures["tower" + std::to_string(type)].loadFromFile("res/imgs/tower/tower" + std::to_string(type) + ".png");
+      m_textures["tower" + std::to_string(tag)].loadFromFile("res/imgs/tower/tower" + std::to_string(tag) + ".png");
     }
-    m_choices[i].first.first.setTexture(m_textures["tower" + std::to_string(type)]);
+    m_choices[i].first.first.setTexture(m_textures["tower" + std::to_string(tag)]);
     m_choices[i].first.first.setOrigin(m_choices[i].first.first.getTexture()->getSize().x / 2, m_choices[i].first.first.getTexture()->getSize().y / 2);
     m_choices[i].first.first.setPosition(m_choices[i].first.first.getTexture()->getSize().x / 2 + 90 * (i + 1), m_choices[i].first.first.getTexture()->getSize().y / 2);
     if (m_fonts.find("arial") == m_fonts.end())
@@ -288,11 +307,11 @@ void Map::LoadMap()
       m_fonts["arial"].loadFromFile("res/fonts/arial.ttf");
     }
     m_choices[i].first.second.setFont(m_fonts["arial"]);
-    m_choices[i].first.second.setString(std::to_string(cost));
+    m_choices[i].first.second.setString(std::to_string(l_towerInfos[tag].m_cost));
     m_choices[i].first.second.setCharacterSize(30);
     m_choices[i].first.second.setOrigin(m_choices[i].first.second.getLocalBounds().width / 2, m_choices[i].first.second.getLocalBounds().height / 2);
     m_choices[i].first.second.setPosition(m_choices[i].first.first.getPosition() + sf::Vector2f(0, m_choices[i].first.first.getTexture()->getSize().y / 2));
-    m_choices[i].second = {cost, atk, range, calmTime, speed};
+    m_choices[i].second = l_towerInfos[tag];
   }
   // Load Invader Turns
   std::vector<std::vector<std::pair<int, int>>> l_invaderTurns;
@@ -327,7 +346,7 @@ void Map::LoadMap()
       {
         if (m_textures.find("grass0") == m_textures.end())
         {
-          m_textures["grass0"].loadFromFile("res/grass0.png");
+          m_textures["grass0"].loadFromFile("res/imgs/grass/grass0.png");
         }
         sf::Sprite l_sp(m_textures["grass0"]);
         l_sp.setOrigin(m_textures["grass0"].getSize().x / 2, m_textures["grass0"].getSize().y / 2);
@@ -338,7 +357,7 @@ void Map::LoadMap()
       {
         if (m_textures.find("road") == m_textures.end())
         {
-          m_textures["road"].loadFromFile("res/imgs/road.png");
+          m_textures["road"].loadFromFile("res/imgs/grass/road.png");
         }
         sf::Sprite l_sp(m_textures["road"]);
         l_sp.setOrigin(m_textures["road"].getSize().x / 2, m_textures["road"].getSize().y / 2);
@@ -349,7 +368,7 @@ void Map::LoadMap()
       {
         if (m_textures.find("startPoint") == m_textures.end())
         {
-          m_textures["startPoint"].loadFromFile("res/startPoint.png");
+          m_textures["startPoint"].loadFromFile("res/imgs/grass/startPoint.png");
         }
         sf::Sprite l_sp(m_textures["startPoint"]);
         l_sp.setOrigin(m_textures["startPoint"].getSize().x / 2, m_textures["startPoint"].getSize().y / 2);
@@ -361,14 +380,14 @@ void Map::LoadMap()
       {
         if (m_textures.find("endPoint") == m_textures.end())
         {
-          m_textures["endPoint"].loadFromFile("res/endPoint.png");
+          m_textures["endPoint"].loadFromFile("res/imgs/grass/endPoint.png");
         }
         sf::Sprite l_esp(m_textures["endPoint"]);
         l_esp.setOrigin(m_textures["endPoint"].getSize().x / 2, m_textures["endPoint"].getSize().y / 2);
         l_esp.setPosition(45 + 90 * i, 405 + 90 * j);
         if (m_textures.find("grass2") == m_textures.end())
         {
-          m_textures["grass2"].loadFromFile("res/grass2.png");
+          m_textures["grass2"].loadFromFile("res/imgs/grass/grass2.png");
         }
         sf::Sprite l_sp(m_textures["grass2"]);
         l_sp.setOrigin(m_textures["grass2"].getSize().x / 2, m_textures["grass2"].getSize().y / 2);
@@ -392,7 +411,6 @@ void Map::LoadMap()
     while (!q.empty())
     {
       State s = q.front();
-      std::cout << s.x << " " << s.y << "\n";
       q.pop();
       if (st.count(s.y * m_XRange + s.x))
       {
@@ -401,22 +419,7 @@ void Map::LoadMap()
       st.insert(s.y * m_XRange + s.x);
       if (m_places[s.x][s.y].GetPlaceType() == PlaceType::End)
       {
-        // int flag = 1;
-        // for (auto &p : m_roads)
-        // {
-        //   if (p.first == std::make_pair(s.x, s.y))
-        //   {
-        //     flag = 0;
-        //     if (p.second.size() > s.m_road.size())
-        //     {
-        //       p.second = s.m_road;
-        //     }
-        //   }
-        // }
-        // if (flag)
-        // {
         m_roads.push_back({{s.x, s.y}, s.m_road});
-        // }
         continue;
       }
       int vect[4][2] = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
@@ -451,16 +454,6 @@ void Map::LoadMap()
       }
     }
   }
-  std::cout << m_roads.size() << std::endl;
-  for (auto &r : m_roads)
-  {
-    for (auto &d : r.second)
-    {
-      std::cout << (int)d << " ";
-    }
-    std::cout << "\n";
-  }
-  // TODO: IF THERE ARE TOW ROADS, the PROGRAM CRASHED!
   std::vector<std::vector<Direction>> l_roads;
   std::transform(m_roads.begin(), m_roads.end(), std::back_inserter(l_roads), [](const auto &p)
                  { return p.second; });

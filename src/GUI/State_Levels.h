@@ -26,4 +26,5 @@ private:
   std::vector<sf::Text> m_labels;
 
   static int m_LevelSum;
+  static double m_CalmTime;
 };

@@ -21,6 +21,8 @@ void State_About::OnCreate()
 
 void State_About::OnDestroy()
 {
+  EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
+  envMgr->RemoveCallback(StateType::About, "Key_Escape");
 }
 
 void State_About::Update(const sf::Time &l_time)
@@ -35,6 +37,7 @@ void State_About::Draw()
 
 void State_About::MainMenu(EventDetails *l_details)
 {
+  m_stateMgr->Remove(StateType::About);
   m_stateMgr->SwitchTo(StateType::MainMenu);
 }
 
