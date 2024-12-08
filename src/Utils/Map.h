@@ -19,6 +19,18 @@
 #include "Bullet.h"
 #include "../GUI/Textbox.h"
 
+enum class SelectType
+{
+  Choice,
+  Existence,
+};
+
+struct SelectInfo
+{
+  SelectType m_selectType;
+  Tower *m_tower;
+};
+
 class Map
 {
 public:
@@ -41,7 +53,7 @@ private:
   std::vector<std::pair<std::pair<sf::Sprite, sf::Text>, TowerInfo>> m_choices;
   sf::RenderWindow *m_wind;
   std::vector<Figure *> m_figures;
-  Tower *m_selectedItem;
+  SelectInfo m_selected;
   std::vector<std::vector<Place>> m_places;
   std::vector<StartPoint> m_startPoints;
   std::vector<EndPoint> m_endPoints;

@@ -44,24 +44,32 @@ void Map::OnCreate(sf::RenderWindow *l_wind)
   m_backup.setFillColor(sf::Color(120, 120, 0));
   m_board.reset(new Board());
   m_textbox.Setup(10, 24, 600, sf::Vector2f(1920, 0));
-  m_textbox.Add("Welcome to Villege Defence");
-  m_selectedItem = nullptr;
+  m_textbox.Add("Welcome to Village Defence");
+  m_selected.m_tower = nullptr;
   m_wind = l_wind;
   LoadMap();
 }
 
 void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
 {
-  if (m_selectedItem)
+  if (m_selected.m_tower)
   {
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+    if (m_selected.m_selectType == SelectType::Choice)
     {
-      m_selectedItem = nullptr;
+      if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+      {
+        m_selected.m_tower = nullptr;
+      }
+      else
+      {
+        m_selected.m_tower->GetSprite().setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
+        m_selected.m_tower->GetCircle()->setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
+      }
     }
     else
     {
-      m_selectedItem->GetSprite().setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
-      m_selectedItem->GetCircle()->setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
+      m_selected.m_tower->SetCircle(nullptr);
+      m_selected.m_tower = nullptr;
     }
   }
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -72,15 +80,28 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
       {
         if (checkMouseSelect(m_places[i][j], m_wind))
         {
-          if (m_selectedItem && m_places[i][j].GetPlaceType() == PlaceType::Land)
+          if (m_selected.m_tower && m_selected.m_selectType == SelectType::Choice && m_places[i][j].GetPlaceType() == PlaceType::Land)
           {
-            Tower t(*m_selectedItem);
+            Tower t(*m_selected.m_tower);
             t.GetSprite().setPosition(45 + 90 * i, 405 + 90 * j);
             t.SetCircle(nullptr);
             m_places[i][j].SetTower(t);
             m_places[i][j].SetPlaceType(PlaceType::Tower);
             m_board->SetMoney(m_board->GetMoney() - t.GetCost());
-            m_selectedItem = nullptr;
+            m_selected.m_tower = nullptr;
+          }
+          else if (m_places[i][j].GetPlaceType() == PlaceType::Tower && m_selected.m_tower == nullptr)
+          {
+            Tower &l_tower = m_places[i][j].GetTower();
+            m_selected.m_selectType = SelectType::Existence;
+            m_selected.m_tower = &l_tower;
+            sf::CircleShape l_circle(l_tower.GetRange());
+            l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
+            l_circle.setFillColor(sf::Color(0, 0, 0, 0));
+            l_circle.setOutlineColor(sf::Color::Red);
+            l_circle.setOutlineThickness(1.0f);
+            l_circle.setPosition(45 + 90 * i, 405 + 90 * j);
+            m_places[i][j].GetTower().SetCircle(&l_circle);
           }
         }
       }
@@ -91,7 +112,6 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
     Figure *l_fig = l_startpoint.Update(l_time);
     if (l_fig)
     {
-      // std::cout << "A Figure Generated" << "\n";
       m_figures.emplace_back(l_fig);
     }
   }
@@ -126,8 +146,9 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
             {
               continue;
             }
-            sf::CircleShape cs(10);
-            cs.setFillColor(sf::Color::Yellow);
+            const Tower &l_tower = m_places[i][j].GetTower();
+            sf::CircleShape cs(l_tower.GetBulletRadius());
+            cs.setFillColor(l_tower.GetBulletColor());
             cs.setPosition(m_places[i][j].getPosition());
             cs.setOrigin(cs.getRadius(), cs.getRadius());
             m_bullets.push_back(Bullet(cs, l_fig, m_places[i][j].GetTower().GetBulletSpeed(), m_places[i][j].GetTower().GetAttackPoint()));
@@ -188,7 +209,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
       if (checkInRange(*l_fig, l_ep, l_fig->getSize().x / 2 + l_ep.getSize().x / 2))
       {
         --m_lives;
-        m_textbox.Add("Villege has been invaded. You have " + std::to_string(m_lives) + " lives currently!!!");
+        m_textbox.Add("Village has been invaded. You have only " + std::to_string(m_lives) + " lives!!!");
         auto itr = std::find(next_figures.begin(), next_figures.end(), l_fig);
         if (itr != next_figures.end())
         {
@@ -207,22 +228,34 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
   {
     if (checkMouseSelectSprite(l_choice.first.first, m_wind) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_board->GetMoney() >= l_choice.second.m_cost)
     {
-      m_selectedItem = new Tower(l_choice.first.first,
-                                 l_choice.first.first.getTexture()->getSize(),
-                                 sf::seconds(l_choice.second.m_calmTime),
-                                 l_choice.second.m_attackPoint,
-                                 l_choice.second.m_speed,
-                                 l_choice.second.m_range,
-                                 l_choice.second.m_cost);
-      m_selectedItem->GetSprite().setOrigin(l_choice.first.first.getTexture()->getSize().x / 2, l_choice.first.first.getTexture()->getSize().y / 2);
-      m_selectedItem->GetSprite().setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
+      if (m_selected.m_selectType == SelectType::Existence)
+      {
+        if (m_selected.m_tower)
+        {
+          m_selected.m_tower->SetCircle(nullptr);
+        }
+      }
+      m_selected.m_tower = new Tower(l_choice.first.first,
+                                     l_choice.first.first.getTexture()->getSize(),
+                                     sf::seconds(l_choice.second.m_calmTime),
+                                     l_choice.second.m_attackPoint,
+                                     l_choice.second.m_speed,
+                                     l_choice.second.m_range,
+                                     l_choice.second.m_cost,
+                                     l_choice.second.m_red,
+                                     l_choice.second.m_green,
+                                     l_choice.second.m_blue,
+                                     l_choice.second.m_bulletRadius);
+      m_selected.m_tower->GetSprite().setOrigin(l_choice.first.first.getTexture()->getSize().x / 2, l_choice.first.first.getTexture()->getSize().y / 2);
+      m_selected.m_tower->GetSprite().setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
       sf::CircleShape l_circle(l_choice.second.m_range);
       l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
       l_circle.setFillColor(sf::Color(0, 0, 0, 0));
       l_circle.setOutlineColor(sf::Color::Red);
       l_circle.setOutlineThickness(1.0f);
       l_circle.setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
-      m_selectedItem->SetCircle(&l_circle);
+      m_selected.m_tower->SetCircle(&l_circle);
+      m_selected.m_selectType = SelectType::Choice;
     }
   }
 }
@@ -253,9 +286,9 @@ void Map::Render(sf::RenderWindow *l_wind)
   {
     l_fig->Render(l_wind);
   }
-  if (m_selectedItem)
+  if (m_selected.m_tower)
   {
-    m_selectedItem->Render(l_wind);
+    m_selected.m_tower->Render(l_wind);
   }
   m_textbox.Render(*l_wind);
   m_board->Render(l_wind);
@@ -272,14 +305,15 @@ void Map::LoadMap()
   {
     assert(false);
   }
+  // Load Tower Infos
   int towerSum;
   inTower >> towerSum;
   for (int i = 0; i < towerSum; ++i)
   {
-    int tag, cost, atk, range;
-    double calmTime, speed;
-    inTower >> tag >> cost >> atk >> range >> calmTime >> speed;
-    l_towerInfos.push_back({cost, atk, range, calmTime, speed});
+    int tag, cost, atk, range, red, green, blue;
+    double calmTime, speed, radius;
+    inTower >> tag >> cost >> atk >> range >> calmTime >> speed >> red >> green >> blue >> radius;
+    l_towerInfos.push_back({cost, atk, range, calmTime, speed, red, green, blue, radius});
   }
   std::ifstream in;
   in.open("res/config/map" + std::to_string(m_level) + ".cfg");

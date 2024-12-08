@@ -6,7 +6,7 @@ class Tower : public Element
 public:
   Tower();
   Tower(const sf::Sprite &, const sf::Vector2u &);
-  Tower(const sf::Sprite &, const sf::Vector2u &, const sf::Time &, int = 1, float = 90, int range = 400, int = 50);
+  Tower(const sf::Sprite &, const sf::Vector2u &, const sf::Time &, int = 1, float = 90, int range = 400, int = 50, int red = 255, int green = 255, int blue = 0, double radius = 10);
   void Render(sf::RenderWindow *l_wind) const override;
   void SetCalmTime(const sf::Time &l_time);
   const sf::Time GetCalmTime() const;
@@ -16,8 +16,10 @@ public:
   void SetClickCalmTime(const sf::Time &l_time);
   const int &GetAttackPoint() const;
   const float &GetBulletSpeed() const;
-  const int& GetCost() const;
-  const int& GetRange() const;
+  const int &GetCost() const;
+  const int &GetRange() const;
+  const sf::Color &GetBulletColor() const;
+  const double &GetBulletRadius() const;
 
   static sf::Time m_totalClickCalmTime;
   sf::Time m_totalCalmTime;
@@ -27,6 +29,8 @@ private:
   int m_attackPoint;
   sf::CircleShape *m_circle;
   sf::Time m_clickCalmTime;
+  double m_bulletRadius;
+  sf::Color m_bulletColor;
   float m_bulletSpeed;
   int m_range;
   int m_cost;
@@ -65,4 +69,6 @@ struct TowerInfo
   int m_range;
   double m_calmTime;
   double m_speed;
+  int m_red, m_green, m_blue;
+  double m_bulletRadius;
 };

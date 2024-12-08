@@ -28,7 +28,8 @@ Tower::Tower(const sf::Sprite &l_sp, const sf::Vector2u &l_size)
       m_bulletSpeed(180) {}
 Tower::Tower(const sf::Sprite &l_sp,
              const sf::Vector2u &l_size,
-             const sf::Time &l_ct, int l_atk, float l_bspeed, int l_range, int l_cost)
+             const sf::Time &l_ct, int l_atk, float l_bspeed, int l_range, int l_cost,
+             int red, int green, int blue, double radius)
     : Element(l_sp, l_size),
       m_circle(nullptr),
       m_clamTime(sf::seconds(0)),
@@ -36,7 +37,9 @@ Tower::Tower(const sf::Sprite &l_sp,
       m_attackPoint(l_atk),
       m_bulletSpeed(l_bspeed),
       m_range(l_range),
-      m_cost(l_cost) {}
+      m_cost(l_cost),
+      m_bulletColor(sf::Color(red, green, blue)),
+      m_bulletRadius(radius) {}
 void Tower::SetCalmTime(const sf::Time &l_t) { m_clamTime = l_t; }
 const sf::Time Tower::GetCalmTime() const { return m_clamTime; }
 sf::CircleShape *Tower::GetCircle() const { return m_circle; }
@@ -66,3 +69,5 @@ const int &Tower::GetAttackPoint() const { return m_attackPoint; }
 const float &Tower::GetBulletSpeed() const { return m_bulletSpeed; }
 const int &Tower::GetCost() const { return m_cost; }
 const int &Tower::GetRange() const { return m_range; }
+const sf::Color &Tower::GetBulletColor() const { return m_bulletColor; }
+const double &Tower::GetBulletRadius() const { return m_bulletRadius; }

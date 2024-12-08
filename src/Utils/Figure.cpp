@@ -11,6 +11,8 @@ Figure::Figure(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::ve
 {
   m_livesBar = sf::RectangleShape(sf::Vector2f(m_size.x, 10));
   m_livesBar.setPosition(getPosition().x - m_size.x / 2, getPosition().y - m_size.y / 2 + (rand() % 21 - 10));
+  m_livesBar.setOutlineColor(sf::Color::Black);
+  m_livesBar.setOutlineThickness(2.0f);
   m_livesBar.setFillColor(sf::Color::Red);
 }
 void Figure::Render(sf::RenderWindow *l_wind) const
