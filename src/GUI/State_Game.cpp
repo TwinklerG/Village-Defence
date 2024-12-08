@@ -3,9 +3,9 @@
 
 State_Game::State_Game(StateManager *l_stateManager)
     : BaseState(l_stateManager),
-      m_map(l_stateManager->GetContext()->m_wind->GetRenderWindow(), l_stateManager->GetContext()->m_level) {}
+      m_map(m_stateMgr->GetContext()->m_wind->GetRenderWindow(), l_stateManager->GetContext()->m_level) {}
 
-State_Game::~State_Game() = default;
+State_Game::~State_Game() {};
 
 void State_Game::OnCreate()
 {

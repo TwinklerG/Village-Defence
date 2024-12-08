@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+
 #include "Element.h"
 
 class Tower : public Element
@@ -10,8 +12,8 @@ public:
   void Render(sf::RenderWindow *l_wind) const override;
   void SetCalmTime(const sf::Time &l_time);
   const sf::Time GetCalmTime() const;
-  sf::CircleShape *GetCircle() const;
-  void SetCircle(const sf::CircleShape *l_circle);
+  std::shared_ptr<sf::CircleShape> GetCircle() const;
+  void SetCircle(const std::shared_ptr<sf::CircleShape> l_circle);
   const sf::Time GetClickCalmTime() const;
   void SetClickCalmTime(const sf::Time &l_time);
   const int &GetAttackPoint() const;
@@ -27,7 +29,7 @@ public:
 private:
   sf::Time m_clamTime;
   int m_attackPoint;
-  sf::CircleShape *m_circle;
+  std::shared_ptr<sf::CircleShape> m_circle;
   sf::Time m_clickCalmTime;
   double m_bulletRadius;
   sf::Color m_bulletColor;

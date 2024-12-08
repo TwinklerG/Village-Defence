@@ -1,11 +1,11 @@
 #pragma once
-#include "Element.h"
+#include <SFML/Graphics.hpp>
 
 class Board 
 {
 public:
   Board();
-  void Render(sf::RenderWindow *l_wind);
+  void Render(sf::RenderWindow *);
   int GetMoney() const;
   void SetMoney(const int &l_money);
   sf::Time GetCalmTime() const;

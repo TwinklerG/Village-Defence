@@ -1,4 +1,7 @@
 #include "Map.h"
+#include <cassert>
+#include <unordered_set>
+#include <queue>
 
 template <class T>
 bool checkMouseSelect(T target, sf::RenderWindow *l_wind)
@@ -42,7 +45,7 @@ void Map::OnCreate(sf::RenderWindow *l_wind)
   // rgb(120, 120, 0)
   m_backup = sf::RectangleShape(sf::Vector2f(l_wind->getSize().x, l_wind->getSize().y));
   m_backup.setFillColor(sf::Color(120, 120, 0));
-  m_board.reset(new Board());
+  m_board = std::make_unique<Board>();
   m_textbox.Setup(10, 24, 600, sf::Vector2f(1920, 0));
   m_textbox.Add("Welcome to Village Defence");
   m_selected.m_tower = nullptr;
@@ -69,8 +72,11 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
     else
     {
       m_selected.m_tower->SetCircle(nullptr);
-      m_selected.m_tower = nullptr;
     }
+  }
+  else if (m_selected.m_selectType == SelectType::Existence && m_places[m_selected.x][m_selected.y].GetPlaceType() == PlaceType::Tower)
+  {
+    m_places[m_selected.x][m_selected.y].GetTower().SetCircle(nullptr);
   }
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
   {
@@ -92,16 +98,17 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
           }
           else if (m_places[i][j].GetPlaceType() == PlaceType::Tower && m_selected.m_tower == nullptr)
           {
-            Tower &l_tower = m_places[i][j].GetTower();
             m_selected.m_selectType = SelectType::Existence;
-            m_selected.m_tower = &l_tower;
+            m_selected.x = i;
+            m_selected.y = j;
+            Tower &l_tower = m_places[i][j].GetTower();
             sf::CircleShape l_circle(l_tower.GetRange());
             l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
             l_circle.setFillColor(sf::Color(0, 0, 0, 0));
             l_circle.setOutlineColor(sf::Color::Red);
             l_circle.setOutlineThickness(1.0f);
             l_circle.setPosition(45 + 90 * i, 405 + 90 * j);
-            m_places[i][j].GetTower().SetCircle(&l_circle);
+            m_places[i][j].GetTower().SetCircle(std::make_shared<sf::CircleShape>(l_circle));
           }
         }
       }
@@ -109,13 +116,13 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
   }
   for (StartPoint &l_startpoint : m_startPoints)
   {
-    Figure *l_fig = l_startpoint.Update(l_time);
+    auto l_fig = l_startpoint.Update(l_time);
     if (l_fig)
     {
       m_figures.emplace_back(l_fig);
     }
   }
-  for (Figure *&l_fig : m_figures)
+  for (auto &l_fig : m_figures)
   {
     l_fig->Update(l_time);
   }
@@ -130,7 +137,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
           m_places[i][j].GetTower().SetCalmTime(m_places[i][j].GetTower().GetCalmTime() - l_time);
           continue;
         }
-        for (Figure *l_fig : m_figures)
+        for (auto l_fig : m_figures)
         {
           if (checkInRange(*l_fig, m_places[i][j], m_places[i][j].GetTower().GetRange()))
           {
@@ -160,12 +167,12 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
     }
   }
   std::vector<Bullet> next_bullets{};
-  for (auto &l_b : m_bullets)
+  for (auto l_b : m_bullets)
   {
     if (checkCollision(l_b.GetCircle(), *l_b.GetTargetFigure()))
     {
-      std::vector<Figure *> next_figures;
-      for (Figure *&l_fig : m_figures)
+      std::vector<std::shared_ptr<Figure>> next_figures;
+      for (auto l_fig : m_figures)
       {
         if (l_fig != l_b.GetTargetFigure())
         {
@@ -201,10 +208,10 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
     m_board->SetMoney(m_board->GetMoney() + 50);
     m_board->SetCalmTime(sf::seconds(3));
   }
-  std::vector<Figure *> next_figures{};
-  for (const auto &l_fig : m_figures)
+  std::vector<std::shared_ptr<Figure>> next_figures{};
+  for (const auto l_fig : m_figures)
   {
-    for (const auto &l_ep : m_endPoints)
+    for (const auto l_ep : m_endPoints)
     {
       if (checkInRange(*l_fig, l_ep, l_fig->getSize().x / 2 + l_ep.getSize().x / 2))
       {
@@ -235,17 +242,17 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
           m_selected.m_tower->SetCircle(nullptr);
         }
       }
-      m_selected.m_tower = new Tower(l_choice.first.first,
-                                     l_choice.first.first.getTexture()->getSize(),
-                                     sf::seconds(l_choice.second.m_calmTime),
-                                     l_choice.second.m_attackPoint,
-                                     l_choice.second.m_speed,
-                                     l_choice.second.m_range,
-                                     l_choice.second.m_cost,
-                                     l_choice.second.m_red,
-                                     l_choice.second.m_green,
-                                     l_choice.second.m_blue,
-                                     l_choice.second.m_bulletRadius);
+      m_selected.m_tower = std::make_shared<Tower>(l_choice.first.first,
+                                                   l_choice.first.first.getTexture()->getSize(),
+                                                   sf::seconds(l_choice.second.m_calmTime),
+                                                   l_choice.second.m_attackPoint,
+                                                   static_cast<float>(l_choice.second.m_speed),
+                                                   l_choice.second.m_range,
+                                                   l_choice.second.m_cost,
+                                                   l_choice.second.m_red,
+                                                   l_choice.second.m_green,
+                                                   l_choice.second.m_blue,
+                                                   l_choice.second.m_bulletRadius);
       m_selected.m_tower->GetSprite().setOrigin(l_choice.first.first.getTexture()->getSize().x / 2, l_choice.first.first.getTexture()->getSize().y / 2);
       m_selected.m_tower->GetSprite().setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
       sf::CircleShape l_circle(l_choice.second.m_range);
@@ -254,7 +261,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
       l_circle.setOutlineColor(sf::Color::Red);
       l_circle.setOutlineThickness(1.0f);
       l_circle.setPosition(sf::Mouse::getPosition(*l_wind).x, sf::Mouse::getPosition(*l_wind).y);
-      m_selected.m_tower->SetCircle(&l_circle);
+      m_selected.m_tower->SetCircle(std::make_shared<sf::CircleShape>(l_circle));
       m_selected.m_selectType = SelectType::Choice;
     }
   }
@@ -282,7 +289,7 @@ void Map::Render(sf::RenderWindow *l_wind)
   {
     l_wind->draw(l_b.GetCircle());
   }
-  for (Figure *l_fig : m_figures)
+  for (auto &l_fig : m_figures)
   {
     l_fig->Render(l_wind);
   }
@@ -315,6 +322,7 @@ void Map::LoadMap()
     inTower >> tag >> cost >> atk >> range >> calmTime >> speed >> red >> green >> blue >> radius;
     l_towerInfos.push_back({cost, atk, range, calmTime, speed, red, green, blue, radius});
   }
+  inTower.close();
   std::ifstream in;
   in.open("res/config/map" + std::to_string(m_level) + ".cfg");
   if (!in.is_open())
@@ -431,6 +439,7 @@ void Map::LoadMap()
       }
     }
   }
+  in.close();
   struct State
   {
     int x;
@@ -495,7 +504,6 @@ void Map::LoadMap()
   {
     sp.SetRoads(l_roads);
   }
-  in.close();
 }
 
 int Map::GetLives() const { return m_lives; }

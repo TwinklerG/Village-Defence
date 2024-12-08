@@ -40,7 +40,7 @@ void StartPoint::SetCalmTime(const sf::Time &l_t) { m_calmTime = l_t; }
 const sf::Time &StartPoint::GetCalmTime() const { return m_calmTime; }
 void StartPoint::RestartCalmTime() { m_calmTime = m_totalCalmTime; }
 const std::pair<int, int> StartPoint::GetCordinate() const { return m_cordinate; }
-Figure *StartPoint::Update(const sf::Time &l_elapsed)
+std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed)
 {
   if (m_calmTime.asSeconds() > 0)
   {
@@ -73,7 +73,7 @@ Figure *StartPoint::Update(const sf::Time &l_elapsed)
   sf::Sprite l_sp(m_textures[l_figureName]);
   l_sp.setOrigin(m_textures[l_figureName].getSize().x / 2, m_textures[l_figureName].getSize().y / 2);
   l_sp.setPosition(45 + m_cordinate.first * 90, 405 + 90 * m_cordinate.second);
-  return new Figure(l_sp, l_sp.getTexture()->getSize(), m_roads[rand() % m_roads.size()], m_figureInfos[tag].m_lives, m_figureInfos[tag].m_speed);
+  return std::make_shared<Figure>(l_sp, l_sp.getTexture()->getSize(), m_roads[rand() % m_roads.size()], m_figureInfos[tag].m_lives, m_figureInfos[tag].m_speed);
 }
 void StartPoint::SetRoads(const std::vector<std::vector<Direction>> &l_roads)
 {

@@ -1,6 +1,5 @@
 #pragma once
 #include "Element.h"
-#include <iostream>
 
 enum class Direction
 {
@@ -10,7 +9,8 @@ enum class Direction
   Left,
 };
 
-struct FigureInfo {
+struct FigureInfo
+{
   int m_lives;
   int m_speed;
 };

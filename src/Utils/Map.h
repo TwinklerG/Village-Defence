@@ -2,16 +2,8 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
-#include <fstream>
-#include <iostream>
 #include <memory>
-#include <cmath>
 #include <SFML/Graphics.hpp>
-#include <algorithm>
-#include <cassert>
-#include <unordered_set>
-#include <functional>
-#include <queue>
 #include "Place.h"
 #include "StartPoint.h"
 #include "EndPoint.h"
@@ -28,7 +20,8 @@ enum class SelectType
 struct SelectInfo
 {
   SelectType m_selectType;
-  Tower *m_tower;
+  std::shared_ptr<Tower> m_tower;
+  int x, y;
 };
 
 class Map
@@ -52,7 +45,7 @@ private:
   std::unique_ptr<Board> m_board;
   std::vector<std::pair<std::pair<sf::Sprite, sf::Text>, TowerInfo>> m_choices;
   sf::RenderWindow *m_wind;
-  std::vector<Figure *> m_figures;
+  std::vector<std::shared_ptr<Figure>> m_figures;
   SelectInfo m_selected;
   std::vector<std::vector<Place>> m_places;
   std::vector<StartPoint> m_startPoints;

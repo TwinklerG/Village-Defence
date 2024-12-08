@@ -32,9 +32,9 @@ void State_Paused::OnDestroy()
 
 void State_Paused::Draw()
 {
-  sf::RenderWindow *wind = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
-  wind->draw(m_rect);
-  wind->draw(m_text);
+  sf::RenderWindow *l_wind = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
+  l_wind->draw(m_rect);
+  l_wind->draw(m_text);
 }
 
 void State_Paused::Unpause(EventDetails *l_details)

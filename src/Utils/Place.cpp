@@ -42,18 +42,10 @@ Tower::Tower(const sf::Sprite &l_sp,
       m_bulletRadius(radius) {}
 void Tower::SetCalmTime(const sf::Time &l_t) { m_clamTime = l_t; }
 const sf::Time Tower::GetCalmTime() const { return m_clamTime; }
-sf::CircleShape *Tower::GetCircle() const { return m_circle; }
-void Tower::SetCircle(const sf::CircleShape *l_circle)
+std::shared_ptr<sf::CircleShape> Tower::GetCircle() const { return m_circle; }
+void Tower::SetCircle(const std::shared_ptr<sf::CircleShape> l_circle)
 {
-  if (m_circle)
-  {
-    delete m_circle;
-    m_circle = nullptr;
-  }
-  if (l_circle)
-  {
-    m_circle = new sf::CircleShape(*l_circle);
-  }
+  m_circle = l_circle;
 }
 void Tower::Render(sf::RenderWindow *l_wind) const
 {
