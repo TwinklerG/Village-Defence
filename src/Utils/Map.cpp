@@ -185,9 +185,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
           next_figures.emplace_back(l_fig);
           continue;
         }
-        // TODO: solve memory leak
-        // delete l_fig;
-        // l_fig = nullptr; // impact other bullets
+        m_board->SetMoney(m_board->GetMoney() + l_fig->GetReward());
       }
       m_figures = next_figures;
       continue;
@@ -199,15 +197,6 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
     next_bullets.emplace_back(l_b);
   }
   m_bullets = next_bullets;
-  if (m_board->GetCalmTime().asSeconds() > 0)
-  {
-    m_board->SetCalmTime(m_board->GetCalmTime() - l_time);
-  }
-  else
-  {
-    m_board->SetMoney(m_board->GetMoney() + 50);
-    m_board->SetCalmTime(sf::seconds(3));
-  }
   std::vector<std::shared_ptr<Figure>> next_figures{};
   for (const auto l_fig : m_figures)
   {
@@ -356,13 +345,15 @@ void Map::LoadMap()
     m_choices[i].second = l_towerInfos[tag];
   }
   // Load Invader Turns
-  std::vector<std::vector<std::pair<int, int>>> l_invaderTurns;
-  float l_calmTime;
-  in >> l_calmTime;
+  std::vector<InvadeTurnInfo> l_invaderTurns;
   int l_turnSum;
   in >> l_turnSum;
   for (int i = 0; i < l_turnSum; ++i)
   {
+    double l_calmTime;
+    in >> l_calmTime;
+    double l_speedBuff;
+    in >> l_speedBuff;
     int l_typeSum;
     in >> l_typeSum;
     std::vector<std::pair<int, int>> l_turn(l_typeSum);
@@ -372,7 +363,7 @@ void Map::LoadMap()
       in >> type >> count;
       l_turn[j] = {type, count};
     }
-    l_invaderTurns.push_back(l_turn);
+    l_invaderTurns.push_back({l_calmTime, l_speedBuff, l_turn});
   }
   // Load Map
   m_places = std::vector<std::vector<Place>>(m_XRange, std::vector<Place>(m_YRange));
@@ -416,7 +407,7 @@ void Map::LoadMap()
         l_sp.setOrigin(m_textures["startPoint"].getSize().x / 2, m_textures["startPoint"].getSize().y / 2);
         l_sp.setPosition(45 + 90 * i, 405 + 90 * j);
         m_places[i][j] = Place(l_sp, m_textures["startPoint"].getSize(), PlaceType::Road);
-        m_startPoints.emplace_back(StartPoint(l_sp, m_textures["startpoint"].getSize(), std::make_pair(i, j), sf::seconds(l_calmTime), l_invaderTurns));
+        m_startPoints.emplace_back(StartPoint(l_sp, m_textures["startpoint"].getSize(), std::make_pair(i, j), l_invaderTurns));
       }
       else if (l_placeType == 4)
       {

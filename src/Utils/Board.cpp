@@ -2,8 +2,7 @@
 
 Board::Board()
 {
-  m_money = 100;
-  m_calmTime = sf::seconds(3);
+  m_money = 150;
   m_font.loadFromFile("res/fonts/arial.ttf");
   m_border = sf::RectangleShape(sf::Vector2f(90, 90));
   m_border.setFillColor(sf::Color(120, 120, 0));
@@ -27,12 +26,9 @@ void Board::Render(sf::RenderWindow *l_wind)
 {
   m_moneyText.setString(std::to_string(m_money));
   m_moneyText.setOrigin(m_moneyText.getLocalBounds().width / 2, m_moneyText.getLocalBounds().height / 2);
-  // l_wind->draw(m_sprite);
   l_wind->draw(m_border);
   l_wind->draw(m_moneyText);
   l_wind->draw(m_tip);
 }
 int Board::GetMoney() const { return m_money; }
 void Board::SetMoney(const int &l_money) { m_money = l_money; }
-sf::Time Board::GetCalmTime() const { return m_calmTime; }
-void Board::SetCalmTime(const sf::Time &l_calmTime) { m_calmTime = l_calmTime; }

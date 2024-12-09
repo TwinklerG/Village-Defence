@@ -1,13 +1,15 @@
 #include "Figure.h"
 
 Figure::Figure() {}
-Figure::Figure(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::vector<Direction> &l_increments, int l_lives, int l_speed)
+Figure::Figure(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::vector<Direction> &l_increments,
+               int l_lives, int l_speed, int l_reward)
     : Element(l_sp, l_size),
       m_mileage(0),
       m_increments(l_increments),
       m_lives(l_lives),
       m_totalLives(l_lives),
-      m_speed(l_speed)
+      m_speed(l_speed),
+      m_reward(l_reward)
 {
   m_livesBar = sf::RectangleShape(sf::Vector2f(m_size.x, 10));
   m_livesBar.setPosition(getPosition().x - m_size.x / 2, getPosition().y - m_size.y / 2 + (rand() % 21 - 10));
@@ -48,9 +50,10 @@ void Figure::Update(const sf::Time &elapsed)
   }
   m_mileage += elapsed.asSeconds() * m_speed;
 }
-int Figure::GetLives() { return m_lives; }
+int Figure::GetLives() const { return m_lives; }
 void Figure::SetLives(int l_lives)
 {
   m_lives = l_lives;
   m_livesBar.setSize(sf::Vector2f(m_size.x * (double)m_lives / (double)m_totalLives, 10));
 }
+int Figure::GetReward() const { return m_reward; }

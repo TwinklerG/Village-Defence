@@ -25,6 +25,7 @@ struct SelectInfo
   int x, y;
 };
 
+
 class Map
 {
 public:
