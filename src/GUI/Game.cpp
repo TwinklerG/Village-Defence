@@ -6,6 +6,8 @@ Game::Game() : m_window("Villege Defence", sf::Vector2u(1920, 1080)), m_stateMan
 {
   m_context.m_wind = &m_window;
   m_context.m_eventManager = m_window.GetEventManager();
+  BgmManager &l_bgmManager = m_context.m_bgmManager;
+  l_bgmManager.Play("loading.wav", 100, true);
   m_stateManager.SwitchTo(StateType::Intro);
 }
 

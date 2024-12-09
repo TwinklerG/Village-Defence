@@ -37,7 +37,7 @@ StartPoint::StartPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const
 }
 void StartPoint::SetCalmTime(const sf::Time &l_t) { m_calmTime = l_t; }
 const sf::Time &StartPoint::GetCalmTime() const { return m_calmTime; }
-void StartPoint::RestartCalmTime() { m_calmTime = sf::seconds(m_invaderTurns.front().m_calmTime); }
+void StartPoint::RestartCalmTime() { m_calmTime = !m_invaderTurns.empty() ? sf::seconds(m_invaderTurns.front().m_calmTime) : sf::seconds(0); }
 const std::pair<int, int> StartPoint::GetCordinate() const { return m_cordinate; }
 std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed)
 {
@@ -79,3 +79,4 @@ void StartPoint::SetRoads(const std::vector<std::vector<Direction>> &l_roads)
 {
   m_roads = l_roads;
 }
+int StartPoint::GetLeftTurns() const { return m_invaderTurns.size(); }

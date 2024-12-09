@@ -35,7 +35,7 @@ bool checkCollision(sf::CircleShape source, F target)
 int Map::m_XRange = 21;
 int Map::m_YRange = 8;
 
-Map::Map(sf::RenderWindow *l_wind, int l_level) : m_level(l_level) { OnCreate(l_wind); }
+Map::Map(sf::RenderWindow *l_wind, int l_level) : m_level(l_level), m_isWin(false) { OnCreate(l_wind); }
 
 Map::~Map() {}
 
@@ -55,6 +55,11 @@ void Map::OnCreate(sf::RenderWindow *l_wind)
 
 void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time)
 {
+  if (std::accumulate(m_startPoints.begin(), m_startPoints.end(), 0, [](int accum, const StartPoint &l_sp)
+                      { return accum + l_sp.GetLeftTurns(); }) == 0 && m_figures.size() == 0)
+  {
+    m_isWin = true;
+  }
   if (m_selected.m_tower)
   {
     if (m_selected.m_selectType == SelectType::Choice)
@@ -498,3 +503,4 @@ void Map::LoadMap()
 }
 
 int Map::GetLives() const { return m_lives; }
+bool Map::IsWin() const { return m_isWin; }

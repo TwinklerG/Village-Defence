@@ -24,6 +24,7 @@ public:
   const sf::Time &GetCalmTime() const;
   void RestartCalmTime();
   void SetRoads(const std::vector<std::vector<Direction>> &l_roads);
+  int GetLeftTurns() const;
 
 private:
   sf::Time m_totalCalmTime;

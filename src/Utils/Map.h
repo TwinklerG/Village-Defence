@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <cmath>
+#include <numeric>
 #include <SFML/Graphics.hpp>
 #include "Place.h"
 #include "StartPoint.h"
@@ -25,7 +26,6 @@ struct SelectInfo
   int x, y;
 };
 
-
 class Map
 {
 public:
@@ -39,10 +39,12 @@ public:
 
   void LoadMap();
   int GetLives() const;
+  bool IsWin() const;
 
 private:
   const int m_level;
   int m_lives;
+  bool m_isWin;
   sf::RectangleShape m_backup;
   std::unique_ptr<Board> m_board;
   std::vector<std::pair<std::pair<sf::Sprite, sf::Text>, TowerInfo>> m_choices;

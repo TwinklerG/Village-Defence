@@ -20,7 +20,8 @@ add_executable(main ${SRC_FILES} ${GUI_FILES} ${UTILS_FILES})
 file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/Debug)
 file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/Release)
 
-target_link_libraries(main PRIVATE sfml-graphics)
+target_link_libraries(main PRIVATE sfml-graphics) # SFML/Graphics.hpp
+target_link_libraries(main PRIVATE sfml-audio) # support for SFML/Audio.hpp
 target_compile_features(main PRIVATE cxx_std_17)
 
 if(WIN32)
