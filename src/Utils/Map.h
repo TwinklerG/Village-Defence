@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <cmath>
 #include <SFML/Graphics.hpp>
 #include "Place.h"
 #include "StartPoint.h"
