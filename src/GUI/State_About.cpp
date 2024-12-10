@@ -4,7 +4,7 @@
 State_About::State_About(StateManager *l_stateManager)
     : BaseState(l_stateManager) {}
 
-State_About::~State_About() {};
+State_About::~State_About() = default;
 
 void State_About::OnCreate()
 {

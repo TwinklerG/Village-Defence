@@ -2,7 +2,7 @@
 
 float Game::m_FrameTime = 1.0f / 60.0f;
 
-Game::Game() : m_window("Villege Defence", sf::Vector2u(1920, 1080)), m_stateManager(&m_context)
+Game::Game() : m_window("Village Defence", sf::Vector2u(1920, 1080)), m_stateManager(&m_context)
 {
   m_context.m_wind = &m_window;
   m_context.m_eventManager = m_window.GetEventManager();
@@ -11,7 +11,7 @@ Game::Game() : m_window("Villege Defence", sf::Vector2u(1920, 1080)), m_stateMan
   m_stateManager.SwitchTo(StateType::Intro);
 }
 
-Game::~Game() {}
+Game::~Game() = default;
 
 void Game::Update()
 {
@@ -32,7 +32,7 @@ void Game::Render()
 
 Window *Game::GetWindow() { return &m_window; }
 
-sf::Time Game::GetElapsed() { return m_elapsed; }
+sf::Time Game::GetElapsed() const { return m_elapsed; }
 void Game::RestartClock() { m_elapsed += m_clock.restart(); }
 
 void Game::LateUpdate()

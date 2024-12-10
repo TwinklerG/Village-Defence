@@ -15,7 +15,7 @@ public:
 
   Window *GetWindow();
 
-  sf::Time GetElapsed();
+  sf::Time GetElapsed() const;
   void RestartClock();
 
 private:

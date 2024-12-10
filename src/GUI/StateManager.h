@@ -2,15 +2,9 @@
 #include <vector>
 #include "BaseState.h"
 #include "SharedContext.hpp"
-#include "State_Intro.h"
-#include "State_MainMenu.h"
 #include "State_Game.h"
-#include "State_Paused.h"
-#include "State_Levels.h"
-#include "State_About.h"
 
-enum class StateType
-{
+enum class StateType {
   Intro = 1,
   MainMenu,
   Levels,
@@ -21,37 +15,45 @@ enum class StateType
   About,
 };
 
-using StateContainer = std::vector<std::pair<StateType, BaseState *>>;
+using StateContainer = std::vector<std::pair<StateType, BaseState *> >;
 
 using TypeContainer = std::vector<StateType>;
 
-using StateFactory = std::unordered_map<StateType, std::function<BaseState *(void)>>;
+using StateFactory = std::unordered_map<StateType, std::function<BaseState *(void)> >;
 
-class StateManager
-{
+class StateManager {
 public:
-  StateManager(SharedContext *l_shared);
+  explicit StateManager(SharedContext *l_shared);
+
   ~StateManager();
+
   void Update(const sf::Time &l_time);
+
   void Draw();
+
   void ProcessRequests();
-  SharedContext *GetContext();
+
+  SharedContext *GetContext() const;
+
   bool HasState(const StateType &l_type);
+
   void SwitchTo(const StateType &l_type);
+
   void Remove(const StateType &l_type);
 
 private:
   // Methods.
   void CreateState(const StateType &l_type);
+
   void RemoveState(const StateType &l_type);
-  template <class T>
-  void RegisterState(const StateType &l_type)
-  {
-    m_stateFactory[l_type] = [this]() -> BaseState *
-    {
+
+  template<class T>
+  void RegisterState(const StateType &l_type) {
+    m_stateFactory[l_type] = [this]() -> BaseState *{
       return new T(this);
     };
   }
+
   // Members.
   SharedContext *m_shared;
   StateContainer m_states;

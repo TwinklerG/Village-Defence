@@ -15,7 +15,7 @@ public:
 
 private:
   std::vector<std::string> m_messages;
-  int m_numVisible;
+  int m_numVisible{};
 
   sf::RectangleShape m_backup;
   sf::Font m_font;

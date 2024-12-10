@@ -3,8 +3,6 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <cmath>
-#include <numeric>
 #include <SFML/Graphics.hpp>
 #include "Place.h"
 #include "StartPoint.h"
@@ -29,13 +27,12 @@ struct SelectInfo
 class Map
 {
 public:
-  Map(sf::RenderWindow *l_wind, int l_level = 0);
+  explicit Map(sf::RenderWindow *l_wind, int l_level = 0);
   ~Map();
 
   void OnCreate(sf::RenderWindow *l_wind);
   void Update(sf::RenderWindow *l_wind, const sf::Time &l_time);
   void Render(sf::RenderWindow *l_wind);
-  void OnDestroy();
 
   void LoadMap();
   int GetLives() const;
@@ -43,12 +40,12 @@ public:
 
 private:
   const int m_level;
-  int m_lives;
+  int m_lives{};
   bool m_isWin;
   sf::RectangleShape m_backup;
   std::unique_ptr<Board> m_board;
   std::vector<std::pair<std::pair<sf::Sprite, sf::Text>, TowerInfo>> m_choices;
-  sf::RenderWindow *m_wind;
+  sf::RenderWindow *m_wind{};
   std::vector<std::shared_ptr<Figure>> m_figures;
   SelectInfo m_selected;
   std::vector<std::vector<Place>> m_places;

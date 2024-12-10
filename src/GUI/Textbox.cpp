@@ -1,10 +1,10 @@
 #include "Textbox.h"
 
 Textbox::Textbox() { Setup(5, 9, 200, sf::Vector2f(0, 0)); }
-Textbox::Textbox(int l_visble, int l_charSize, int l_width, const sf::Vector2f &l_screenPos) { Setup(l_visble, l_charSize, l_width, l_screenPos); }
+Textbox::Textbox(const int l_visible, const int l_charSize, const int l_width, const sf::Vector2f &l_screenPos) { Setup(l_visible, l_charSize, l_width, l_screenPos); }
 Textbox::~Textbox() { Clear(); }
 
-void Textbox::Setup(int l_visible, int l_charSize, int l_width, const sf::Vector2f &l_screenPos)
+void Textbox::Setup(const int l_visible, const int l_charSize, const int l_width, const sf::Vector2f &l_screenPos)
 {
   m_numVisible = l_visible;
 
@@ -15,10 +15,10 @@ void Textbox::Setup(int l_visible, int l_charSize, int l_width, const sf::Vector
   m_content.setString("");
   m_content.setCharacterSize(l_charSize);
   m_content.setFillColor(sf::Color::White);
-  m_content.setPosition(sf::Vector2f(l_screenPos.x + l_offset.x - l_width, l_offset.y));
+  m_content.setPosition(sf::Vector2f(l_screenPos.x + l_offset.x - static_cast<float>(l_width), l_offset.y));
 
-  m_backup.setOrigin(l_width, 0);
-  m_backup.setSize(sf::Vector2f(l_width, (l_visible * l_charSize * 1.2f)));
+  m_backup.setOrigin(static_cast<float>(l_width), 0);
+  m_backup.setSize(sf::Vector2f(static_cast<float>(l_width), static_cast<float>(l_visible * l_charSize) * 1.2f));
   m_backup.setFillColor(sf::Color(90, 90, 90, 90));
   m_backup.setPosition(l_screenPos);
 }
@@ -42,7 +42,7 @@ void Textbox::Render(sf::RenderWindow &l_wind)
   {
     l_content.append(itr + "\n");
   }
-  if (l_content != "")
+  if (!l_content.empty())
   {
     m_content.setString(l_content);
     l_wind.draw(m_backup);

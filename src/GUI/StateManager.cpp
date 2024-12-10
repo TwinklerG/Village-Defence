@@ -1,4 +1,9 @@
 #include "StateManager.h"
+#include "State_Intro.h"
+#include "State_MainMenu.h"
+#include "State_Paused.h"
+#include "State_Levels.h"
+#include "State_About.h"
 
 StateManager::StateManager(SharedContext *l_shared) : m_shared(l_shared)
 {
@@ -81,15 +86,14 @@ void StateManager::Update(const sf::Time &l_time)
   }
 }
 
-SharedContext *StateManager::GetContext() { return m_shared; }
+SharedContext *StateManager::GetContext() const { return m_shared; }
 bool StateManager::HasState(const StateType &l_type)
 {
-  for (auto itr = m_states.begin(); itr != m_states.end(); ++itr)
+  for (const auto &[fst, snd] : m_states)
   {
-    if (itr->first == l_type)
+    if (fst == l_type)
     {
-      auto removed = std::find(m_toRemove.begin(), m_toRemove.end(), l_type);
-      if (removed == m_toRemove.end())
+      if (const auto removed = std::find(m_toRemove.begin(), m_toRemove.end(), l_type); removed == m_toRemove.end())
       {
         return true;
       }

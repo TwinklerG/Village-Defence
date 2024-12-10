@@ -1,9 +1,9 @@
 #include "SoundManager.h"
 
-SoundManager::SoundManager() {}
-SoundManager::~SoundManager() {}
+SoundManager::SoundManager() = default;
+SoundManager::~SoundManager() = default;
 
-void SoundManager::Play(const std::string &l_soundName, int l_volume, bool l_loop)
+void SoundManager::Play(const std::string &l_soundName, const float l_volume, const bool l_loop)
 {
   if (m_buffers.find(l_soundName) == m_buffers.end())
   {

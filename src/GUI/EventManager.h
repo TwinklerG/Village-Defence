@@ -85,7 +85,7 @@ public:
   EventManager();
   ~EventManager();
   bool AddBinding(Binding *l_binding);
-  bool RemoveBinding(std::string l_name);
+  bool RemoveBinding(const std::string& l_name);
   void SetCurrentState(StateType l_state);
   void SetFocus(const bool &l_focus);
   template <class T>
@@ -110,7 +110,7 @@ public:
     itr->second.erase(l_name);
     return true;
   }
-  void HandleEvent(sf::Event &l_event);
+  void HandleEvent(sf::Event &l_event) const;
   void Update();
   sf::Vector2i GetMousePos(sf::RenderWindow *l_wind = nullptr)
   {
