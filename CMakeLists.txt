@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.28)
-project(VillegeDefence LANGUAGES CXX)
+project(VillageDefence LANGUAGES CXX)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 include(FetchContent)
 FetchContent_Declare(SFML
-        GIT_REPOSITORY https://gitcode.com/gh_mirrors/sf/SFML.git # acclerate https://github.com/SFML/SFML.git
+        GIT_REPOSITORY https://gitcode.com/gh_mirrors/sf/SFML.git # accelerate https://github.com/SFML/SFML.git
         GIT_TAG 2.6.x
         GIT_SHALLOW ON
         EXCLUDE_FROM_ALL
@@ -16,10 +16,8 @@ set(SOURCE_DIR src)
 aux_source_directory(${SOURCE_DIR} SRC_FILES)
 aux_source_directory(${SOURCE_DIR}/GUI GUI_FILES)
 aux_source_directory(${SOURCE_DIR}/Utils UTILS_FILES)
-add_executable(main ${SRC_FILES} ${GUI_FILES} ${UTILS_FILES}
-        src/Utils/Utils.hpp)
-file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/Debug)
-file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/Release)
+add_executable(main ${SRC_FILES} ${GUI_FILES} ${UTILS_FILES})
+file(INSTALL res DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)
 
 target_link_libraries(main PRIVATE sfml-graphics) # SFML/Graphics.hpp
 target_link_libraries(main PRIVATE sfml-audio) # support for SFML/Audio.hpp

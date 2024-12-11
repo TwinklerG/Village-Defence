@@ -1,7 +1,6 @@
 #include "State_Levels.h"
 #include "StateManager.h"
 
-double State_Levels::m_CalmTime = 0.3;
 int State_Levels::m_LevelSum = 4;
 
 State_Levels::State_Levels(StateManager *l_stateManager) : BaseState(l_stateManager) {
@@ -47,23 +46,26 @@ void State_Levels::OnDestroy() {
 }
 
 void State_Levels::Update(const sf::Time &l_time) {
-  if (m_CalmTime > 0) {
-    m_CalmTime -= l_time.asSeconds();
+  if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+    m_isMouseLeft = false;
   }
   for (int i = 0; i < m_LevelSum; ++i) {
-    const sf::Vector2i l_pos = sf::Mouse::getPosition(*m_stateMgr->GetContext()->m_wind->GetRenderWindow());
-    if (static_cast<float>(l_pos.x) >= m_rects[i].getPosition().x - m_rects[i].getSize().x / 2.0f &&
-        static_cast<float>(l_pos.x) <= m_rects[i].getPosition().x + m_rects[i].getSize().x / 2.0f &&
-        static_cast<float>(l_pos.y) >= m_rects[i].getPosition().y - m_rects[i].getSize().y / 2.0f &&
-        static_cast<float>(l_pos.y) <= m_rects[i].getPosition().y + m_rects[i].getSize().y / 2.0f) {
+    if (const sf::Vector2i l_pos = sf::Mouse::getPosition(*m_stateMgr->GetContext()->m_wind->GetRenderWindow());
+      static_cast<float>(l_pos.x) >= m_rects[i].getPosition().x - m_rects[i].getSize().x / 2.0f &&
+      static_cast<float>(l_pos.x) <= m_rects[i].getPosition().x + m_rects[i].getSize().x / 2.0f &&
+      static_cast<float>(l_pos.y) >= m_rects[i].getPosition().y - m_rects[i].getSize().y / 2.0f &&
+      static_cast<float>(l_pos.y) <= m_rects[i].getPosition().y + m_rects[i].getSize().y / 2.0f) {
       m_rects[i].setFillColor(sf::Color::White);
       m_labels[i].setFillColor(sf::Color::Black);
-      if (m_CalmTime <= 0 && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+      if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !m_isMouseLeft) {
+        // std::cout << "Mouse Left Clicked\n";
         if (m_stateMgr->HasState(StateType::Game)) {
           m_stateMgr->Remove(StateType::Game);
+          m_stateMgr->ProcessRequests();
         }
         m_stateMgr->GetContext()->m_level = i;
         m_stateMgr->SwitchTo(StateType::Game);
+        m_isMouseLeft = true;
       }
     } else {
       m_rects[i].setFillColor(sf::Color::Red);
@@ -85,7 +87,9 @@ void State_Levels::MainMenu(EventDetails *l_details) {
   m_stateMgr->SwitchTo(StateType::MainMenu);
 }
 
-void State_Levels::Activate() { m_CalmTime = 0.3; }
+void State_Levels::Activate() {
+  m_isMouseLeft = true;
+}
 
 void State_Levels::Deactivate() {
 }

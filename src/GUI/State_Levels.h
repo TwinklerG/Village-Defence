@@ -2,21 +2,24 @@
 #include "BaseState.h"
 #include "EventManager.h"
 
-class State_Levels final : public BaseState
-{
+class State_Levels final : public BaseState {
 public:
   explicit State_Levels(StateManager *l_stateManager);
+
   ~State_Levels() override;
 
   void OnCreate() override;
+
   void OnDestroy() override;
 
   void Activate() override;
+
   void Deactivate() override;
 
   void MainMenu(EventDetails *l_details);
 
   void Update(const sf::Time &l_time) override;
+
   void Draw() override;
 
 private:
@@ -25,6 +28,6 @@ private:
   std::vector<sf::RectangleShape> m_rects;
   std::vector<sf::Text> m_labels;
 
+  bool m_isMouseLeft{true};
   static int m_LevelSum;
-  static double m_CalmTime;
 };

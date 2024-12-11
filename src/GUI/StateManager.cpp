@@ -4,6 +4,7 @@
 #include "State_Paused.h"
 #include "State_Levels.h"
 #include "State_About.h"
+#include "State_Store.h"
 
 StateManager::StateManager(SharedContext *l_shared) : m_shared(l_shared)
 {
@@ -13,6 +14,7 @@ StateManager::StateManager(SharedContext *l_shared) : m_shared(l_shared)
   RegisterState<State_Paused>(StateType::Paused);
   RegisterState<State_Levels>(StateType::Levels);
   RegisterState<State_About>(StateType::About);
+  RegisterState<State_Store>(StateType::Store);
 }
 
 StateManager::~StateManager()

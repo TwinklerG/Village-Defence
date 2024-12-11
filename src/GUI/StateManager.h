@@ -13,6 +13,7 @@ enum class StateType {
   GameOver,
   Credits,
   About,
+  Store,
 };
 
 using StateContainer = std::vector<std::pair<StateType, BaseState *> >;
