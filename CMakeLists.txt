@@ -11,16 +11,35 @@ FetchContent_Declare(SFML
         EXCLUDE_FROM_ALL
         SYSTEM)
 FetchContent_MakeAvailable(SFML)
+FetchContent_Declare(JSON
+        GIT_REPOSITORY https://gitcode.com/gh_mirrors/js/json.git # accelerate https://github.com/nlohmann/json.git
+        GIT_SHALLOW ON
+        EXCLUDE_FROM_ALL
+        SYSTEM)
+FetchContent_MakeAvailable(JSON)
 
 set(SOURCE_DIR src)
 aux_source_directory(${SOURCE_DIR} SRC_FILES)
 aux_source_directory(${SOURCE_DIR}/GUI GUI_FILES)
 aux_source_directory(${SOURCE_DIR}/Utils UTILS_FILES)
 add_executable(main ${SRC_FILES} ${GUI_FILES} ${UTILS_FILES})
-file(INSTALL res DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)
+
+if (CMAKE_GENERATOR MATCHES "Visual Studio")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/Debug)
+    elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+        file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/Release)
+    else ()
+        file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/Debug)
+        file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/Release)
+    endif ()
+elseif (CMAKE_GENERATOR STREQUAL "Ninja")
+    file(INSTALL res DESTINATION ${CMAKE_BINARY_DIR}/)
+endif ()
 
 target_link_libraries(main PRIVATE sfml-graphics) # SFML/Graphics.hpp
 target_link_libraries(main PRIVATE sfml-audio) # support for SFML/Audio.hpp
+target_link_libraries(main PRIVATE nlohmann_json)
 target_compile_features(main PRIVATE cxx_std_17)
 
 if (WIN32)

@@ -1,4 +1,5 @@
 #pragma once
+#include <nlohmann/json.hpp>
 #include "BaseState.h"
 #include "EventManager.h"
 
@@ -62,11 +63,9 @@ public:
   void MainMenu(EventDetails *l_details);
 
 private:
-  void LoadGoods();
+  void LoadJson();
 
-  void LoadProps();
-
-  void SaveProps();
+  void SaveJson();
 
   sf::Font m_font;
   sf::Text m_title;

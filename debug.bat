@@ -1,2 +1,3 @@
-mkdir build
-cd build && cmake .. && cmake --build . && cd Debug && "./main.exe"
+cmake -B build -DBUILD_SHARED_LIBSTRUE=false
+cmake --build build --target main --config Debug
+"./build/Debug/main.exe"

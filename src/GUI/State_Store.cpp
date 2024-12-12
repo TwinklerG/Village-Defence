@@ -22,6 +22,7 @@ State_Store::State_Store(StateManager *l_stateManager) : BaseState(l_stateManage
 State_Store::~State_Store() = default;
 
 void State_Store::OnCreate() {
+  nlohmann::json data;
   m_font.loadFromFile("res/fonts/CONSOLAB.TTF");
   m_title.setFont(m_font);
   m_title.setString("STORE");
@@ -29,56 +30,37 @@ void State_Store::OnCreate() {
   m_title.setOrigin(m_title.getLocalBounds().width / 2.0f, m_title.getLocalBounds().height / 2.0f);
   m_title.setPosition(static_cast<float>(m_stateMgr->GetContext()->m_wind->GetWindowSize().x) / 2.0f,
                       static_cast<float>(m_stateMgr->GetContext()->m_wind->GetWindowSize().y) / 10.0f);
-  LoadProps();
-  LoadGoods();
-
+  // LoadPropss();
+  LoadJson();
 
   EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
   envMgr->AddCallback(StateType::Store, "Key_Escape", &State_Store::MainMenu, this);
 }
 
-void State_Store::LoadGoods() {
+void State_Store::LoadJson() {
+  std::ifstream in("res/config/store.json");
+  nlohmann::json data = nlohmann::json::parse(in);
+  m_coin = data["coin"];
   const sf::Vector2u l_windSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  std::fstream inCoin, in;
-  inCoin.open("res/config/coin.cfg");
-  inCoin >> m_coin;
-  inCoin.close();
   m_coinText.setFont(m_font);
   m_coinText.setString("Coin: " + std::to_string(m_coin));
   m_coinText.setCharacterSize(40);
   m_coinText.setOrigin(m_coinText.getLocalBounds().width, 0);
   m_coinText.setPosition(static_cast<float>(l_windSize.x) - m_coinText.getLocalBounds().width / 2.0f,
                          m_coinText.getLocalBounds().height / 2.0f);
-  in.open("res/config/store.cfg");
-  std::string line{};
-  std::getline(in, line);
-  const int choiceSum = std::stoi(line);
-  for (int i = 0; i < choiceSum; ++i) {
-    std::string l_title, l_description;
-    std::getline(in, l_title);
-    std::getline(in, l_description);
-    std::getline(in, line);
-    const int cost = std::stoi(line);
-    m_choices.emplace_back(l_title, l_description, cost,
+  auto goods = data["goods"];
+  auto props = data["props"];
+  for (auto &prop: props) {
+    m_props[sToPropType(prop["name"])] = prop["stock"] == nullptr ? 0 : prop["stock"];
+  }
+  for (int i = 0; i < goods.size(); ++i) {
+    auto &good = goods[i];
+    m_choices.emplace_back(good["name"], good["description"], good["price"],
                            sf::Vector2f(static_cast<float>(l_windSize.x) / 13.0f * 3.0f,
                                         static_cast<float>(l_windSize.y) / 3.0f * 2.0f)
                            , sf::Vector2f(static_cast<float>(l_windSize.x) / 13.0f * static_cast<float>(2.5f + 4.0 * i),
                                           static_cast<float>(l_windSize.y) / 5.0f * 3.0f),
-                           m_font, m_props[sToPropType(l_title)]);
-  }
-  in.close();
-}
-
-void State_Store::LoadProps() {
-  std::fstream in;
-  in.open("res/config/prop.cfg");
-  int l_propSum;
-  in >> l_propSum;
-  for (int i = 0; i < l_propSum; ++i) {
-    std::string l_propTypeStr;
-    int l_propCnt;
-    in >> l_propTypeStr >> l_propCnt;
-    m_props[sToPropType(l_propTypeStr)] = l_propCnt;
+                           m_font, m_props[sToPropType(good["name"])]);
   }
   in.close();
 }
@@ -115,32 +97,34 @@ void State_Store::Activate() {
 }
 
 void State_Store::Deactivate() {
-  SaveProps();
+  SaveJson();
 }
 
 void State_Store::OnDestroy() {
-  SaveProps();
+  SaveJson();
 }
 
-void State_Store::SaveProps() {
-  std::ofstream out;
-  out.open("res/config/prop.cfg", std::ios::out);
-  const size_t l_propSum = m_props.size();
-  out << l_propSum << "\n";
-  for (auto &[l_propType, l_propCnt]: m_props) {
+void State_Store::SaveJson() {
+  nlohmann::json data;
+  data["coin"] = m_coin;
+  std::ifstream in("res/config/store.json");
+  nlohmann::json tmp = nlohmann::json::parse(in);
+  data["goods"] = tmp["goods"];
+  std::cout << "Hello World\n";
+  in.close();
+  for (const auto &[l_propType, l_propCnt]: m_props) {
     if (l_propType == PropType::SLOW) {
-      out << "SLOW " + std::to_string(l_propCnt) + "\n";
+      data["props"].push_back({{"name", "SLOW"}, {"stock", l_propCnt}});
     } else if (l_propType == PropType::ACCELERATE) {
-      out << "ACCELERATE " + std::to_string(l_propCnt) + "\n";
+      data["props"].push_back({{"name", "ACCELERATE"}, {"stock", l_propCnt}});
     } else if (l_propType == PropType::TROPHY) {
-      out << "TROPHY " + std::to_string(l_propCnt) + "\n";
+      data["props"].push_back({{"name", "TROPHY"}, {"stock", l_propCnt}});
     } else {
       throw std::invalid_argument("Illegal Prop Type");
     }
   }
-  out.close();
-  out.open("res/config/coin.cfg", std::ios::out);
-  out << m_coin;
+  std::ofstream out("res/config/store.json");
+  out << std::setw(4) << data << std::endl;
   out.close();
 }
 
