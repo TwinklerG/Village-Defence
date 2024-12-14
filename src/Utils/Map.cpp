@@ -3,10 +3,11 @@
 #include <unordered_set>
 #include <queue>
 #include <cmath>
+#include <iostream>
 #include <numeric>
 
 template<class T>
-bool checkMouseSelect(T target, sf::RenderWindow *l_wind) {
+bool checkMouseSelect(const T &target, sf::RenderWindow *l_wind) {
   return target.getPosition().x - target.getSize().x / 2.0 <= sf::Mouse::getPosition(*l_wind).x &&
          target.getPosition().x + target.getSize().x / 2.0 >= sf::Mouse::getPosition(*l_wind).x &&
          target.getPosition().y - target.getSize().y / 2.0 <= sf::Mouse::getPosition(*l_wind).y &&
@@ -21,14 +22,14 @@ bool checkMouseSelectSprite(const sf::Sprite &l_sprite, const sf::RenderWindow *
 }
 
 template<class T, class F>
-bool checkInRange(T source, F target, double range) {
+bool checkInRange(const T &source, const F &target, const double range) {
   return (source.getPosition().x - target.getPosition().x) * (source.getPosition().x - target.getPosition().x) + (
            source.getPosition().y - target.getPosition().y) * (source.getPosition().y - target.getPosition().y) <= range
          * range;
 }
 
 template<class F>
-bool checkCollision(const sf::CircleShape &source, F target) {
+bool checkCollision(const sf::CircleShape &source, const F &target) {
   return (source.getPosition().x - target.getPosition().x) * (source.getPosition().x - target.getPosition().x) + (
            source.getPosition().y - target.getPosition().y) * (source.getPosition().y - target.getPosition().y) <= (
            source.getRadius() + target.getSize().x) * (source.getRadius() + target.getSize().x) / 8 + (
@@ -54,6 +55,7 @@ void Map::OnCreate(sf::RenderWindow *l_wind) {
   m_selected.m_tower = nullptr;
   m_wind = l_wind;
   LoadMap();
+  LoadMaps();
 }
 
 void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
@@ -259,7 +261,7 @@ void Map::Render(sf::RenderWindow *l_wind) {
   m_board->Render(l_wind);
 }
 
-void Map::LoadMap() {
+void Map::LoadMaps() {
   std::vector<TowerInfo> l_towerInfos;
   std::ifstream inTower;
   inTower.open("res/config/tower.cfg");
@@ -441,6 +443,56 @@ void Map::LoadMap() {
     sp.SetRoads(l_roads);
   }
 }
+
+void Map::LoadMap() {
+  std::ifstream inTower("res/config/tower.json");
+  const nlohmann::json l_towerData = nlohmann::json::parse(inTower);
+  std::vector<TowerInfo> l_towerInfos(l_towerData.size());
+  for (const auto &d: l_towerData) {
+    l_towerInfos.push_back({
+      d["cost"], d["atk"], d["range"], d["calmTime"], d["speed"],
+      d["rgb"][0], d["rgb"][1], d["rgb"][2], d["bulletRadius"]
+    });
+  }
+  inTower.close();
+  std::ifstream in("res/config/map" + std::to_string(m_level) + ".json");
+  nlohmann::json l_mapData = nlohmann::json::parse(in);
+  in.close();
+  const size_t l_choiceSum = l_mapData["choice"].size();
+  m_choices = std::vector<std::pair<std::pair<sf::Sprite, sf::Text>, TowerInfo> >(l_choiceSum);
+  for (int i = 0; i < l_choiceSum; ++i) {
+    const auto &l_t = l_mapData["choice"][i];
+    const int tag = l_t["tag"].get<int>();
+    if (m_textures.find("tower" + std::to_string(tag)) == m_textures.end()) {
+      m_textures["tower" + std::to_string(tag)].loadFromFile("res/img/tower/tower" + std::to_string(tag) + ".png");
+    }
+    m_choices[i].first.first.setTexture(m_textures["tower" + std::to_string(tag)]);
+    m_choices[i].first.first.setOrigin(static_cast<float>(m_choices[i].first.first.getTexture()->getSize().x / 2.0),
+                                       static_cast<float>(m_choices[i].first.first.getTexture()->getSize().y / 2.0));
+    m_choices[i].first.first.setPosition(
+      static_cast<float>(m_choices[i].first.first.getTexture()->getSize().x / 2.0 + 90 * (i + 1)),
+      static_cast<float>(m_choices[i].first.first.getTexture()->getSize().y / 2.0));
+    if (m_fonts.find("arial") == m_fonts.end()) {
+      m_fonts["arial"].loadFromFile("res/fonts/arial.ttf");
+    }
+    m_choices[i].first.second.setFont(m_fonts["arial"]);
+    m_choices[i].first.second.setString(std::to_string(l_towerInfos[tag].m_cost));
+    m_choices[i].first.second.setCharacterSize(30);
+    m_choices[i].first.second.setOrigin(m_choices[i].first.second.getLocalBounds().width / 2,
+                                        m_choices[i].first.second.getLocalBounds().height / 2);
+    m_choices[i].first.second.setPosition(
+      m_choices[i].first.first.getPosition() + sf::Vector2f(
+        0, static_cast<float>(m_choices[i].first.first.getTexture()->getSize().y / 2.0)));
+    m_choices[i].second = l_towerInfos[tag];
+  }
+  // Load Invader Turns
+  // TODO: Load Invader Turns
+
+  // Load Map
+  // TODO: Load Map
+  m_places = std::vector<std::vector<Place> >(m_XRange, std::vector<Place>(m_YRange));
+}
+
 
 int Map::GetLives() const { return m_lives; }
 bool Map::IsWin() const { return m_isWin; }

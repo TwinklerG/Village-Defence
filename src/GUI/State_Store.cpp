@@ -1,5 +1,4 @@
 #include "State_Store.h"
-#include <cassert>
 #include "StateManager.h"
 
 PropType sToPropType(const std::string &s) {
@@ -51,7 +50,7 @@ void State_Store::LoadJson() {
   auto goods = data["goods"];
   auto props = data["props"];
   for (auto &prop: props) {
-    m_props[sToPropType(prop["name"])] = prop["stock"] == nullptr ? 0 : prop["stock"];
+    m_props[sToPropType(prop["name"])] = prop["stock"] == nullptr ? 0 : static_cast<int>(prop["stock"]);
   }
   for (int i = 0; i < goods.size(); ++i) {
     auto &good = goods[i];
@@ -110,7 +109,6 @@ void State_Store::SaveJson() {
   std::ifstream in("res/config/store.json");
   nlohmann::json tmp = nlohmann::json::parse(in);
   data["goods"] = tmp["goods"];
-  std::cout << "Hello World\n";
   in.close();
   for (const auto &[l_propType, l_propCnt]: m_props) {
     if (l_propType == PropType::SLOW) {

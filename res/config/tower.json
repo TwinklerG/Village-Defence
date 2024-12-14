@@ -1,0 +1,58 @@
+[
+  {
+    "tag": 0,
+    "cost": 50,
+    "atk": 1,
+    "range": 400,
+    "calmTime": 1,
+    "speed": 500,
+    "rgb": [
+      0,
+      0,
+      255
+    ],
+    "bulletRadius": 10
+  },
+  {
+    "tag": 1,
+    "cost": 100,
+    "atk": 2,
+    "range": 300,
+    "calmTime": 0.8,
+    "speed": 240,
+    "rgb": [
+      255,
+      255,
+      255
+    ],
+    "bulletRadius": 15
+  },
+  {
+    "tag": 2,
+    "cost": 200,
+    "atk": 3,
+    "range": 500,
+    "calmTime": 0.5,
+    "speed": 400,
+    "rgb": [
+      0,
+      0,
+      255
+    ],
+    "bulletRadius": 10
+  },
+  {
+    "tag": 0,
+    "cost": 50,
+    "atk": 1,
+    "range": 400,
+    "calmTime": 1,
+    "speed": 800,
+    "rgb": [
+      0,
+      0,
+      255
+    ],
+    "bulletRadius": 10
+  }
+]

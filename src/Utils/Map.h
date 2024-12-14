@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
 #include "Place.h"
 #include "StartPoint.h"
 #include "EndPoint.h"
@@ -39,6 +40,8 @@ public:
   bool IsWin() const;
 
 private:
+  void LoadMaps();
+
   void LoadMap();
 
   const int m_level;
