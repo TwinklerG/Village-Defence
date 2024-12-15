@@ -14,6 +14,7 @@ enum class StateType {
   Credits,
   About,
   Store,
+  Setting,
 };
 
 using StateContainer = std::vector<std::pair<StateType, BaseState *> >;
@@ -34,13 +35,15 @@ public:
 
   void ProcessRequests();
 
-  SharedContext *GetContext() const;
+  [[nodiscard]] SharedContext *GetContext() const;
 
   bool HasState(const StateType &l_type);
 
   void SwitchTo(const StateType &l_type);
 
   void Remove(const StateType &l_type);
+
+  void RemoveAll();
 
 private:
   // Methods.

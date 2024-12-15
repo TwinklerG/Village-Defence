@@ -14,17 +14,17 @@ State_Intro::~State_Intro() = default;
 
 void State_Intro::OnCreate() {
   m_timePassed = 0.0f;
-  sf::Vector2u windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
+  const sf::Vector2u windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
   m_font.loadFromFile("res/fonts/CONSOLAZ.TTF");
   m_text.setFont(m_font);
   m_text.setString({"Press SPACE to continue"});
-  m_text.setCharacterSize(20);
+  m_text.setCharacterSize(windowSize.y / 50);
   sf::FloatRect textRect = m_text.getLocalBounds();
   m_text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
   m_text.setPosition(static_cast<float>(windowSize.x) / 2.0f, static_cast<float>(windowSize.y) / 3.0f * 2);
   m_title.setFont(m_font);
   m_title.setString("Village Defence");
-  m_title.setCharacterSize(160);
+  m_title.setCharacterSize(windowSize.y / 6);
   m_title.setOrigin(m_title.getLocalBounds().width / 2, m_title.getLocalBounds().height);
   m_title.setPosition(static_cast<float>(windowSize.x) / 2.0f, 0);
   EventManager *evMgr = m_stateMgr->GetContext()->m_eventManager;
