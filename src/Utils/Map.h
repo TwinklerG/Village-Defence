@@ -40,8 +40,6 @@ public:
   bool IsWin() const;
 
 private:
-  void LoadMaps();
-
   void LoadMap();
 
   const int m_level;

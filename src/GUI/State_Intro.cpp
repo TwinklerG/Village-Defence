@@ -52,7 +52,8 @@ void State_Intro::Update(const sf::Time &l_time) {
     // Less than five seconds.
     m_timePassed += l_time.asSeconds();
     m_title.setPosition(m_title.getPosition().x,
-                        m_title.getPosition().y + static_cast<float>(m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize().y) / (m_AnimationTime * 2.0f) *
+                        m_title.getPosition().y + static_cast<float>(m_stateMgr->GetContext()->m_wind->GetRenderWindow()
+                          ->getSize().y) / (m_AnimationTime * 2.0f) *
                         l_time.asSeconds());
   }
 }
@@ -80,10 +81,12 @@ void State_Intro::MoveSprites() {
     const sf::Vector2u l_windSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
     const sf::Vector2u l_spSize = m_textures[i].getSize();
     const sf::Vector2f l_spPos = m_sprites[i].getPosition();
-    if ((l_spPos.x + static_cast<float>(l_spSize.x) > static_cast<float>(l_windSize.x) && m_increments[i].x > 0) || (l_spPos.x < 0 && m_increments[i].x < 0)) {
+    if ((l_spPos.x + static_cast<float>(l_spSize.x) > static_cast<float>(l_windSize.x) && m_increments[i].x > 0) || (
+          l_spPos.x < 0 && m_increments[i].x < 0)) {
       m_increments[i].x = -m_increments[i].x;
     }
-    if ((l_spPos.y + static_cast<float>(l_spSize.y) > static_cast<float>(l_windSize.y) && m_increments[i].y > 0) || (l_spPos.y < 0 && m_increments[i].y < 0)) {
+    if ((l_spPos.y + static_cast<float>(l_spSize.y) > static_cast<float>(l_windSize.y) && m_increments[i].y > 0) || (
+          l_spPos.y < 0 && m_increments[i].y < 0)) {
       m_increments[i].y = -m_increments[i].y;
     }
     m_sprites[i].setPosition(l_spPos.x + static_cast<float>(m_increments[i].x) * m_elapsed.asSeconds(),

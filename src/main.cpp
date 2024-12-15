@@ -8,5 +8,6 @@ int main() {
     game.Render();
     game.LateUpdate();
   }
+  sf::Text m_text;
   return EXIT_SUCCESS;
 }

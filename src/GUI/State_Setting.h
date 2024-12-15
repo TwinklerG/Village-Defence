@@ -1,0 +1,3 @@
+class State_Setting {
+
+};
