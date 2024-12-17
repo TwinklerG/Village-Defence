@@ -28,3 +28,5 @@ private:
 
   sf::Font m_font;
 };
+
+void SaveResolution(int width, int height);

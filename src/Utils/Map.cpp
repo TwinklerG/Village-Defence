@@ -206,31 +206,31 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
   }
   m_figures = next_figures;
   // Check whether any Choice is selected
-  for (const auto &l_choice: m_choices) {
-    if (checkMouseSelectSprite(l_choice.first.first, m_wind) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_board->
-        GetMoney() >= l_choice.second.m_cost) {
+  for (const auto &[l_choice, l_towerInfo]: m_choices) {
+    if (checkMouseSelectSprite(l_choice.first, m_wind) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_board->
+        GetMoney() >= l_towerInfo.m_cost) {
       if (m_selected.m_selectType == SelectType::Existence) {
         if (m_selected.m_tower) {
           m_selected.m_tower->SetCircle(nullptr);
         }
       }
-      m_selected.m_tower = std::make_shared<Tower>(l_choice.first.first,
-                                                   l_choice.first.first.getTexture()->getSize(),
-                                                   sf::seconds(static_cast<float>(l_choice.second.m_calmTime)),
-                                                   l_choice.second.m_attackPoint,
-                                                   static_cast<float>(l_choice.second.m_speed),
-                                                   l_choice.second.m_range,
-                                                   l_choice.second.m_cost,
-                                                   l_choice.second.m_red,
-                                                   l_choice.second.m_green,
-                                                   l_choice.second.m_blue,
-                                                   l_choice.second.m_bulletRadius);
+      m_selected.m_tower = std::make_shared<Tower>(l_choice.first,
+                                                   l_choice.first.getTexture()->getSize(),
+                                                   sf::seconds(static_cast<float>(l_towerInfo.m_calmTime)),
+                                                   l_towerInfo.m_attackPoint,
+                                                   static_cast<float>(l_towerInfo.m_speed),
+                                                   l_towerInfo.m_range,
+                                                   l_towerInfo.m_cost,
+                                                   l_towerInfo.m_red,
+                                                   l_towerInfo.m_green,
+                                                   l_towerInfo.m_blue,
+                                                   l_towerInfo.m_bulletRadius);
       m_selected.m_tower->GetSprite().setOrigin(
-        static_cast<float>(l_choice.first.first.getTexture()->getSize().x / 2.0),
-        static_cast<float>(l_choice.first.first.getTexture()->getSize().y / 2.0));
+        static_cast<float>(l_choice.first.getTexture()->getSize().x / 2.0),
+        static_cast<float>(l_choice.first.getTexture()->getSize().y / 2.0));
       m_selected.m_tower->GetSprite().setPosition(static_cast<float>(sf::Mouse::getPosition(*l_wind).x),
                                                   static_cast<float>(sf::Mouse::getPosition(*l_wind).y));
-      sf::CircleShape l_circle(static_cast<float>(l_choice.second.m_range));
+      sf::CircleShape l_circle(static_cast<float>(l_towerInfo.m_range));
       l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
       l_circle.setFillColor(sf::Color(0, 0, 0, 0));
       l_circle.setOutlineColor(sf::Color::Red);

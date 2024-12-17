@@ -36,7 +36,7 @@ public:
   }
 
   [[nodiscard]] bool IsTranscendent() const { return m_transcendent; }
-  StateManager *GetStateManager() const { return m_stateMgr; }
+  [[nodiscard]] StateManager *GetStateManager() const { return m_stateMgr; }
 
 protected:
   StateManager *m_stateMgr;

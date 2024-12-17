@@ -16,32 +16,36 @@ void State_Setting::OnCreate() {
                                    static_cast<float>(l_windowSize.y) / 5.1f);
   const auto l_delta = sf::Vector2f(0, static_cast<float>(l_windowSize.y) / 5.0f);
   auto l_options = std::vector<gl::Button>{
-    gl::Button("(1440, 900)", l_pos + 1.0f * l_delta, l_size
+    gl::Button("(1200, 750)", l_pos + 1.0f * l_delta, l_size
                , l_windowSize.y / 22, m_font, [this]() {
                  m_stateMgr->RemoveAll();
                  m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
-                   {1440, 900, 32}, "Village Defence", sf::Style::Close
+                   {1200, 750, 32}, "Village Defence", sf::Style::Close
                  );
                  m_stateMgr->SwitchTo(StateType::Intro);
+                 SaveResolution(1200, 750);
                }),
-    gl::Button("(1920, 1080)", l_pos + 2.0f * l_delta, l_size, l_windowSize.y / 22,
+    gl::Button("(1600, 1000)", l_pos + 2.0f * l_delta, l_size, l_windowSize.y / 22,
                m_font, [this]() {
                  m_stateMgr->RemoveAll();
                  m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
-                   {1920, 1080, 32}
+                   {1600, 1000, 32}
                    , "Village Defence", sf::Style::Close
                  );
                  m_stateMgr->SwitchTo(StateType::Intro);
+                 SaveResolution(1600, 1000);
                }),
-    gl::Button("(2560, 1600)", l_pos + 3.0f * l_delta, l_size, l_windowSize.y / 22, m_font, [this]() {
-      std::cout << "change resolution to (2560, 1600)" << std::endl;
-      m_stateMgr->RemoveAll();
-      m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
-        {2560, 1600, 32}
-        , "Village Defence", sf::Style::Close
-      );
-      m_stateMgr->SwitchTo(StateType::Intro);
-    })
+    gl::Button("(2000, 1250)", l_pos + 3.0f * l_delta, l_size, l_windowSize.y / 22,
+               m_font, [this]() {
+                 std::cout << "change resolution to (2560, 1600)" << std::endl;
+                 m_stateMgr->RemoveAll();
+                 m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
+                   {2000, 1250, 32}
+                   , "Village Defence", sf::Style::Close
+                 );
+                 m_stateMgr->SwitchTo(StateType::Intro);
+                 SaveResolution(2000, 1250);
+               })
   };
   m_select = std::make_unique<gl::Select>("Resolution", l_pos, l_size, l_windowSize.y / 18, m_font, l_options);
   // Add KeyBindCallBind
@@ -68,4 +72,14 @@ void State_Setting::Activate() {
 }
 
 void State_Setting::Deactivate() {
+}
+
+void SaveResolution(int width, int height) {
+  std::ifstream l_iFs("res/config/config.json");
+  nlohmann::json l_cfg = nlohmann::json::parse(l_iFs);
+  l_iFs.close();
+  l_cfg["resolution"] = {{"width", width}, {"height", height}};
+  std::ofstream o_iFs("res/config/config.json");
+  o_iFs << std::setw(4) << l_cfg;
+  o_iFs.close();
 }

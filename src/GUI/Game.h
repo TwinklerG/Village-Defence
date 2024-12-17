@@ -3,28 +3,31 @@
 #include "StateManager.h"
 #include "SharedContext.hpp"
 
-class Game
-{
+class Game {
 public:
   Game();
+
   ~Game();
 
   void Update();
+
   void Render();
+
   void LateUpdate();
 
-  Window *GetWindow();
+  std::shared_ptr<Window> GetWindow();
 
   sf::Time GetElapsed() const;
+
   void RestartClock();
 
 private:
-  Window m_window;
+  std::shared_ptr<Window> m_window;
   sf::Clock m_clock;
   sf::Time m_elapsed;
 
   SharedContext m_context;
   StateManager m_stateManager;
 
-static float m_FrameTime;
+  static float m_FrameTime;
 };
