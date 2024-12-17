@@ -2,6 +2,7 @@
 #include <fstream>
 #include <memory>
 #include <unordered_map>
+#include <nlohmann/json.hpp>
 #include "Element.h"
 #include "Figure.h"
 
@@ -19,6 +20,8 @@ public:
 
   StartPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::pair<int, int> &l_cor,
              const std::vector<InvadeTurnInfo> &l_invaderTurns);
+
+  void OnCreate();
 
   std::shared_ptr<Figure> Update(const sf::Time &l_elapsed);
 

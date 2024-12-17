@@ -45,7 +45,6 @@ Map::~Map() = default;
 
 void Map::OnCreate(sf::RenderWindow *l_wind) {
   m_lives = 10;
-  // rgb(120, 120, 0)
   m_backup = sf::RectangleShape(sf::Vector2f(static_cast<float>(l_wind->getSize().x),
                                              static_cast<float>(l_wind->getSize().y)));
   m_backup.setFillColor(sf::Color(120, 120, 0));
@@ -55,16 +54,17 @@ void Map::OnCreate(sf::RenderWindow *l_wind) {
   m_selected.m_tower = nullptr;
   m_wind = l_wind;
   LoadMap();
-  // LoadMaps();
 }
 
 void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
+  // Check Game Finish Condition
   if (std::accumulate(m_startPoints.begin(), m_startPoints.end(), 0, [](int accum, const StartPoint &l_sp) {
     return accum + l_sp.GetLeftTurns();
   }) == 0 && m_figures.empty()) {
     m_isWin = true;
   }
   if (m_selected.m_tower) {
+    // Selected Choice
     if (m_selected.m_selectType == SelectType::Choice) {
       if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
         m_selected.m_tower = nullptr;
@@ -74,19 +74,20 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
         m_selected.m_tower->GetCircle()->setPosition(static_cast<float>(sf::Mouse::getPosition(*l_wind).x),
                                                      static_cast<float>(sf::Mouse::getPosition(*l_wind).y));
       }
-    } else {
-      m_selected.m_tower->SetCircle(nullptr);
     }
   } else if (m_selected.m_selectType == SelectType::Existence && m_places[m_selected.x][m_selected.y].GetPlaceType() ==
              PlaceType::Tower) {
+    // Set Existed Tower Circle NULL
     m_places[m_selected.x][m_selected.y].GetTower().SetCircle(nullptr);
   }
+  // Click a Land
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
     for (int i = 0; i < m_XRange; i++) {
       for (int j = 0; j < m_YRange; j++) {
         if (checkMouseSelect(m_places[i][j], m_wind)) {
           if (m_selected.m_tower && m_selected.m_selectType == SelectType::Choice && m_places[i][j].GetPlaceType() ==
               PlaceType::Land) {
+            // Lay a Tower
             Tower t(*m_selected.m_tower);
             t.GetSprite().setPosition(static_cast<float>(45 + 90 * i), static_cast<float>(405 + 90 * j));
             t.SetCircle(nullptr);
@@ -95,6 +96,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
             m_board->SetMoney(m_board->GetMoney() - t.GetCost());
             m_selected.m_tower = nullptr;
           } else if (m_places[i][j].GetPlaceType() == PlaceType::Tower && m_selected.m_tower == nullptr) {
+            // Select an Existing Tower
             m_selected.m_selectType = SelectType::Existence;
             m_selected.x = i;
             m_selected.y = j;
@@ -111,14 +113,17 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
       }
     }
   }
+  // StartPoints Update
   for (StartPoint &l_startPoint: m_startPoints) {
     if (auto l_fig = l_startPoint.Update(l_time)) {
       m_figures.emplace_back(l_fig);
     }
   }
+  // Figures Update
   for (auto &l_fig: m_figures) {
     l_fig->Update(l_time);
   }
+  // Tower Attack Invaders
   for (int i = 0; i < m_XRange; ++i) {
     for (int j = 0; j < m_YRange; ++j) {
       if (m_places[i][j].GetPlaceType() == PlaceType::Tower) {
@@ -151,6 +156,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
       }
     }
   }
+  // Bullets Update
   std::vector<Bullet> next_bullets{};
   for (auto l_b: m_bullets) {
     if (checkCollision(l_b.GetCircle(), *l_b.GetTargetFigure())) {
@@ -179,6 +185,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
     next_bullets.emplace_back(l_b);
   }
   m_bullets = next_bullets;
+  // Invaders Update
   std::vector<std::shared_ptr<Figure> > next_figures{};
   for (const auto &l_fig: m_figures) {
     for (const auto &l_ep: m_endPoints) {
@@ -197,6 +204,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
     }
   }
   m_figures = next_figures;
+  // Check whether any Choice is selected
   for (const auto &l_choice: m_choices) {
     if (checkMouseSelectSprite(l_choice.first.first, m_wind) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_board->
         GetMoney() >= l_choice.second.m_cost) {

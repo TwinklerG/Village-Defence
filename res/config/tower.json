@@ -19,7 +19,7 @@
     "atk": 2,
     "range": 300,
     "calmTime": 0.8,
-    "speed": 240,
+    "speed": 350,
     "rgb": [
       255,
       255,
@@ -39,7 +39,7 @@
       0,
       0
     ],
-    "bulletRadius": 10
+    "bulletRadius": 20
   },
   {
     "tag": 3,

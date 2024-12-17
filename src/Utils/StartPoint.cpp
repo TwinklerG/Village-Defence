@@ -1,5 +1,6 @@
 #include "StartPoint.h"
 #include "Utils.hpp"
+
 sf::Time StartPoint::m_BreakTime = sf::seconds(5);
 
 StartPoint::StartPoint() = default;
@@ -8,15 +9,7 @@ StartPoint::StartPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const
   : Element(l_sp, l_size),
     m_totalCalmTime(sf::seconds(1)),
     m_coordinate(l_cor) {
-  std::ifstream in;
-  in.open("res/config/invader.cfg");
-  int typeSum;
-  in >> typeSum;
-  for (int i = 0; i < typeSum; ++i) {
-    int tag, lives, speed;
-    in >> tag >> lives >> speed;
-    m_figureInfos.push_back({lives, speed});
-  }
+  OnCreate();
 }
 
 StartPoint::StartPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::pair<int, int> &l_cor,
@@ -24,14 +17,14 @@ StartPoint::StartPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const
   : Element(l_sp, l_size),
     m_coordinate(l_cor),
     m_invaderTurns(l_invaderTurns) {
-  std::ifstream in;
-  in.open("res/config/invader.cfg");
-  int typeSum;
-  in >> typeSum;
-  for (int i = 0; i < typeSum; ++i) {
-    int tag, lives, speed, reward;
-    in >> tag >> lives >> speed >> reward;
-    m_figureInfos.push_back({lives, speed, reward});
+  OnCreate();
+}
+
+void StartPoint::OnCreate() {
+  std::ifstream in("res/config/invader.json");
+  nlohmann::json invaderData = nlohmann::json::parse(in);
+  for (const auto &invader: invaderData) {
+    m_figureInfos.push_back({invader["lives"], invader["speed"], invader["reward"]});
   }
 }
 
@@ -73,9 +66,12 @@ std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed) {
   sf::Sprite l_sp(m_textures[l_figureName]);
   l_sp.setOrigin(static_cast<float>(m_textures[l_figureName].getSize().x / 2.0),
                  static_cast<float>(m_textures[l_figureName].getSize().y / 2.0));
-  l_sp.setPosition(static_cast<float>(45 + m_coordinate.first * 90), static_cast<float>(405 + 90 * m_coordinate.second));
-  return std::make_shared<Figure>(l_sp, l_sp.getTexture()->getSize(), m_roads[Utils::RandInt(0, static_cast<int>(m_roads.size()) - 1)],
-                                  m_figureInfos[tag].m_lives, static_cast<int>(m_figureInfos[tag].m_speed * l_speedBuff),
+  l_sp.setPosition(static_cast<float>(45 + m_coordinate.first * 90),
+                   static_cast<float>(405 + 90 * m_coordinate.second));
+  return std::make_shared<Figure>(l_sp, l_sp.getTexture()->getSize(),
+                                  m_roads[Utils::RandInt(0, static_cast<int>(m_roads.size()) - 1)],
+                                  m_figureInfos[tag].m_lives,
+                                  static_cast<int>(m_figureInfos[tag].m_speed * l_speedBuff),
                                   m_figureInfos[tag].m_reward);
 }
 
