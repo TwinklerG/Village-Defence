@@ -72,4 +72,12 @@ namespace gl {
   const sf::RectangleShape &Button::GetRectangleShape() const {
     return m_rect;
   }
+
+  sf::Text Button::GetText() const {
+    return m_text;
+  }
+
+  void Button::SetText(const sf::Text &l_text) {
+    m_text = l_text;
+  }
 };

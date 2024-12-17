@@ -71,16 +71,16 @@ public:
 
   void Render(sf::RenderWindow *l_wind) const override;
 
-  void SetTower(const Tower &l_tower);
+  void SetTower(std::shared_ptr<Tower> l_tower);
 
-  Tower &GetTower();
+  std::shared_ptr<Tower> GetTower();
 
   const PlaceType &GetPlaceType() const;
 
   void SetPlaceType(const PlaceType &);
 
 private:
-  Tower m_tower;
+  std::shared_ptr<Tower> m_tower;
   PlaceType m_placeType;
 };
 

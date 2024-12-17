@@ -59,7 +59,6 @@ private:
   Textbox m_textbox;
   std::unordered_map<std::string, sf::Font> m_fonts;
   std::unordered_map<std::string, sf::Texture> m_textures;
-  sf::Clock m_clock;
   static int m_XRange;
   static int m_YRange;
 };

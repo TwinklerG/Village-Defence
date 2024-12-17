@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseState.h"
 #include "EventManager.h"
+#include "../Widgets/Button.h"
 
 class State_Levels final : public BaseState {
 public:
@@ -25,6 +26,7 @@ public:
 private:
   sf::Font m_font;
   sf::Text m_title;
+  std::vector<gl::Button> m_buttons;
   std::vector<sf::RectangleShape> m_rects;
   std::vector<sf::Text> m_labels;
 

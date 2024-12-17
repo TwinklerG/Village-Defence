@@ -25,12 +25,6 @@ public:
 
 private:
   sf::Font m_font;
-  // sf::Text m_text;
-  // sf::Vector2f m_buttonSize;
-  // sf::Vector2f m_buttonPos;
-  // unsigned int m_buttonPadding{};
-  // std::vector<sf::RectangleShape> m_rects;
-  // std::vector<sf::Text> m_labels;
 
   sf::Text m_title;
   std::vector<gl::Button> m_buttons;

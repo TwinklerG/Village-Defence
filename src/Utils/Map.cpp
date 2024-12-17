@@ -64,8 +64,8 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
     m_isWin = true;
   }
   if (m_selected.m_tower) {
-    // Selected Choice
     if (m_selected.m_selectType == SelectType::Choice) {
+      // Selected Choice
       if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
         m_selected.m_tower = nullptr;
       } else {
@@ -74,11 +74,11 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
         m_selected.m_tower->GetCircle()->setPosition(static_cast<float>(sf::Mouse::getPosition(*l_wind).x),
                                                      static_cast<float>(sf::Mouse::getPosition(*l_wind).y));
       }
+    } else if (m_selected.m_selectType == SelectType::Existence) {
+      // Selected Existence
+      m_selected.m_tower->SetCircle(nullptr);
+      m_selected.m_tower = nullptr;
     }
-  } else if (m_selected.m_selectType == SelectType::Existence && m_places[m_selected.x][m_selected.y].GetPlaceType() ==
-             PlaceType::Tower) {
-    // Set Existed Tower Circle NULL
-    m_places[m_selected.x][m_selected.y].GetTower().SetCircle(nullptr);
   }
   // Click a Land
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -88,26 +88,27 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
           if (m_selected.m_tower && m_selected.m_selectType == SelectType::Choice && m_places[i][j].GetPlaceType() ==
               PlaceType::Land) {
             // Lay a Tower
-            Tower t(*m_selected.m_tower);
-            t.GetSprite().setPosition(static_cast<float>(45 + 90 * i), static_cast<float>(405 + 90 * j));
-            t.SetCircle(nullptr);
+            std::shared_ptr<Tower> t = m_selected.m_tower;
+            t->GetSprite().setPosition(static_cast<float>(45 + 90 * i), static_cast<float>(405 + 90 * j));
+            t->SetCircle(nullptr);
             m_places[i][j].SetTower(t);
             m_places[i][j].SetPlaceType(PlaceType::Tower);
-            m_board->SetMoney(m_board->GetMoney() - t.GetCost());
+            m_board->SetMoney(m_board->GetMoney() - t->GetCost());
             m_selected.m_tower = nullptr;
           } else if (m_places[i][j].GetPlaceType() == PlaceType::Tower && m_selected.m_tower == nullptr) {
             // Select an Existing Tower
             m_selected.m_selectType = SelectType::Existence;
             m_selected.x = i;
             m_selected.y = j;
-            Tower &l_tower = m_places[i][j].GetTower();
-            sf::CircleShape l_circle(static_cast<float>(l_tower.GetRange()));
+            m_selected.m_tower = m_places[i][j].GetTower();
+            std::shared_ptr<Tower> l_tower = m_places[i][j].GetTower();
+            sf::CircleShape l_circle(static_cast<float>(l_tower->GetRange()));
             l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
             l_circle.setFillColor(sf::Color(0, 0, 0, 0));
             l_circle.setOutlineColor(sf::Color::Red);
-            l_circle.setOutlineThickness(1.0f);
+            l_circle.setOutlineThickness(3.0f);
             l_circle.setPosition(static_cast<float>(45 + 90 * i), static_cast<float>(405 + 90 * j));
-            m_places[i][j].GetTower().SetCircle(std::make_shared<sf::CircleShape>(l_circle));
+            m_places[i][j].GetTower()->SetCircle(std::make_shared<sf::CircleShape>(l_circle));
           }
         }
       }
@@ -127,12 +128,12 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
   for (int i = 0; i < m_XRange; ++i) {
     for (int j = 0; j < m_YRange; ++j) {
       if (m_places[i][j].GetPlaceType() == PlaceType::Tower) {
-        if (m_places[i][j].GetTower().GetCalmTime().asSeconds() > 0) {
-          m_places[i][j].GetTower().SetCalmTime(m_places[i][j].GetTower().GetCalmTime() - l_time);
+        if (m_places[i][j].GetTower()->GetCalmTime().asSeconds() > 0) {
+          m_places[i][j].GetTower()->SetCalmTime(m_places[i][j].GetTower()->GetCalmTime() - l_time);
           continue;
         }
         for (const auto &l_fig: m_figures) {
-          if (checkInRange(*l_fig, m_places[i][j], m_places[i][j].GetTower().GetRange())) {
+          if (checkInRange(*l_fig, m_places[i][j], m_places[i][j].GetTower()->GetRange())) {
             int cnt = 0;
             for (auto &l_b: m_bullets) {
               if (l_b.GetTargetFigure() == l_fig) {
@@ -142,17 +143,17 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
             if (cnt >= l_fig->GetLives()) {
               continue;
             }
-            const Tower &l_tower = m_places[i][j].GetTower();
-            sf::CircleShape cs(static_cast<float>(l_tower.GetBulletRadius()));
-            cs.setFillColor(l_tower.GetBulletColor());
+            const std::shared_ptr<Tower> l_tower = m_places[i][j].GetTower();
+            sf::CircleShape cs(static_cast<float>(l_tower->GetBulletRadius()));
+            cs.setFillColor(l_tower->GetBulletColor());
             cs.setPosition(m_places[i][j].getPosition());
             cs.setOrigin(cs.getRadius(), cs.getRadius());
-            m_bullets.emplace_back(cs, l_fig, static_cast<int>(m_places[i][j].GetTower().GetBulletSpeed()),
-                                   m_places[i][j].GetTower().GetAttackPoint());
+            m_bullets.emplace_back(cs, l_fig, static_cast<int>(m_places[i][j].GetTower()->GetBulletSpeed()),
+                                   m_places[i][j].GetTower()->GetAttackPoint());
             break;
           }
         }
-        m_places[i][j].GetTower().SetCalmTime(sf::seconds(1));
+        m_places[i][j].GetTower()->SetCalmTime(sf::seconds(1));
       }
     }
   }
@@ -233,7 +234,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
       l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
       l_circle.setFillColor(sf::Color(0, 0, 0, 0));
       l_circle.setOutlineColor(sf::Color::Red);
-      l_circle.setOutlineThickness(1.0f);
+      l_circle.setOutlineThickness(3.0f);
       l_circle.setPosition(static_cast<float>(sf::Mouse::getPosition(*l_wind).x),
                            static_cast<float>(sf::Mouse::getPosition(*l_wind).y));
       m_selected.m_tower->SetCircle(std::make_shared<sf::CircleShape>(l_circle));

@@ -26,6 +26,10 @@ namespace gl {
 
     const sf::RectangleShape &GetRectangleShape() const;
 
+    sf::Text GetText() const;
+
+    void SetText(const sf::Text &l_text);
+
   private:
     sf::RectangleShape m_rect;
     sf::Text m_text;
