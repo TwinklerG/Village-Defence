@@ -1,5 +1,5 @@
 ret = []
-for i in range(8):
+for i in range(10):
     ret.append([int(t) for t in input().split()])
 print(ret)
 # 8*21, input example

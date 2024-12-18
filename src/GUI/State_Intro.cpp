@@ -19,7 +19,7 @@ void State_Intro::OnCreate() {
   m_text.setFont(m_font);
   m_text.setString({"Press SPACE to continue"});
   m_text.setCharacterSize(windowSize.y / 50);
-  sf::FloatRect textRect = m_text.getLocalBounds();
+  const sf::FloatRect textRect = m_text.getLocalBounds();
   m_text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
   m_text.setPosition(static_cast<float>(windowSize.x) / 2.0f, static_cast<float>(windowSize.y) / 3.0f * 2);
   m_title.setFont(m_font);
@@ -33,9 +33,8 @@ void State_Intro::OnCreate() {
   m_textures = std::vector<sf::Texture>(m_SpritesSum);
   m_increments = std::vector<sf::Vector2i>(m_SpritesSum);
   for (int i = 0; i < m_SpritesSum; ++i) {
-    m_textures[i].loadFromFile("res/img/states/STATE_INTRO_file_0.png");
+    m_textures[i].loadFromFile("res/img/states/" + m_stateMgr->GetContext()->m_resolution + "/intro_figure.png");
     m_sprites.emplace_back(m_textures[i]);
-    // m_increments[i] = sf::Vector2i(randint(100, 400), randint(100, 400));
     m_increments[i] = sf::Vector2i(Utils::RandInt(100, 400), Utils::RandInt(100, 400));
   }
 }

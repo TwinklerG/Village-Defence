@@ -25,7 +25,8 @@ struct SelectInfo {
 
 class Map {
 public:
-  explicit Map(sf::RenderWindow *l_wind, int l_level = 0);
+  explicit Map(sf::RenderWindow *l_wind, int l_level = 0,
+               std::string l_resolutions = "1600_1000", std::pair<int, int> l_resolution = {80, 80});
 
   ~Map();
 
@@ -59,6 +60,9 @@ private:
   Textbox m_textbox;
   std::unordered_map<std::string, sf::Font> m_fonts;
   std::unordered_map<std::string, sf::Texture> m_textures;
+
+  std::string m_resolution;
+  std::pair<int, int> m_atomResolution;
   static int m_XRange;
   static int m_YRange;
 };

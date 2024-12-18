@@ -1,22 +1,20 @@
 #include "StartPoint.h"
+
+#include <utility>
 #include "Utils.hpp"
+
+int StartPoint::m_YRange = 10;
 
 sf::Time StartPoint::m_BreakTime = sf::seconds(5);
 
-StartPoint::StartPoint() = default;
-
-StartPoint::StartPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::pair<int, int> &l_cor)
-  : Element(l_sp, l_size),
-    m_totalCalmTime(sf::seconds(1)),
-    m_coordinate(l_cor) {
-  OnCreate();
-}
-
 StartPoint::StartPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::pair<int, int> &l_cor,
-                       const std::vector<InvadeTurnInfo> &l_invaderTurns)
+                       const std::vector<InvadeTurnInfo> &l_invaderTurns, std::string l_resolution,
+                       const std::pair<int, int> l_atomResolution)
   : Element(l_sp, l_size),
     m_coordinate(l_cor),
-    m_invaderTurns(l_invaderTurns) {
+    m_invaderTurns(l_invaderTurns),
+    m_resolution(std::move(l_resolution)),
+    m_atomResolution(l_atomResolution) {
   OnCreate();
 }
 
@@ -28,7 +26,7 @@ void StartPoint::OnCreate() {
   }
 }
 
-void StartPoint::SetCalmTime(const sf::Time &l_t) { m_calmTime = l_t; }
+void StartPoint::SetCalmTime(const sf::Time &l_time) { m_calmTime = l_time; }
 const sf::Time &StartPoint::GetCalmTime() const { return m_calmTime; }
 
 void StartPoint::RestartCalmTime() {
@@ -61,13 +59,16 @@ std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed) {
   }
   std::string l_figureName = "invader" + std::to_string(tag);
   if (m_textures.find(l_figureName) == m_textures.end()) {
-    m_textures[l_figureName].loadFromFile("res/img/invader/" + l_figureName + ".png");
+    m_textures[l_figureName].loadFromFile("res/img/invader/" + m_resolution + "/" + l_figureName + ".png");
   }
   sf::Sprite l_sp(m_textures[l_figureName]);
   l_sp.setOrigin(static_cast<float>(m_textures[l_figureName].getSize().x / 2.0),
                  static_cast<float>(m_textures[l_figureName].getSize().y / 2.0));
-  l_sp.setPosition(static_cast<float>(45 + m_coordinate.first * 90),
-                   static_cast<float>(405 + 90 * m_coordinate.second));
+  l_sp.setPosition(static_cast<float>(m_atomResolution.first) / 2.0f
+                   + static_cast<float>(m_atomResolution.first) * static_cast<float>(m_coordinate.first),
+                   static_cast<float>(m_atomResolution.second) * static_cast<float>(m_YRange) / 4.0f
+                   + static_cast<float>(m_atomResolution.second) / 2.0f + static_cast<float>(
+                     m_atomResolution.second) * static_cast<float>(m_coordinate.second));
   return std::make_shared<Figure>(l_sp, l_sp.getTexture()->getSize(),
                                   m_roads[Utils::RandInt(0, static_cast<int>(m_roads.size()) - 1)],
                                   m_figureInfos[tag].m_lives,

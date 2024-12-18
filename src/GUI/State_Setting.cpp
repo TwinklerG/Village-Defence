@@ -79,6 +79,7 @@ void SaveResolution(int width, int height) {
   nlohmann::json l_cfg = nlohmann::json::parse(l_iFs);
   l_iFs.close();
   l_cfg["resolution"] = {{"width", width}, {"height", height}};
+  // TODO: Change ShareContext
   std::ofstream o_iFs("res/config/config.json");
   o_iFs << std::setw(4) << l_cfg;
   o_iFs.close();

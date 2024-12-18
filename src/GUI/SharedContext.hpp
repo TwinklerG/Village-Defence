@@ -14,4 +14,6 @@ struct SharedContext {
   int m_level;
   BgmManager m_bgmManager;
   SoundManager m_soundManager;
+  std::string m_resolution;
+  std::pair<int, int> m_atomResolution;
 };

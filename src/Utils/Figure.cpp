@@ -25,6 +25,7 @@ void Figure::Render(sf::RenderWindow *l_wind) const {
 }
 
 void Figure::Update(const sf::Time &elapsed) {
+  // TODO: Change Mileage Check
   if (m_mileage / 90 >= static_cast<double>(m_increments.size())) {
     return;
   }

@@ -7,6 +7,12 @@ Game::Game() : m_stateManager(&m_context) {
   nlohmann::json cfg = nlohmann::json::parse(config);
   m_window = std::make_shared<Window>("Village Defence",
                                       sf::Vector2u(cfg["resolution"]["width"], cfg["resolution"]["height"]));
+  m_stateManager.GetContext()->m_resolution = to_string(cfg["resolution"]["width"]) + "_" + to_string(
+                                                cfg["resolution"]["height"]);
+  m_stateManager.GetContext()->m_atomResolution = {
+    static_cast<int>(cfg["resolution"]["width"]) / 20,
+    static_cast<int>(cfg["resolution"]["height"]) * 2 / 25
+  };
   m_context.m_wind = m_window;
   m_context.m_eventManager = m_window->GetEventManager();
   BgmManager &l_bgmManager = m_context.m_bgmManager;
