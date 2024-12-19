@@ -21,7 +21,7 @@ public:
 
   void Render(sf::RenderWindow *l_wind) const override;
 
-  void Update(const sf::Time &elapsed);
+  void Update(const sf::Time &elapsed, double l_ratio = 1.0);
 
   int GetLives() const;
 

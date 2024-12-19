@@ -1,34 +1,25 @@
 {
-    "coin": 90,
-    "goods": [
-        {
-            "description": "slow down\nInvaders",
-            "name": "SLOW",
-            "price": 10
-        },
-        {
-            "description": "accelerate\ntowers",
-            "name": "ACCELERATE",
-            "price": 10
-        },
-        {
-            "description": "YOU ARE\nWINNER!",
-            "name": "TROPHY",
-            "price": 100
-        }
-    ],
-    "props": [
-        {
-            "name": "SLOW",
-            "stock": 1
-        },
-        {
-            "name": "ACCELERATE",
-            "stock": 0
-        },
-        {
-            "name": "TROPHY",
-            "stock": 0
-        }
-    ]
+  "coin": 50,
+  "goods": [
+    {
+      "description": "slow down\nInvaders",
+      "name": "DECELERATE",
+      "price": 10
+    },
+    {
+      "description": "accelerate\ntowers",
+      "name": "ACCELERATE",
+      "price": 10
+    }
+  ],
+  "props": [
+    {
+      "name": "ACCELERATE",
+      "stock": 5
+    },
+    {
+      "name": "DECELERATE",
+      "stock": 5
+    }
+  ]
 }

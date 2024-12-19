@@ -23,39 +23,39 @@ void Figure::Render(sf::RenderWindow *l_wind) const {
   l_wind->draw(m_livesBar);
 }
 
-void Figure::Update(const sf::Time &elapsed) {
-  // TODO: Only Support Square
+void Figure::Update(const sf::Time &elapsed, const double l_ratio) {
   if (m_mileage / m_atomResolution.x >= static_cast<double>(m_increments.size())) {
     return;
   }
+  const float delta = elapsed.asSeconds() * static_cast<float>(m_speed) * static_cast<float>(l_ratio);
   switch (m_increments[static_cast<long long>(m_mileage / m_atomResolution.x)]) {
     case Direction::Right:
-      m_sprite.setPosition(m_sprite.getPosition().x + elapsed.asSeconds() * static_cast<float>(m_speed),
+      m_sprite.setPosition(m_sprite.getPosition().x + delta,
                            m_sprite.getPosition().y);
-      m_livesBar.setPosition(m_livesBar.getPosition().x + elapsed.asSeconds() * static_cast<float>(m_speed),
+      m_livesBar.setPosition(m_livesBar.getPosition().x + delta,
                              m_livesBar.getPosition().y);
       break;
     case Direction::Down:
       m_sprite.setPosition(m_sprite.getPosition().x,
-                           m_sprite.getPosition().y + elapsed.asSeconds() * static_cast<float>(m_speed));
+                           m_sprite.getPosition().y + delta);
       m_livesBar.setPosition(m_livesBar.getPosition().x,
-                             m_livesBar.getPosition().y + elapsed.asSeconds() * static_cast<float>(m_speed));
+                             m_livesBar.getPosition().y + delta);
       break;
     case Direction::Left:
-      m_sprite.setPosition(m_sprite.getPosition().x - elapsed.asSeconds() * static_cast<float>(m_speed),
+      m_sprite.setPosition(m_sprite.getPosition().x - delta,
                            m_sprite.getPosition().y);
-      m_livesBar.setPosition(m_livesBar.getPosition().x - elapsed.asSeconds() * static_cast<float>(m_speed),
+      m_livesBar.setPosition(m_livesBar.getPosition().x - delta,
                              m_livesBar.getPosition().y);
       break;
     case Direction::Up:
       m_sprite.setPosition(m_sprite.getPosition().x,
-                           m_sprite.getPosition().y - elapsed.asSeconds() * static_cast<float>(m_speed));
+                           m_sprite.getPosition().y - delta);
       m_livesBar.setPosition(m_livesBar.getPosition().x,
-                             m_livesBar.getPosition().y - elapsed.asSeconds() * static_cast<float>(m_speed));
+                             m_livesBar.getPosition().y - delta);
     default:
       break;
   }
-  m_mileage += elapsed.asSeconds() * static_cast<float>(m_speed);
+  m_mileage += delta;
 }
 
 int Figure::GetLives() const { return m_lives; }

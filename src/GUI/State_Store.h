@@ -4,7 +4,7 @@
 #include "EventManager.h"
 
 enum class PropType {
-  SLOW,
+  DECELERATE,
   ACCELERATE,
   TROPHY,
 };

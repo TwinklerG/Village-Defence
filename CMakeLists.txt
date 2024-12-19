@@ -30,6 +30,10 @@ if (CMAKE_GENERATOR MATCHES "Visual Studio")
     file(COPY res DESTINATION ${CMAKE_BINARY_DIR}/Release)
 elseif (CMAKE_GENERATOR STREQUAL "Ninja")
     file(COPY res DESTINATION ${CMAKE_BINARY_DIR}/)
+else ()
+    file(COPY res DESTINATION ${CMAKE_BINARY_DIR}/Release)
+    file(COPY res DESTINATION ${CMAKE_BINARY_DIR}/Debug)
+    file(COPY res DESTINATION ${CMAKE_BINARY_DIR}/)
 endif ()
 
 target_link_libraries(main PRIVATE sfml-graphics) # SFML/Graphics.hpp

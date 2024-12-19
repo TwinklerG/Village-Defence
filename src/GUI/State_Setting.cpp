@@ -22,8 +22,8 @@ void State_Setting::OnCreate() {
                  m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
                    {1200, 750, 32}, "Village Defence", sf::Style::Close
                  );
-                 m_stateMgr->SwitchTo(StateType::Intro);
                  SaveResolution(1200, 750);
+                 m_stateMgr->SwitchTo(StateType::Intro);
                }),
     gl::Button("(1600, 1000)", l_pos + 2.0f * l_delta, l_size, l_windowSize.y / 22,
                m_font, [this]() {
@@ -32,19 +32,18 @@ void State_Setting::OnCreate() {
                    {1600, 1000, 32}
                    , "Village Defence", sf::Style::Close
                  );
-                 m_stateMgr->SwitchTo(StateType::Intro);
                  SaveResolution(1600, 1000);
+                 m_stateMgr->SwitchTo(StateType::Intro);
                }),
     gl::Button("(2000, 1250)", l_pos + 3.0f * l_delta, l_size, l_windowSize.y / 22,
                m_font, [this]() {
-                 std::cout << "change resolution to (2560, 1600)" << std::endl;
                  m_stateMgr->RemoveAll();
                  m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
                    {2000, 1250, 32}
                    , "Village Defence", sf::Style::Close
                  );
-                 m_stateMgr->SwitchTo(StateType::Intro);
                  SaveResolution(2000, 1250);
+                 m_stateMgr->SwitchTo(StateType::Intro);
                })
   };
   m_select = std::make_unique<gl::Select>("Resolution", l_pos, l_size, l_windowSize.y / 18, m_font, l_options);
@@ -79,7 +78,6 @@ void State_Setting::SaveResolution(int width, int height) const {
   nlohmann::json l_cfg = nlohmann::json::parse(l_iFs);
   l_iFs.close();
   l_cfg["resolution"] = {{"width", width}, {"height", height}};
-  // TODO: Change ShareContext
   m_stateMgr->GetContext()->m_resolution = std::to_string(width) + "_" + std::to_string(height);
   m_stateMgr->GetContext()->m_atomResolution = sf::Vector2f(static_cast<float>(width) / 20.0f,
                                                             static_cast<float>(height) * 2.0f / 25.0f);

@@ -12,9 +12,21 @@ namespace Utils {
 
   inline bool IsHover(const sf::RectangleShape &l_rect, const sf::RenderWindow &l_window) {
     const sf::Vector2i l_mousePos = sf::Mouse::getPosition(l_window);
-    return static_cast<float>(l_mousePos.x) > l_rect.getPosition().x - l_rect.getSize().x / 2 &&
-           static_cast<float>(l_mousePos.x) < l_rect.getPosition().x + l_rect.getSize().x / 2 &&
-           static_cast<float>(l_mousePos.y) > l_rect.getPosition().y - l_rect.getSize().y / 2 &&
-           static_cast<float>(l_mousePos.y) < l_rect.getPosition().y + l_rect.getSize().y / 2;
+    return static_cast<float>(l_mousePos.x) > l_rect.getPosition().x - l_rect.getSize().x / 2.0f &&
+           static_cast<float>(l_mousePos.x) < l_rect.getPosition().x + l_rect.getSize().x / 2.0f &&
+           static_cast<float>(l_mousePos.y) > l_rect.getPosition().y - l_rect.getSize().y / 2.0f &&
+           static_cast<float>(l_mousePos.y) < l_rect.getPosition().y + l_rect.getSize().y / 2.0f;
+  }
+
+  inline bool IsHover(const sf::Sprite &l_rect, const sf::RenderWindow &l_window) {
+    const sf::Vector2i l_mousePos = sf::Mouse::getPosition(l_window);
+    return static_cast<float>(l_mousePos.x) > l_rect.getPosition().x - static_cast<float>(l_rect.getTexture()->getSize()
+             .x) / 2.0f &&
+           static_cast<float>(l_mousePos.x) < l_rect.getPosition().x + static_cast<float>(l_rect.getTexture()->getSize()
+             .x) / 2.0f &&
+           static_cast<float>(l_mousePos.y) > l_rect.getPosition().y - static_cast<float>(l_rect.getTexture()->getSize()
+             .y) / 2.0f &&
+           static_cast<float>(l_mousePos.y) < l_rect.getPosition().y + static_cast<float>(l_rect.getTexture()->getSize()
+             .y) / 2.0f;
   }
 }

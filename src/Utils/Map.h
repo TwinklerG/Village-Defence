@@ -11,6 +11,7 @@
 #include "Board.h"
 #include "Bullet.h"
 #include "../Widgets/TextBox.h"
+#include "../Widgets/Label.h"
 
 enum class SelectType {
   Choice,
@@ -21,6 +22,23 @@ struct SelectInfo {
   SelectType m_selectType;
   std::shared_ptr<Tower> m_tower;
   int x, y;
+};
+
+struct PropBuff {
+  PropBuff(): m_accelerate(1), m_decelerate(1), m_countDownSum(3) {
+  }
+
+  void Reset() {
+    m_accelerate = 1.0;
+    m_decelerate = 1.0;
+    m_countDown = 0;
+  }
+
+  double m_accelerate; // accelerate Tower
+  double m_decelerate; // decelerate Invader
+  float m_countDown = 0;
+
+  const float m_countDownSum;
 };
 
 class Map {
@@ -43,7 +61,6 @@ public:
 private:
   void LoadMap();
 
-  const int m_level;
   int m_lives{};
   bool m_isWin;
   sf::RectangleShape m_backup;
@@ -55,6 +72,10 @@ private:
   std::vector<std::vector<Place> > m_places;
   std::vector<std::pair<std::pair<int, int>, std::vector<Direction> > > m_roads;
   std::vector<Bullet> m_bullets;
+
+  // Props
+  PropBuff m_propBuff;
+  std::vector<gl::Label> m_labels;
 
   // Widgets
   std::vector<StartPoint> m_startPoints;
@@ -68,6 +89,7 @@ private:
   // Configurations
   std::string m_resolution;
   sf::Vector2f m_atomResolution;
+  const int m_level;
   static int m_XRange;
   static int m_YRange;
 };

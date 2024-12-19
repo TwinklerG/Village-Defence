@@ -2,8 +2,8 @@
 #include "StateManager.h"
 
 PropType sToPropType(const std::string &s) {
-  if (s == "SLOW") {
-    return PropType::SLOW;
+  if (s == "DECELERATE") {
+    return PropType::DECELERATE;
   }
   if (s == "ACCELERATE") {
     return PropType::ACCELERATE;
@@ -21,7 +21,6 @@ State_Store::State_Store(StateManager *l_stateManager) : BaseState(l_stateManage
 State_Store::~State_Store() = default;
 
 void State_Store::OnCreate() {
-  nlohmann::json data;
   m_font.loadFromFile("res/fonts/CONSOLAB.TTF");
   m_title.setFont(m_font);
   m_title.setString("STORE");
@@ -29,7 +28,6 @@ void State_Store::OnCreate() {
   m_title.setOrigin(m_title.getLocalBounds().width / 2.0f, m_title.getLocalBounds().height / 2.0f);
   m_title.setPosition(static_cast<float>(m_stateMgr->GetContext()->m_wind->GetWindowSize().x) / 2.0f,
                       static_cast<float>(m_stateMgr->GetContext()->m_wind->GetWindowSize().y) / 10.0f);
-  // LoadPropss();
   LoadJson();
 
   EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
@@ -111,8 +109,8 @@ void State_Store::SaveJson() {
   data["goods"] = tmp["goods"];
   in.close();
   for (const auto &[l_propType, l_propCnt]: m_props) {
-    if (l_propType == PropType::SLOW) {
-      data["props"].push_back({{"name", "SLOW"}, {"stock", l_propCnt}});
+    if (l_propType == PropType::DECELERATE) {
+      data["props"].push_back({{"name", "DECELERATE"}, {"stock", l_propCnt}});
     } else if (l_propType == PropType::ACCELERATE) {
       data["props"].push_back({{"name", "ACCELERATE"}, {"stock", l_propCnt}});
     } else if (l_propType == PropType::TROPHY) {
@@ -180,7 +178,6 @@ bool StoreChoice::Update(const sf::RenderWindow *l_wind) {
     static_cast<float>(l_mousePos.y) >= m_rect.getPosition().y - m_rect.getSize().y / 2.0f &&
     static_cast<float>(l_mousePos.y) <= m_rect.getPosition().y + m_rect.getSize().y / 2.0f) {
     if (!m_isMouseLeft && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-      // std::cout << "MouseLeft Clicked!\n";
       m_isMouseLeft = true;
       ret = true;
       ++m_cnt;

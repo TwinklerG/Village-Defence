@@ -4,6 +4,7 @@
 #include <cmath>
 #include <numeric>
 #include <utility>
+#include <iostream>
 
 template<class T>
 bool checkMouseSelect(const T &target, sf::RenderWindow *l_wind) {
@@ -65,9 +66,48 @@ void Map::OnCreate(sf::RenderWindow *l_wind) {
     6,
     m_fonts["arial"]);
   m_textBox->AddText("Welcome to Village Defence!");
+  std::ifstream l_propIn("res/config/store.json");
+  nlohmann::json l_propData = nlohmann::json::parse(l_propIn);
+  l_propIn.close();
+  auto l_props = l_propData["props"];
+  if (m_textures.find("ACCELERATE") == m_textures.end()) {
+    m_textures["ACCELERATE"].loadFromFile("res/img/prop/" + m_resolution + "/prop_accelerate.png");
+  }
+  if (m_textures.find("DECELERATE") == m_textures.end()) {
+    m_textures["DECELERATE"].loadFromFile("res/img/prop/" + m_resolution + "/prop_decelerate.png");
+  }
+  for (int i = 0; i < l_props.size(); ++i) {
+    std::string l_propName = l_props[i]["name"], l_propCnt = nlohmann::to_string(l_props[i]["stock"]);
+    m_labels.emplace_back(m_textures[l_propName], sf::Vector2f(
+                            m_atomResolution.x * static_cast<float>(6 + i) + static_cast<float>(m_textures[l_propName].
+                              getSize().x) / 2.0f,
+                            static_cast<float>(m_textures[l_propName].getSize().y) / 2.0f), l_propCnt,
+                          static_cast<unsigned int>(m_atomResolution.x) / 3, m_fonts["arial"],
+                          [i, this]() {
+                            std::cout << "Clicked on " << i << "\n";
+                            std::ifstream in("res/config/store.json");
+                            if (nlohmann::json data = nlohmann::json::parse(in); data["props"][i]["stock"] > 0) {
+                              data["props"][i]["stock"] = static_cast<int>(data["props"][i]["stock"]) - 1;
+                              std::cout << data["props"][i]["stock"] << "\n";
+                              if (data["props"][i]["name"] == "ACCELERATE") {
+                                m_propBuff.m_accelerate = 3;
+                              } else if (data["props"][i]["name"] == "DECELERATE") {
+                                m_propBuff.m_decelerate = 0.3;
+                              }
+                              m_propBuff.m_countDown = m_propBuff.m_countDownSum;
+                            }
+                          });
+  }
 }
 
 void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
+  // Update Buff
+  if (m_propBuff.m_countDown > 0) {
+    m_propBuff.m_countDown -= l_time.asSeconds();
+    if (m_propBuff.m_countDown <= 0) {
+      m_propBuff.Reset();
+    }
+  }
   // Check Game Finish Condition
   if (std::accumulate(m_startPoints.begin(), m_startPoints.end(), 0, [](const int accum, const StartPoint &l_sp) {
     return accum + l_sp.GetLeftTurns();
@@ -139,7 +179,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
   }
   // Figures Update
   for (auto &l_fig: m_figures) {
-    l_fig->Update(l_time);
+    l_fig->Update(l_time, m_propBuff.m_decelerate);
   }
   // Tower Attack Invaders
   for (int i = 0; i < m_XRange; ++i) {
@@ -171,7 +211,9 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
             break;
           }
         }
-        m_places[i][j].GetTower()->SetCalmTime(m_places[i][j].GetTower()->m_totalCalmTime);
+        m_places[i][j].GetTower()->SetCalmTime(
+          sf::seconds(
+            m_places[i][j].GetTower()->m_totalCalmTime.asSeconds() / static_cast<float>(m_propBuff.m_accelerate)));
       }
     }
   }
@@ -210,6 +252,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
     for (const auto &l_ep: m_endPoints) {
       if (checkInRange(*l_fig, l_ep, l_fig->getSize().x / 2.0 + l_ep.getSize().x / 2.0)) {
         --m_lives;
+        m_textBox->AddText("Village Invaded, current lives: " + std::to_string(m_lives));
         if (auto itr = std::find(next_figures.begin(), next_figures.end(), l_fig);
           itr != next_figures.end()) {
           next_figures.erase(itr);
@@ -258,6 +301,10 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
       m_selected.m_selectType = SelectType::Choice;
     }
   }
+  // Update Labels
+  for (auto &l_label: m_labels) {
+    l_label.Update(*m_wind);
+  }
 }
 
 void Map::Render(sf::RenderWindow *l_wind) {
@@ -265,6 +312,9 @@ void Map::Render(sf::RenderWindow *l_wind) {
   for (const auto &[fst, snd]: m_choices) {
     l_wind->draw(fst.first);
     l_wind->draw(fst.second);
+  }
+  for (const auto &l_label: m_labels) {
+    l_label.Render(*m_wind);
   }
   for (int i = 0; i < m_XRange; i++) {
     for (int j = 0; j < m_YRange; j++) {
@@ -371,11 +421,10 @@ void Map::LoadMap() {
         sf::Sprite l_sp(m_textures["road"]);
         l_sp.setOrigin(static_cast<float>(m_textures["road"].getSize().x / 2.0),
                        static_cast<float>(m_textures["road"].getSize().y / 2.0));
-        l_sp.setPosition(static_cast<float>(m_atomResolution.x) / 2.0f
-                         + static_cast<float>(m_atomResolution.x) * static_cast<float>(i),
-                         static_cast<float>(m_atomResolution.y) * static_cast<float>(m_YRange) / 4.0f
-                         + static_cast<float>(m_atomResolution.y) / 2.0f + static_cast<float>(
-                           m_atomResolution.y) * static_cast<float>(j));
+        l_sp.setPosition(m_atomResolution.x / 2.0f
+                         + m_atomResolution.x * static_cast<float>(i),
+                         m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f
+                         + m_atomResolution.y / 2.0f + m_atomResolution.y * static_cast<float>(j));
         m_places[i][j] = Place(l_sp, m_textures["road"].getSize(), PlaceType::Road);
       } else if (l_placeType == 3) {
         if (m_textures.find("startPoint") == m_textures.end()) {
