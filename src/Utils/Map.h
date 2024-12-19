@@ -10,7 +10,7 @@
 #include "EndPoint.h"
 #include "Board.h"
 #include "Bullet.h"
-#include "../GUI/Textbox.h"
+#include "../Widgets/TextBox.h"
 
 enum class SelectType {
   Choice,
@@ -26,7 +26,7 @@ struct SelectInfo {
 class Map {
 public:
   explicit Map(sf::RenderWindow *l_wind, int l_level = 0,
-               std::string l_resolutions = "1600_1000", std::pair<int, int> l_resolution = {80, 80});
+               std::string l_resolutions = "1600_1000", sf::Vector2f l_resolution = {80, 80});
 
   ~Map();
 
@@ -53,16 +53,21 @@ private:
   std::vector<std::shared_ptr<Figure> > m_figures;
   SelectInfo m_selected;
   std::vector<std::vector<Place> > m_places;
-  std::vector<StartPoint> m_startPoints;
-  std::vector<EndPoint> m_endPoints;
   std::vector<std::pair<std::pair<int, int>, std::vector<Direction> > > m_roads;
   std::vector<Bullet> m_bullets;
-  Textbox m_textbox;
+
+  // Widgets
+  std::vector<StartPoint> m_startPoints;
+  std::vector<EndPoint> m_endPoints;
+  std::unique_ptr<gl::TextBox> m_textBox;
+
+  // Resources
   std::unordered_map<std::string, sf::Font> m_fonts;
   std::unordered_map<std::string, sf::Texture> m_textures;
 
+  // Configurations
   std::string m_resolution;
-  std::pair<int, int> m_atomResolution;
+  sf::Vector2f m_atomResolution;
   static int m_XRange;
   static int m_YRange;
 };

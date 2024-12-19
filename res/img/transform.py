@@ -2,7 +2,7 @@ import os
 from PIL import Image
 
 # 设置源文件夹
-source_folders = ["grass", "invader", "states", "tower"]
+source_folders = ["prop"]
 
 for source_folder in source_folders:
     if not os.path.exists(source_folder):

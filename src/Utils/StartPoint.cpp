@@ -9,7 +9,7 @@ sf::Time StartPoint::m_BreakTime = sf::seconds(5);
 
 StartPoint::StartPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::pair<int, int> &l_cor,
                        const std::vector<InvadeTurnInfo> &l_invaderTurns, std::string l_resolution,
-                       const std::pair<int, int> l_atomResolution)
+                       const sf::Vector2f l_atomResolution)
   : Element(l_sp, l_size),
     m_coordinate(l_cor),
     m_invaderTurns(l_invaderTurns),
@@ -57,23 +57,22 @@ std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed) {
     m_invaderTurns.erase(m_invaderTurns.begin());
     m_calmTime = sf::seconds(5);
   }
-  std::string l_figureName = "invader" + std::to_string(tag);
+  const std::string l_figureName = "invader" + std::to_string(tag);
   if (m_textures.find(l_figureName) == m_textures.end()) {
     m_textures[l_figureName].loadFromFile("res/img/invader/" + m_resolution + "/" + l_figureName + ".png");
   }
   sf::Sprite l_sp(m_textures[l_figureName]);
   l_sp.setOrigin(static_cast<float>(m_textures[l_figureName].getSize().x / 2.0),
                  static_cast<float>(m_textures[l_figureName].getSize().y / 2.0));
-  l_sp.setPosition(static_cast<float>(m_atomResolution.first) / 2.0f
-                   + static_cast<float>(m_atomResolution.first) * static_cast<float>(m_coordinate.first),
-                   static_cast<float>(m_atomResolution.second) * static_cast<float>(m_YRange) / 4.0f
-                   + static_cast<float>(m_atomResolution.second) / 2.0f + static_cast<float>(
-                     m_atomResolution.second) * static_cast<float>(m_coordinate.second));
+  l_sp.setPosition(m_atomResolution.x / 2.0f
+                   + m_atomResolution.x * static_cast<float>(m_coordinate.first),
+                   m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f
+                   + m_atomResolution.y / 2.0f + m_atomResolution.y * static_cast<float>(m_coordinate.second));
   return std::make_shared<Figure>(l_sp, l_sp.getTexture()->getSize(),
                                   m_roads[Utils::RandInt(0, static_cast<int>(m_roads.size()) - 1)],
                                   m_figureInfos[tag].m_lives,
                                   static_cast<int>(m_figureInfos[tag].m_speed * l_speedBuff),
-                                  m_figureInfos[tag].m_reward);
+                                  m_figureInfos[tag].m_reward, m_atomResolution);
 }
 
 void StartPoint::SetRoads(const std::vector<std::vector<Direction> > &l_roads) {

@@ -9,7 +9,7 @@ public:
 
   Tower(const sf::Sprite &, const sf::Vector2u &);
 
-  Tower(const sf::Sprite &, const sf::Vector2u &, const sf::Time &, int = 1, float = 90, int range = 400, int = 50,
+  Tower(const sf::Sprite &, const sf::Vector2u &, const sf::Time &, int = 1, float = 90, double range = 400, int = 50,
         int red = 255, int green = 255, int blue = 0, double radius = 10);
 
   void Render(sf::RenderWindow *l_wind) const override;
@@ -32,14 +32,14 @@ public:
 
   const int &GetCost() const;
 
-  const int &GetRange() const;
+  const double &GetRange() const;
 
   const sf::Color &GetBulletColor() const;
 
   const double &GetBulletRadius() const;
 
   static sf::Time m_totalClickCalmTime;
-  sf::Time m_totalCalmTime;
+  const sf::Time m_totalCalmTime;
 
 private:
   sf::Time m_clamTime;
@@ -49,7 +49,7 @@ private:
   double m_bulletRadius{};
   sf::Color m_bulletColor;
   float m_bulletSpeed{};
-  int m_range{};
+  double m_range{};
   int m_cost{};
 };
 
@@ -88,7 +88,7 @@ struct TowerInfo {
   int m_tag;
   int m_cost;
   int m_attackPoint;
-  int m_range;
+  double m_range;
   double m_calmTime;
   double m_speed;
   int m_red, m_green, m_blue;

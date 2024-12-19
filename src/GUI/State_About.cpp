@@ -15,7 +15,7 @@ void State_About::OnCreate() {
   m_font.loadFromFile("res/fonts/CONSOLAZ.TTF");
   m_content.setFont(m_font);
   m_content.setString("Village Defence\n\nCreated By Liang Gong & Powered by SFML\n");
-  m_content.setCharacterSize(60);
+  m_content.setCharacterSize(static_cast<unsigned int>(m_stateMgr->GetContext()->m_atomResolution.x) / 3 * 2);
   m_content.setFillColor(sf::Color::White);
   m_content.setOrigin(m_content.getLocalBounds().width / 2.0f, m_content.getLocalBounds().height / 2.0f);
   m_content.setPosition(static_cast<float>(l_wind->getSize().x) / 2.0f,

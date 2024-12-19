@@ -15,5 +15,5 @@ struct SharedContext {
   BgmManager m_bgmManager;
   SoundManager m_soundManager;
   std::string m_resolution;
-  std::pair<int, int> m_atomResolution;
+  sf::Vector2f m_atomResolution; // Support Square only
 };

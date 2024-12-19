@@ -12,7 +12,10 @@ Place::Place(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const PlaceType
 }
 
 std::shared_ptr<Tower> Place::GetTower() { return m_tower; }
-void Place::SetTower(std::shared_ptr<Tower> l_tower) { m_tower = std::move(l_tower); }
+
+void Place::SetTower(std::shared_ptr<Tower> l_tower) {
+  m_tower = std::move(l_tower);
+}
 
 void Place::Render(sf::RenderWindow *l_wind) const {
   l_wind->draw(m_sprite);
@@ -44,7 +47,7 @@ Tower::Tower(const sf::Sprite &l_sp, const sf::Vector2u &l_size)
 
 Tower::Tower(const sf::Sprite &l_sp,
              const sf::Vector2u &l_size,
-             const sf::Time &l_ct, const int l_atk, const float l_bSpeed, const int range, const int l_cost,
+             const sf::Time &l_ct, const int l_atk, const float l_bSpeed, const double range, const int l_cost,
              const int red, const int green, const int blue, const double radius)
   : Element(l_sp, l_size),
     m_totalCalmTime(l_ct),
@@ -80,6 +83,6 @@ void Tower::SetClickCalmTime(const sf::Time &l_time) { m_clickCalmTime = l_time;
 const int &Tower::GetAttackPoint() const { return m_attackPoint; }
 const float &Tower::GetBulletSpeed() const { return m_bulletSpeed; }
 const int &Tower::GetCost() const { return m_cost; }
-const int &Tower::GetRange() const { return m_range; }
+const double &Tower::GetRange() const { return m_range; }
 const sf::Color &Tower::GetBulletColor() const { return m_bulletColor; }
 const double &Tower::GetBulletRadius() const { return m_bulletRadius; }

@@ -9,10 +9,10 @@ Game::Game() : m_stateManager(&m_context) {
                                       sf::Vector2u(cfg["resolution"]["width"], cfg["resolution"]["height"]));
   m_stateManager.GetContext()->m_resolution = to_string(cfg["resolution"]["width"]) + "_" + to_string(
                                                 cfg["resolution"]["height"]);
-  m_stateManager.GetContext()->m_atomResolution = {
-    static_cast<int>(cfg["resolution"]["width"]) / 20,
-    static_cast<int>(cfg["resolution"]["height"]) * 2 / 25
-  };
+  m_stateManager.GetContext()->m_atomResolution = sf::Vector2f(
+    static_cast<float>(cfg["resolution"]["width"]) / 20.0f,
+    static_cast<float>(cfg["resolution"]["height"]) * 2.0f / 25.0f
+  );
   m_context.m_wind = m_window;
   m_context.m_eventManager = m_window->GetEventManager();
   BgmManager &l_bgmManager = m_context.m_bgmManager;

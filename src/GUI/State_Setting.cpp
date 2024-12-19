@@ -74,12 +74,15 @@ void State_Setting::Activate() {
 void State_Setting::Deactivate() {
 }
 
-void SaveResolution(int width, int height) {
+void State_Setting::SaveResolution(int width, int height) const {
   std::ifstream l_iFs("res/config/config.json");
   nlohmann::json l_cfg = nlohmann::json::parse(l_iFs);
   l_iFs.close();
   l_cfg["resolution"] = {{"width", width}, {"height", height}};
   // TODO: Change ShareContext
+  m_stateMgr->GetContext()->m_resolution = std::to_string(width) + "_" + std::to_string(height);
+  m_stateMgr->GetContext()->m_atomResolution = sf::Vector2f(static_cast<float>(width) / 20.0f,
+                                                            static_cast<float>(height) * 2.0f / 25.0f);
   std::ofstream o_iFs("res/config/config.json");
   o_iFs << std::setw(4) << l_cfg;
   o_iFs.close();

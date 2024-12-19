@@ -1,12 +1,16 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class Board
-{
+class Board {
 public:
   Board();
+
+  explicit Board(const sf::Vector2f &l_size);
+
   void Render(sf::RenderWindow *);
+
   int GetMoney() const;
+
   void SetMoney(const int &l_money);
 
 private:

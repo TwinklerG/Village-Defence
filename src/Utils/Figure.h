@@ -14,12 +14,10 @@ struct FigureInfo {
   int m_reward;
 };
 
-class Figure : public Element {
+class Figure final : public Element {
 public:
-  Figure();
-
-  Figure(const sf::Sprite &, const sf::Vector2u &, const std::vector<Direction> &, int l_lives = 5, int l_speed = 90,
-         int l_reward = 10);
+  explicit Figure(const sf::Sprite &, const sf::Vector2u &, const std::vector<Direction> &, int l_lives = 5,
+                  int l_speed = 90, int l_reward = 10, sf::Vector2f l_atomResolution = {80, 80});
 
   void Render(sf::RenderWindow *l_wind) const override;
 
@@ -33,6 +31,7 @@ public:
 
 private:
   sf::RectangleShape m_livesBar;
+  sf::Vector2f m_atomResolution;
   std::vector<Direction> m_increments;
   double m_mileage{};
   int m_totalLives{};

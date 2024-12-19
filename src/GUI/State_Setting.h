@@ -22,11 +22,11 @@ public:
   void Draw() override;
 
 private:
+  void SaveResolution(int width, int height) const;
+
   void MainMenu(EventDetails *l_details);
 
   std::unique_ptr<gl::Select> m_select;
 
   sf::Font m_font;
 };
-
-void SaveResolution(int width, int height);

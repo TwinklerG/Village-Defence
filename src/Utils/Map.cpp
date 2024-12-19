@@ -39,9 +39,9 @@ int Map::m_XRange = 20;
 int Map::m_YRange = 10;
 
 Map::Map(sf::RenderWindow *l_wind, const int l_level, std::string l_resolutions,
-         const std::pair<int, int> l_resolution) : m_level(l_level), m_isWin(false),
-                                                   m_resolution(std::move(l_resolutions)),
-                                                   m_atomResolution(l_resolution) { OnCreate(l_wind); }
+         const sf::Vector2f l_resolution) : m_level(l_level), m_isWin(false),
+                                            m_resolution(std::move(l_resolutions)),
+                                            m_atomResolution(l_resolution) { OnCreate(l_wind); }
 
 Map::~Map() = default;
 
@@ -50,12 +50,21 @@ void Map::OnCreate(sf::RenderWindow *l_wind) {
   m_backup = sf::RectangleShape(sf::Vector2f(static_cast<float>(l_wind->getSize().x),
                                              static_cast<float>(l_wind->getSize().y)));
   m_backup.setFillColor(sf::Color(120, 120, 0));
-  m_board = std::make_unique<Board>();
-  m_textbox.Setup(10, 24, 600, sf::Vector2f(1920, 0));
-  m_textbox.Add("Welcome to Village Defence");
-  m_selected.m_tower = nullptr;
+  m_board = std::make_unique<Board>(sf::Vector2f(m_atomResolution.x, m_atomResolution.y));
   m_wind = l_wind;
+  m_selected.m_tower = nullptr;
   LoadMap();
+  if (m_fonts.find("arial") == m_fonts.end()) {
+    m_fonts["arial"].loadFromFile("res/fonts/arial.ttf");
+  }
+  m_textBox = std::make_unique<gl::TextBox>(
+    sf::Vector2f(static_cast<float>(l_wind->getSize().x) / 5.0f * 4.0f,
+                 static_cast<float>(l_wind->getSize().y) / 10.0f),
+    sf::Vector2f(static_cast<float>(l_wind->getSize().x) / 5.0f * 2,
+                 static_cast<float>(l_wind->getSize().y) / 5.0f),
+    6,
+    m_fonts["arial"]);
+  m_textBox->AddText("Welcome to Village Defence!");
 }
 
 void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
@@ -91,11 +100,10 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
               PlaceType::Land) {
             // Lay a Tower
             std::shared_ptr<Tower> t = m_selected.m_tower;
-            t->GetSprite().setPosition(static_cast<float>(m_atomResolution.first) / 2.0f
-                                       + static_cast<float>(m_atomResolution.first) * static_cast<float>(i),
-                                       static_cast<float>(m_atomResolution.second) * static_cast<float>(m_YRange) / 4.0f
-                                       + static_cast<float>(m_atomResolution.second) / 2.0f + static_cast<float>(
-                                         m_atomResolution.second) * static_cast<float>(j));
+            t->GetSprite().setPosition(m_atomResolution.x / 2.0f
+                                       + m_atomResolution.x * static_cast<float>(i),
+                                       m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f
+                                       + m_atomResolution.y / 2.0f + m_atomResolution.y * static_cast<float>(j));
             t->SetCircle(nullptr);
             m_places[i][j].SetTower(t);
             m_places[i][j].SetPlaceType(PlaceType::Tower);
@@ -108,17 +116,15 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
             m_selected.y = j;
             m_selected.m_tower = m_places[i][j].GetTower();
             std::shared_ptr<Tower> l_tower = m_places[i][j].GetTower();
-            sf::CircleShape l_circle(static_cast<float>(l_tower->GetRange()));
+            sf::CircleShape l_circle(static_cast<float>(l_tower->GetRange()) * m_atomResolution.x);
             l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
             l_circle.setFillColor(sf::Color(0, 0, 0, 0));
             l_circle.setOutlineColor(sf::Color::Red);
-            l_circle.setOutlineThickness(3.0f);
+            l_circle.setOutlineThickness(m_atomResolution.x / 50.0f);
             l_circle.setPosition(
-              static_cast<float>(m_atomResolution.first) / 2.0f + static_cast<float>(m_atomResolution.first) *
-              static_cast<float>(i),
-              static_cast<float>(m_atomResolution.second) * static_cast<float>(m_YRange) / 4.0f + static_cast<float>(
-                m_atomResolution.
-                second) / 2.0f + static_cast<float>(m_atomResolution.second) * static_cast<float>(j));
+              m_atomResolution.x / 2.0f + m_atomResolution.x * static_cast<float>(i),
+              m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f + m_atomResolution.y / 2.0f + m_atomResolution.y
+              * static_cast<float>(j));
             m_places[i][j].GetTower()->SetCircle(std::make_shared<sf::CircleShape>(l_circle));
           }
         }
@@ -144,7 +150,8 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
           continue;
         }
         for (const auto &l_fig: m_figures) {
-          if (checkInRange(*l_fig, m_places[i][j], m_places[i][j].GetTower()->GetRange())) {
+          if (checkInRange(*l_fig, m_places[i][j],
+                           static_cast<float>(m_places[i][j].GetTower()->GetRange()) * m_atomResolution.x)) {
             int cnt = 0;
             for (auto &l_b: m_bullets) {
               if (l_b.GetTargetFigure() == l_fig) {
@@ -164,7 +171,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
             break;
           }
         }
-        m_places[i][j].GetTower()->SetCalmTime(sf::seconds(1));
+        m_places[i][j].GetTower()->SetCalmTime(m_places[i][j].GetTower()->m_totalCalmTime);
       }
     }
   }
@@ -203,9 +210,8 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
     for (const auto &l_ep: m_endPoints) {
       if (checkInRange(*l_fig, l_ep, l_fig->getSize().x / 2.0 + l_ep.getSize().x / 2.0)) {
         --m_lives;
-        m_textbox.Add("Village has been invaded. You have only " + std::to_string(m_lives) + " lives!!!");
-        auto itr = std::find(next_figures.begin(), next_figures.end(), l_fig);
-        if (itr != next_figures.end()) {
+        if (auto itr = std::find(next_figures.begin(), next_figures.end(), l_fig);
+          itr != next_figures.end()) {
           next_figures.erase(itr);
         }
         break;
@@ -241,11 +247,11 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
         static_cast<float>(l_choice.first.getTexture()->getSize().y / 2.0));
       m_selected.m_tower->GetSprite().setPosition(static_cast<float>(sf::Mouse::getPosition(*l_wind).x),
                                                   static_cast<float>(sf::Mouse::getPosition(*l_wind).y));
-      sf::CircleShape l_circle(static_cast<float>(l_towerInfo.m_range));
+      sf::CircleShape l_circle(static_cast<float>(l_towerInfo.m_range) * m_atomResolution.x);
       l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
       l_circle.setFillColor(sf::Color(0, 0, 0, 0));
       l_circle.setOutlineColor(sf::Color::Red);
-      l_circle.setOutlineThickness(3.0f);
+      l_circle.setOutlineThickness(m_atomResolution.x / 50.0f);
       l_circle.setPosition(static_cast<float>(sf::Mouse::getPosition(*l_wind).x),
                            static_cast<float>(sf::Mouse::getPosition(*l_wind).y));
       m_selected.m_tower->SetCircle(std::make_shared<sf::CircleShape>(l_circle));
@@ -271,14 +277,14 @@ void Map::Render(sf::RenderWindow *l_wind) {
   for (auto &l_b: m_bullets) {
     l_wind->draw(l_b.GetCircle());
   }
-  for (auto &l_fig: m_figures) {
+  for (const auto &l_fig: m_figures) {
     l_fig->Render(l_wind);
   }
   if (m_selected.m_tower) {
     m_selected.m_tower->Render(l_wind);
   }
-  m_textbox.Render(*l_wind);
   m_board->Render(l_wind);
+  m_textBox->Render(*l_wind);
 }
 
 void Map::LoadMap() {
@@ -311,14 +317,15 @@ void Map::LoadMap() {
     m_choices[i].first.first.setOrigin(static_cast<float>(m_choices[i].first.first.getTexture()->getSize().x / 2.0),
                                        static_cast<float>(m_choices[i].first.first.getTexture()->getSize().y / 2.0));
     m_choices[i].first.first.setPosition(
-      static_cast<float>(m_choices[i].first.first.getTexture()->getSize().x / 2.0 + m_atomResolution.first * (i + 1)),
+      static_cast<float>(m_choices[i].first.first.getTexture()->getSize().x / 2.0 + m_atomResolution.x * static_cast<
+                           float>(i + 1)),
       static_cast<float>(m_choices[i].first.first.getTexture()->getSize().y / 2.0));
     if (m_fonts.find("arial") == m_fonts.end()) {
       m_fonts["arial"].loadFromFile("res/fonts/arial.ttf");
     }
     m_choices[i].first.second.setFont(m_fonts["arial"]);
     m_choices[i].first.second.setString(std::to_string(l_towerInfos[tag].m_cost));
-    m_choices[i].first.second.setCharacterSize(30);
+    m_choices[i].first.second.setCharacterSize(static_cast<unsigned int>(m_atomResolution.x) / 3);
     m_choices[i].first.second.setOrigin(m_choices[i].first.second.getLocalBounds().width / 2,
                                         m_choices[i].first.second.getLocalBounds().height / 2);
     m_choices[i].first.second.setPosition(
@@ -343,8 +350,8 @@ void Map::LoadMap() {
   auto l_placesType = l_mapData["map"];
   for (int j = 0; j < m_YRange; ++j) {
     for (int i = 0; i < m_XRange; ++i) {
-      const int l_placeType = l_placesType[j][i];
-      if (l_placeType == 0) {
+      if (const int l_placeType = l_placesType[j][i];
+        l_placeType == 0) {
         if (m_textures.find("grass0") == m_textures.end()) {
           m_textures["grass0"].loadFromFile("res/img/grass/" + m_resolution + "/grass0.png");
         }
@@ -352,11 +359,10 @@ void Map::LoadMap() {
         l_sp.setOrigin(static_cast<float>(m_textures["grass0"].getSize().x / 2.0),
                        static_cast<float>(m_textures["grass0"].getSize().y / 2.0));
         l_sp.setPosition(
-          static_cast<float>(m_atomResolution.first) / 2.0f + static_cast<float>(m_atomResolution.first) *
+          m_atomResolution.x / 2.0f + m_atomResolution.x *
           static_cast<float>(i),
-          static_cast<float>(m_atomResolution.second) * static_cast<float>(m_YRange) / 4.0f + static_cast<float>(
-            m_atomResolution.
-            second) / 2.0f + static_cast<float>(m_atomResolution.second) * static_cast<float>(j));
+          m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f + m_atomResolution.y / 2.0f + m_atomResolution.y *
+          static_cast<float>(j));
         m_places[i][j] = Place(l_sp, m_textures["grass0"].getSize(), PlaceType::Land);
       } else if (l_placeType == 1) {
         if (m_textures.find("road") == m_textures.end()) {
@@ -365,11 +371,11 @@ void Map::LoadMap() {
         sf::Sprite l_sp(m_textures["road"]);
         l_sp.setOrigin(static_cast<float>(m_textures["road"].getSize().x / 2.0),
                        static_cast<float>(m_textures["road"].getSize().y / 2.0));
-        l_sp.setPosition(static_cast<float>(m_atomResolution.first) / 2.0f
-                         + static_cast<float>(m_atomResolution.first) * static_cast<float>(i),
-                         static_cast<float>(m_atomResolution.second) * static_cast<float>(m_YRange) / 4.0f
-                         + static_cast<float>(m_atomResolution.second) / 2.0f + static_cast<float>(
-                           m_atomResolution.second) * static_cast<float>(j));
+        l_sp.setPosition(static_cast<float>(m_atomResolution.x) / 2.0f
+                         + static_cast<float>(m_atomResolution.x) * static_cast<float>(i),
+                         static_cast<float>(m_atomResolution.y) * static_cast<float>(m_YRange) / 4.0f
+                         + static_cast<float>(m_atomResolution.y) / 2.0f + static_cast<float>(
+                           m_atomResolution.y) * static_cast<float>(j));
         m_places[i][j] = Place(l_sp, m_textures["road"].getSize(), PlaceType::Road);
       } else if (l_placeType == 3) {
         if (m_textures.find("startPoint") == m_textures.end()) {
@@ -378,11 +384,11 @@ void Map::LoadMap() {
         sf::Sprite l_sp(m_textures["startPoint"]);
         l_sp.setOrigin(static_cast<float>(m_textures["startPoint"].getSize().x / 2.0),
                        static_cast<float>(m_textures["startPoint"].getSize().y / 2.0));
-        l_sp.setPosition(static_cast<float>(m_atomResolution.first) / 2.0f
-                         + static_cast<float>(m_atomResolution.first) * static_cast<float>(i),
-                         static_cast<float>(m_atomResolution.second) * static_cast<float>(m_YRange) / 4.0f
-                         + static_cast<float>(m_atomResolution.second) / 2.0f + static_cast<float>(
-                           m_atomResolution.second) * static_cast<float>(j));
+        l_sp.setPosition(m_atomResolution.x / 2.0f
+                         + m_atomResolution.x * static_cast<float>(i),
+                         m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f
+                         + m_atomResolution.y / 2.0f +
+                         m_atomResolution.y * static_cast<float>(j));
         m_places[i][j] = Place(l_sp, m_textures["startPoint"].getSize(), PlaceType::Road);
         m_startPoints.emplace_back(l_sp, m_textures["startPoint"].getSize(), std::make_pair(i, j), l_invaderTurns,
                                    m_resolution, m_atomResolution);
@@ -393,22 +399,21 @@ void Map::LoadMap() {
         sf::Sprite l_esp(m_textures["endPoint"]);
         l_esp.setOrigin(static_cast<float>(m_textures["endPoint"].getSize().x / 2.0),
                         static_cast<float>(m_textures["endPoint"].getSize().y / 2.0));
-        l_esp.setPosition(static_cast<float>(m_atomResolution.first) / 2.0f
-                          + static_cast<float>(m_atomResolution.first) * static_cast<float>(i),
-                          static_cast<float>(m_atomResolution.second) * static_cast<float>(m_YRange) / 4.0f
-                          + static_cast<float>(m_atomResolution.second) / 2.0f + static_cast<float>(
-                            m_atomResolution.second) * static_cast<float>(j));
+        l_esp.setPosition(m_atomResolution.x / 2.0f
+                          + m_atomResolution.x * static_cast<float>(i),
+                          m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f
+                          + m_atomResolution.y / 2.0f +
+                          m_atomResolution.y * static_cast<float>(j));
         if (m_textures.find("grass2") == m_textures.end()) {
           m_textures["grass2"].loadFromFile("res/img/grass/" + m_resolution + "/grass2.png");
         }
         sf::Sprite l_sp(m_textures["grass2"]);
         l_sp.setOrigin(static_cast<float>(m_textures["grass2"].getSize().x / 2.0),
                        static_cast<float>(m_textures["grass2"].getSize().y / 2.0));
-        l_sp.setPosition(static_cast<float>(m_atomResolution.first) / 2.0f
-                         + static_cast<float>(m_atomResolution.first) * static_cast<float>(i),
-                         static_cast<float>(m_atomResolution.second) * static_cast<float>(m_YRange) / 4.0f
-                         + static_cast<float>(m_atomResolution.second) / 2.0f + static_cast<float>(
-                           m_atomResolution.second) * static_cast<float>(j));
+        l_sp.setPosition(m_atomResolution.x / 2.0f
+                         + m_atomResolution.x * static_cast<float>(i),
+                         m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f
+                         + m_atomResolution.y / 2.0f + m_atomResolution.y * static_cast<float>(j));
         m_places[i][j] = Place(l_sp, m_textures["grass2"].getSize(), PlaceType::End);
         m_endPoints.emplace_back(l_esp, l_esp.getTexture()->getSize(), std::make_pair(i, j));
       }

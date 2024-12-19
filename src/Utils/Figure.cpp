@@ -1,11 +1,10 @@
 #include "Figure.h"
 #include "Utils.hpp"
 
-Figure::Figure() = default;
-
 Figure::Figure(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::vector<Direction> &l_increments,
-               const int l_lives, const int l_speed, const int l_reward)
+               const int l_lives, const int l_speed, const int l_reward, const sf::Vector2f l_atomResolution)
   : Element(l_sp, l_size),
+    m_atomResolution(l_atomResolution),
     m_increments(l_increments),
     m_totalLives(l_lives),
     m_lives(l_lives),
@@ -25,26 +24,34 @@ void Figure::Render(sf::RenderWindow *l_wind) const {
 }
 
 void Figure::Update(const sf::Time &elapsed) {
-  // TODO: Change Mileage Check
-  if (m_mileage / 90 >= static_cast<double>(m_increments.size())) {
+  // TODO: Only Support Square
+  if (m_mileage / m_atomResolution.x >= static_cast<double>(m_increments.size())) {
     return;
   }
-  switch (m_increments[static_cast<long long>(m_mileage / 90)]) {
+  switch (m_increments[static_cast<long long>(m_mileage / m_atomResolution.x)]) {
     case Direction::Right:
-      m_sprite.setPosition(m_sprite.getPosition().x + elapsed.asSeconds() * static_cast<float>(m_speed), m_sprite.getPosition().y);
-      m_livesBar.setPosition(m_livesBar.getPosition().x + elapsed.asSeconds() * static_cast<float>(m_speed), m_livesBar.getPosition().y);
+      m_sprite.setPosition(m_sprite.getPosition().x + elapsed.asSeconds() * static_cast<float>(m_speed),
+                           m_sprite.getPosition().y);
+      m_livesBar.setPosition(m_livesBar.getPosition().x + elapsed.asSeconds() * static_cast<float>(m_speed),
+                             m_livesBar.getPosition().y);
       break;
     case Direction::Down:
-      m_sprite.setPosition(m_sprite.getPosition().x, m_sprite.getPosition().y + elapsed.asSeconds() * static_cast<float>(m_speed));
-      m_livesBar.setPosition(m_livesBar.getPosition().x, m_livesBar.getPosition().y + elapsed.asSeconds() * static_cast<float>(m_speed));
+      m_sprite.setPosition(m_sprite.getPosition().x,
+                           m_sprite.getPosition().y + elapsed.asSeconds() * static_cast<float>(m_speed));
+      m_livesBar.setPosition(m_livesBar.getPosition().x,
+                             m_livesBar.getPosition().y + elapsed.asSeconds() * static_cast<float>(m_speed));
       break;
     case Direction::Left:
-      m_sprite.setPosition(m_sprite.getPosition().x - elapsed.asSeconds() * static_cast<float>(m_speed), m_sprite.getPosition().y);
-      m_livesBar.setPosition(m_livesBar.getPosition().x - elapsed.asSeconds() * static_cast<float>(m_speed), m_livesBar.getPosition().y);
+      m_sprite.setPosition(m_sprite.getPosition().x - elapsed.asSeconds() * static_cast<float>(m_speed),
+                           m_sprite.getPosition().y);
+      m_livesBar.setPosition(m_livesBar.getPosition().x - elapsed.asSeconds() * static_cast<float>(m_speed),
+                             m_livesBar.getPosition().y);
       break;
     case Direction::Up:
-      m_sprite.setPosition(m_sprite.getPosition().x, m_sprite.getPosition().y - elapsed.asSeconds() * static_cast<float>(m_speed));
-      m_livesBar.setPosition(m_livesBar.getPosition().x, m_livesBar.getPosition().y - elapsed.asSeconds() * static_cast<float>(m_speed));
+      m_sprite.setPosition(m_sprite.getPosition().x,
+                           m_sprite.getPosition().y - elapsed.asSeconds() * static_cast<float>(m_speed));
+      m_livesBar.setPosition(m_livesBar.getPosition().x,
+                             m_livesBar.getPosition().y - elapsed.asSeconds() * static_cast<float>(m_speed));
     default:
       break;
   }
