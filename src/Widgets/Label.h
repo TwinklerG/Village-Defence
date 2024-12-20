@@ -14,6 +14,8 @@ namespace gl {
 
     void Render(sf::RenderWindow &l_window) const;
 
+    void SetTextString(const std::string &l_textString);
+
   private:
     sf::Sprite m_sprite;
     sf::Text m_text;

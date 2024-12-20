@@ -35,7 +35,7 @@ void State_Intro::OnCreate() {
   for (int i = 0; i < m_SpritesSum; ++i) {
     m_textures[i].loadFromFile("res/img/states/" + m_stateMgr->GetContext()->m_resolution + "/intro_figure.png");
     m_sprites.emplace_back(m_textures[i]);
-    m_increments[i] = sf::Vector2i(Utils::RandInt(100, 400), Utils::RandInt(100, 400));
+    m_increments[i] = sf::Vector2i(gl::RandInt(100, 400), gl::RandInt(100, 400));
   }
 }
 

@@ -47,9 +47,11 @@ void State_Game::Pause(EventDetails *l_details) {
 }
 
 void State_Game::Activate() {
+  m_map.Reload();
   m_stateMgr->GetContext()->m_bgmManager.Play("battle.mp3", 8, true);
 }
 
 void State_Game::Deactivate() {
+  m_map.Save();
   m_stateMgr->GetContext()->m_bgmManager.Play("loading.wav", 100, true);
 }

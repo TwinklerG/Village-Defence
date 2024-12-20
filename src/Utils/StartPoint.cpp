@@ -47,7 +47,7 @@ std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed) {
     return nullptr;
   }
   auto &[l_calmTime, l_speedBuff, l_infos] = m_invaderTurns.front();
-  const int idx = Utils::RandInt(0, static_cast<int>(l_infos.size()) - 1);
+  const int idx = gl::RandInt(0, static_cast<int>(l_infos.size()) - 1);
   const int tag = l_infos[idx].first;
   l_infos[idx].second -= 1;
   if (l_infos[idx].second == 0) {
@@ -69,7 +69,7 @@ std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed) {
                    m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f
                    + m_atomResolution.y / 2.0f + m_atomResolution.y * static_cast<float>(m_coordinate.second));
   return std::make_shared<Figure>(l_sp, l_sp.getTexture()->getSize(),
-                                  m_roads[Utils::RandInt(0, static_cast<int>(m_roads.size()) - 1)],
+                                  m_roads[gl::RandInt(0, static_cast<int>(m_roads.size()) - 1)],
                                   m_figureInfos[tag].m_lives,
                                   static_cast<int>(m_figureInfos[tag].m_speed * l_speedBuff),
                                   m_figureInfos[tag].m_reward, m_atomResolution);

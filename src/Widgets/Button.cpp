@@ -50,7 +50,7 @@ namespace gl {
 
   bool Button::UpdateRender(sf::RenderWindow &l_window) {
     bool ret = false;
-    if (Utils::IsHover(m_rect, l_window)) {
+    if (gl::IsHover(m_rect, l_window)) {
       m_rect.setFillColor(m_backHoverColor);
       m_text.setFillColor(m_textHoverColor);
       if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {

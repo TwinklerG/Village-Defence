@@ -40,9 +40,9 @@ int Map::m_XRange = 20;
 int Map::m_YRange = 10;
 
 Map::Map(sf::RenderWindow *l_wind, const int l_level, std::string l_resolutions,
-         const sf::Vector2f l_resolution) : m_level(l_level), m_isWin(false),
-                                            m_resolution(std::move(l_resolutions)),
-                                            m_atomResolution(l_resolution) { OnCreate(l_wind); }
+         const sf::Vector2f l_resolution) : m_isWin(false), m_resolution(std::move(l_resolutions)),
+                                            m_atomResolution(l_resolution),
+                                            m_level(l_level) { OnCreate(l_wind); }
 
 Map::~Map() = default;
 
@@ -66,38 +66,6 @@ void Map::OnCreate(sf::RenderWindow *l_wind) {
     6,
     m_fonts["arial"]);
   m_textBox->AddText("Welcome to Village Defence!");
-  std::ifstream l_propIn("res/config/store.json");
-  nlohmann::json l_propData = nlohmann::json::parse(l_propIn);
-  l_propIn.close();
-  auto l_props = l_propData["props"];
-  if (m_textures.find("ACCELERATE") == m_textures.end()) {
-    m_textures["ACCELERATE"].loadFromFile("res/img/prop/" + m_resolution + "/prop_accelerate.png");
-  }
-  if (m_textures.find("DECELERATE") == m_textures.end()) {
-    m_textures["DECELERATE"].loadFromFile("res/img/prop/" + m_resolution + "/prop_decelerate.png");
-  }
-  for (int i = 0; i < l_props.size(); ++i) {
-    std::string l_propName = l_props[i]["name"], l_propCnt = nlohmann::to_string(l_props[i]["stock"]);
-    m_labels.emplace_back(m_textures[l_propName], sf::Vector2f(
-                            m_atomResolution.x * static_cast<float>(6 + i) + static_cast<float>(m_textures[l_propName].
-                              getSize().x) / 2.0f,
-                            static_cast<float>(m_textures[l_propName].getSize().y) / 2.0f), l_propCnt,
-                          static_cast<unsigned int>(m_atomResolution.x) / 3, m_fonts["arial"],
-                          [i, this]() {
-                            std::cout << "Clicked on " << i << "\n";
-                            std::ifstream in("res/config/store.json");
-                            if (nlohmann::json data = nlohmann::json::parse(in); data["props"][i]["stock"] > 0) {
-                              data["props"][i]["stock"] = static_cast<int>(data["props"][i]["stock"]) - 1;
-                              std::cout << data["props"][i]["stock"] << "\n";
-                              if (data["props"][i]["name"] == "ACCELERATE") {
-                                m_propBuff.m_accelerate = 3;
-                              } else if (data["props"][i]["name"] == "DECELERATE") {
-                                m_propBuff.m_decelerate = 0.3;
-                              }
-                              m_propBuff.m_countDown = m_propBuff.m_countDownSum;
-                            }
-                          });
-  }
 }
 
 void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
@@ -136,8 +104,8 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
     for (int i = 0; i < m_XRange; i++) {
       for (int j = 0; j < m_YRange; j++) {
         if (checkMouseSelect(m_places[i][j], m_wind)) {
-          if (m_selected.m_tower && m_selected.m_selectType == SelectType::Choice && m_places[i][j].GetPlaceType() ==
-              PlaceType::Land) {
+          if (m_selected.m_tower && m_selected.m_selectType == SelectType::Choice && (m_places[i][j].GetPlaceType() ==
+                PlaceType::Land || m_places[i][j].GetPlaceType() == PlaceType::Tower)) {
             // Lay a Tower
             std::shared_ptr<Tower> t = m_selected.m_tower;
             t->GetSprite().setPosition(m_atomResolution.x / 2.0f
@@ -337,6 +305,10 @@ void Map::Render(sf::RenderWindow *l_wind) {
   m_textBox->Render(*l_wind);
 }
 
+void Map::Reload() {
+  LoadProp();
+}
+
 void Map::LoadMap() {
   std::ifstream inTower("res/config/tower.json");
   const nlohmann::json l_towerData = nlohmann::json::parse(inTower);
@@ -524,6 +496,61 @@ void Map::LoadMap() {
   }
 }
 
+void Map::Save() {
+  nlohmann::json l_gameState;
+  l_gameState["m_lives"] = m_lives;
+  l_gameState["m_level"] = m_level;
+  std::vector<std::vector<int> > l_places(m_YRange, std::vector<int>(m_XRange));
+  for (int i = 0; i < m_YRange; ++i) {
+    for (int j = 0; j < m_XRange; ++j) {
+      l_places[i][j] = static_cast<int>(m_places[j][i].GetPlaceType());
+    }
+  }
+  l_gameState["m_places"] = l_places;
+  std::ofstream out("res/config/save.json");
+  out << std::setw(2) << l_gameState;
+  std::cout << "Save Finished!\n";
+}
+
+void Map::LoadProp() {
+  m_labels.clear();
+  std::ifstream l_propIn("res/config/store.json");
+  nlohmann::json l_propData = nlohmann::json::parse(l_propIn);
+  l_propIn.close();
+  auto l_props = l_propData["props"];
+  if (m_textures.find("ACCELERATE") == m_textures.end()) {
+    m_textures["ACCELERATE"].loadFromFile("res/img/prop/" + m_resolution + "/prop_accelerate.png");
+  }
+  if (m_textures.find("DECELERATE") == m_textures.end()) {
+    m_textures["DECELERATE"].loadFromFile("res/img/prop/" + m_resolution + "/prop_decelerate.png");
+  }
+  for (int i = 0; i < l_props.size(); ++i) {
+    std::string l_propName = l_props[i]["name"], l_propCnt = nlohmann::to_string(l_props[i]["stock"]);
+    m_labels.emplace_back(m_textures[l_propName], sf::Vector2f(
+                            m_atomResolution.x * static_cast<float>(6 + i) + static_cast<float>(m_textures[l_propName].
+                              getSize().x) / 2.0f,
+                            static_cast<float>(m_textures[l_propName].getSize().y) / 2.0f), l_propCnt,
+                          static_cast<unsigned int>(m_atomResolution.x) / 3, m_fonts["arial"],
+                          [i, this]() {
+                            std::ifstream in("res/config/store.json");
+                            if (nlohmann::json data = nlohmann::json::parse(in); data["props"][i]["stock"] > 0) {
+                              in.close();
+                              data["props"][i]["stock"] = static_cast<int>(data["props"][i]["stock"]) - 1;
+                              std::ofstream out("res/config/store.json");
+                              out << std::setw(4) << data;
+                              out.close();
+                              m_labels[i].SetTextString(std::to_string(static_cast<int>(data["props"][i]["stock"])));
+                              std::cout << data["props"][i]["stock"] << "\n";
+                              if (data["props"][i]["name"] == "ACCELERATE") {
+                                m_propBuff.m_accelerate = 3;
+                              } else if (data["props"][i]["name"] == "DECELERATE") {
+                                m_propBuff.m_decelerate = 0.3;
+                              }
+                              m_propBuff.m_countDown = m_propBuff.m_countDownSum;
+                            }
+                          });
+  }
+}
 
 int Map::GetLives() const { return m_lives; }
 bool Map::IsWin() const { return m_isWin; }

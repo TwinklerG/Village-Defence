@@ -21,7 +21,7 @@ namespace gl {
   }
 
   void Label::Update(const sf::RenderWindow &l_window) {
-    if (Utils::IsHover(m_sprite, l_window)) {
+    if (gl::IsHover(m_sprite, l_window)) {
       if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         m_isPressed = false;
       } else if (!m_isPressed) {
@@ -34,5 +34,9 @@ namespace gl {
   void Label::Render(sf::RenderWindow &l_window) const {
     l_window.draw(m_sprite);
     l_window.draw(m_text);
+  }
+
+  void Label::SetTextString(const std::string &l_textString) {
+    m_text.setString(l_textString);
   }
 }

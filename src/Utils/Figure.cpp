@@ -12,7 +12,7 @@ Figure::Figure(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::ve
     m_reward(l_reward) {
   m_livesBar = sf::RectangleShape(sf::Vector2f(static_cast<float>(m_size.x), 10));
   m_livesBar.setPosition(static_cast<float>(getPosition().x - m_size.x / 2.0),
-                         static_cast<float>(getPosition().y - m_size.y / 2.0 + Utils::RandInt(-5, 5)));
+                         static_cast<float>(getPosition().y - m_size.y / 2.0 + gl::RandInt(-5, 5)));
   m_livesBar.setOutlineColor(sf::Color::Black);
   m_livesBar.setOutlineThickness(2.0f);
   m_livesBar.setFillColor(sf::Color::Red);

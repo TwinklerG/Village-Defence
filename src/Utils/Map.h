@@ -54,6 +54,10 @@ public:
 
   void Render(sf::RenderWindow *l_wind);
 
+  void Reload();
+
+  void Save();
+
   int GetLives() const;
 
   bool IsWin() const;
@@ -61,16 +65,20 @@ public:
 private:
   void LoadMap();
 
+  void LoadProp();
+
   int m_lives{};
   bool m_isWin;
   sf::RectangleShape m_backup;
   std::unique_ptr<Board> m_board;
   std::vector<std::pair<std::pair<sf::Sprite, sf::Text>, TowerInfo> > m_choices;
   sf::RenderWindow *m_wind{};
-  std::vector<std::shared_ptr<Figure> > m_figures;
-  SelectInfo m_selected;
-  std::vector<std::vector<Place> > m_places;
   std::vector<std::pair<std::pair<int, int>, std::vector<Direction> > > m_roads;
+  SelectInfo m_selected;
+
+  // Main Objects
+  std::vector<std::vector<Place> > m_places;
+  std::vector<std::shared_ptr<Figure> > m_figures;
   std::vector<Bullet> m_bullets;
 
   // Props
