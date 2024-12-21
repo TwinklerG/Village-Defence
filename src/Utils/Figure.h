@@ -16,18 +16,24 @@ struct FigureInfo {
 
 class Figure final : public Element {
 public:
-  explicit Figure(const sf::Sprite &, const sf::Vector2u &, const std::vector<Direction> &, int l_lives = 5,
+  explicit Figure(int l_tag, const sf::Sprite &, const sf::Vector2u &, const std::vector<Direction> &, int l_lives = 5,
                   int l_speed = 90, int l_reward = 10, sf::Vector2f l_atomResolution = {80, 80});
 
   void Render(sf::RenderWindow *l_wind) const override;
 
   void Update(const sf::Time &elapsed, double l_ratio = 1.0);
 
+  std::vector<int> GetIncrements() const;
+
+  double GetMileage() const;
+
   int GetLives() const;
 
   void SetLives(int l_lives);
 
   int GetReward() const;
+
+  int GetTag() const;
 
 private:
   sf::RectangleShape m_livesBar;
@@ -39,4 +45,6 @@ private:
   int m_lives{};
   int m_speed{};
   int m_reward{};
+
+  int m_tag;
 };

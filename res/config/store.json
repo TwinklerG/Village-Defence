@@ -1,5 +1,5 @@
 {
-    "coin": 50,
+    "coin": 0,
     "goods": [
         {
             "description": "slow down\nInvaders",
@@ -15,11 +15,11 @@
     "props": [
         {
             "name": "DECELERATE",
-            "stock": 1
+            "stock": 0
         },
         {
             "name": "ACCELERATE",
-            "stock": 1
+            "stock": 3
         }
     ]
 }

@@ -1,7 +1,8 @@
 #include "Figure.h"
 #include "Utils.hpp"
 
-Figure::Figure(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::vector<Direction> &l_increments,
+Figure::Figure(const int l_tag, const sf::Sprite &l_sp, const sf::Vector2u &l_size,
+               const std::vector<Direction> &l_increments,
                const int l_lives, const int l_speed, const int l_reward, const sf::Vector2f l_atomResolution)
   : Element(l_sp, l_size),
     m_atomResolution(l_atomResolution),
@@ -9,7 +10,8 @@ Figure::Figure(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::ve
     m_totalLives(l_lives),
     m_lives(l_lives),
     m_speed(l_speed),
-    m_reward(l_reward) {
+    m_reward(l_reward),
+    m_tag(l_tag) {
   m_livesBar = sf::RectangleShape(sf::Vector2f(static_cast<float>(m_size.x), 10));
   m_livesBar.setPosition(static_cast<float>(getPosition().x - m_size.x / 2.0),
                          static_cast<float>(getPosition().y - m_size.y / 2.0 + gl::RandInt(-5, 5)));
@@ -58,6 +60,17 @@ void Figure::Update(const sf::Time &elapsed, const double l_ratio) {
   m_mileage += delta;
 }
 
+std::vector<int> Figure::GetIncrements() const {
+  std::vector<int> ret;
+  std::transform(m_increments.begin(), m_increments.end(), std::back_inserter(ret),
+                 [](const Direction d) { return static_cast<int>(d); });
+  return ret;
+}
+
+double Figure::GetMileage() const {
+  return m_mileage;
+}
+
 int Figure::GetLives() const { return m_lives; }
 
 void Figure::SetLives(const int l_lives) {
@@ -66,3 +79,7 @@ void Figure::SetLives(const int l_lives) {
 }
 
 int Figure::GetReward() const { return m_reward; }
+
+int Figure::GetTag() const {
+  return m_tag;
+}

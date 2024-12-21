@@ -6,35 +6,7 @@
 #include <utility>
 #include <iostream>
 
-template<class T>
-bool checkMouseSelect(const T &target, sf::RenderWindow *l_wind) {
-  return target.getPosition().x - target.getSize().x / 2.0 <= sf::Mouse::getPosition(*l_wind).x &&
-         target.getPosition().x + target.getSize().x / 2.0 >= sf::Mouse::getPosition(*l_wind).x &&
-         target.getPosition().y - target.getSize().y / 2.0 <= sf::Mouse::getPosition(*l_wind).y &&
-         target.getPosition().y + target.getSize().y / 2.0 >= sf::Mouse::getPosition(*l_wind).y;
-}
-
-bool checkMouseSelectSprite(const sf::Sprite &l_sprite, const sf::RenderWindow *l_wind) {
-  return l_sprite.getPosition().x - l_sprite.getTexture()->getSize().x / 2.0 <= sf::Mouse::getPosition(*l_wind).x &&
-         l_sprite.getPosition().x + l_sprite.getTexture()->getSize().x / 2.0 >= sf::Mouse::getPosition(*l_wind).x &&
-         l_sprite.getPosition().y - l_sprite.getTexture()->getSize().y / 2.0 <= sf::Mouse::getPosition(*l_wind).y &&
-         l_sprite.getPosition().y + l_sprite.getTexture()->getSize().y / 2.0 >= sf::Mouse::getPosition(*l_wind).y;
-}
-
-template<class T, class F>
-bool checkInRange(const T &source, const F &target, const double range) {
-  return (source.getPosition().x - target.getPosition().x) * (source.getPosition().x - target.getPosition().x) + (
-           source.getPosition().y - target.getPosition().y) * (source.getPosition().y - target.getPosition().y) <= range
-         * range;
-}
-
-template<class F>
-bool checkCollision(const sf::CircleShape &source, const F &target) {
-  return (source.getPosition().x - target.getPosition().x) * (source.getPosition().x - target.getPosition().x) + (
-           source.getPosition().y - target.getPosition().y) * (source.getPosition().y - target.getPosition().y) <= (
-           source.getRadius() + target.getSize().x) * (source.getRadius() + target.getSize().x) / 8 + (
-           source.getRadius() + target.getSize().y) * (source.getRadius() + target.getSize().y) / 8;
-}
+#include "Utils.hpp"
 
 int Map::m_XRange = 20;
 int Map::m_YRange = 10;
@@ -103,7 +75,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
     for (int i = 0; i < m_XRange; i++) {
       for (int j = 0; j < m_YRange; j++) {
-        if (checkMouseSelect(m_places[i][j], m_wind)) {
+        if (gl::checkMouseSelect(m_places[i][j], m_wind)) {
           if (m_selected.m_tower && m_selected.m_selectType == SelectType::Choice && (m_places[i][j].GetPlaceType() ==
                 PlaceType::Land || m_places[i][j].GetPlaceType() == PlaceType::Tower)) {
             // Lay a Tower
@@ -158,8 +130,8 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
           continue;
         }
         for (const auto &l_fig: m_figures) {
-          if (checkInRange(*l_fig, m_places[i][j],
-                           static_cast<float>(m_places[i][j].GetTower()->GetRange()) * m_atomResolution.x)) {
+          if (gl::checkInRange(*l_fig, m_places[i][j],
+                               static_cast<float>(m_places[i][j].GetTower()->GetRange()) * m_atomResolution.x)) {
             int cnt = 0;
             for (auto &l_b: m_bullets) {
               if (l_b.GetTargetFigure() == l_fig) {
@@ -188,7 +160,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
   // Bullets Update
   std::vector<Bullet> next_bullets{};
   for (auto l_b: m_bullets) {
-    if (checkCollision(l_b.GetCircle(), *l_b.GetTargetFigure())) {
+    if (gl::checkCollision(l_b.GetCircle(), *l_b.GetTargetFigure())) {
       std::vector<std::shared_ptr<Figure> > next_figures;
       for (const auto &l_fig: m_figures) {
         if (l_fig != l_b.GetTargetFigure()) {
@@ -218,7 +190,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
   std::vector<std::shared_ptr<Figure> > next_figures{};
   for (const auto &l_fig: m_figures) {
     for (const auto &l_ep: m_endPoints) {
-      if (checkInRange(*l_fig, l_ep, l_fig->getSize().x / 2.0 + l_ep.getSize().x / 2.0)) {
+      if (gl::checkInRange(*l_fig, l_ep, l_fig->getSize().x / 2.0 + l_ep.getSize().x / 2.0)) {
         --m_lives;
         m_textBox->AddText("Village Invaded, current lives: " + std::to_string(m_lives));
         if (auto itr = std::find(next_figures.begin(), next_figures.end(), l_fig);
@@ -235,7 +207,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
   m_figures = next_figures;
   // Check whether any Choice is selected
   for (const auto &[l_choice, l_towerInfo]: m_choices) {
-    if (checkMouseSelectSprite(l_choice.first, m_wind) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_board->
+    if (gl::checkMouseSelectSprite(l_choice.first, m_wind) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && m_board->
         GetMoney() >= l_towerInfo.m_cost) {
       if (m_selected.m_selectType == SelectType::Existence) {
         if (m_selected.m_tower) {
@@ -498,6 +470,8 @@ void Map::LoadMap() {
 
 void Map::Save() {
   nlohmann::json l_gameState;
+  l_gameState["m_resolution"] = m_resolution;
+  l_gameState["m_atomResolution"] = nlohmann::json::array({m_atomResolution.x, m_atomResolution.y});
   l_gameState["m_lives"] = m_lives;
   l_gameState["m_level"] = m_level;
   std::vector<std::vector<int> > l_places(m_YRange, std::vector<int>(m_XRange));
@@ -507,6 +481,34 @@ void Map::Save() {
     }
   }
   l_gameState["m_places"] = l_places;
+  l_gameState["m_figures"] = {};
+  for (const auto &l_fig: m_figures) {
+    nlohmann::json l_figState = {
+      {"m_tag", l_fig->GetTag()},
+      {"m_increments", l_fig->GetIncrements()},
+      {"m_mileage", l_fig->GetMileage()},
+      {"m_lives", l_fig->GetLives()},
+    };
+    l_gameState["m_figures"].emplace_back(l_figState);
+  }
+  l_gameState["m_startPoints"] = {};
+  for (const auto &l_startPoint: m_startPoints) {
+    nlohmann::json l_startPointState = {};
+    l_startPointState["m_invaderTurns"] = {};
+    const auto l_invadeTurnInfos = l_startPoint.GetInvadeTurns();
+    for (const auto &[m_calmTime, m_speedBuff, m_infos]: l_invadeTurnInfos) {
+      nlohmann::json t =
+      {
+        {"m_calmTime", m_calmTime},
+        {"m_speedBuff", m_speedBuff},
+      };
+      for (const auto &[type, cnt]: m_infos) {
+        t["m_infos"].push_back(nlohmann::json::array({type, cnt}));
+      }
+      l_startPointState["m_invaderTurns"].emplace_back(t);
+    }
+    l_gameState["m_startPoints"].emplace_back(l_startPointState);
+  }
   std::ofstream out("res/config/save.json");
   out << std::setw(2) << l_gameState;
   std::cout << "Save Finished!\n";
@@ -554,3 +556,19 @@ void Map::LoadProp() {
 
 int Map::GetLives() const { return m_lives; }
 bool Map::IsWin() const { return m_isWin; }
+
+Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
+  : m_isWin(false),
+    m_resolution(l_gameState["m_resolution"]),
+    m_atomResolution({l_gameState["m_atomResolution"][0], l_gameState["m_atomResolution"][1]}),
+    m_level(l_gameState["m_level"]) {
+  LoadMap();
+  LoadProp();
+  m_lives = l_gameState["m_lives"];
+  auto l_places = l_gameState["m_places"];
+  for (int i = 0; i < m_YRange; ++i) {
+    for (int j = 0; j < m_XRange; ++j) {
+      //TODO
+    }
+  }
+}

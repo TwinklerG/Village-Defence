@@ -12,7 +12,7 @@ StartPoint::StartPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const
                        const sf::Vector2f l_atomResolution)
   : Element(l_sp, l_size),
     m_coordinate(l_cor),
-    m_invaderTurns(l_invaderTurns),
+    m_invadeTurns(l_invaderTurns),
     m_resolution(std::move(l_resolution)),
     m_atomResolution(l_atomResolution) {
   OnCreate();
@@ -30,8 +30,8 @@ void StartPoint::SetCalmTime(const sf::Time &l_time) { m_calmTime = l_time; }
 const sf::Time &StartPoint::GetCalmTime() const { return m_calmTime; }
 
 void StartPoint::RestartCalmTime() {
-  m_calmTime = !m_invaderTurns.empty()
-                 ? sf::seconds(static_cast<float>(m_invaderTurns.front().m_calmTime))
+  m_calmTime = !m_invadeTurns.empty()
+                 ? sf::seconds(static_cast<float>(m_invadeTurns.front().m_calmTime))
                  : sf::seconds(0);
 }
 
@@ -43,10 +43,10 @@ std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed) {
     return nullptr;
   }
   RestartCalmTime();
-  if (m_invaderTurns.empty()) {
+  if (m_invadeTurns.empty()) {
     return nullptr;
   }
-  auto &[l_calmTime, l_speedBuff, l_infos] = m_invaderTurns.front();
+  auto &[l_calmTime, l_speedBuff, l_infos] = m_invadeTurns.front();
   const int idx = gl::RandInt(0, static_cast<int>(l_infos.size()) - 1);
   const int tag = l_infos[idx].first;
   l_infos[idx].second -= 1;
@@ -54,7 +54,7 @@ std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed) {
     l_infos.erase(l_infos.begin() + idx);
   }
   if (l_infos.empty()) {
-    m_invaderTurns.erase(m_invaderTurns.begin());
+    m_invadeTurns.erase(m_invadeTurns.begin());
     m_calmTime = sf::seconds(5);
   }
   const std::string l_figureName = "invader" + std::to_string(tag);
@@ -68,7 +68,7 @@ std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed) {
                    + m_atomResolution.x * static_cast<float>(m_coordinate.first),
                    m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f
                    + m_atomResolution.y / 2.0f + m_atomResolution.y * static_cast<float>(m_coordinate.second));
-  return std::make_shared<Figure>(l_sp, l_sp.getTexture()->getSize(),
+  return std::make_shared<Figure>(idx, l_sp, l_sp.getTexture()->getSize(),
                                   m_roads[gl::RandInt(0, static_cast<int>(m_roads.size()) - 1)],
                                   m_figureInfos[tag].m_lives,
                                   static_cast<int>(m_figureInfos[tag].m_speed * l_speedBuff),
@@ -79,4 +79,8 @@ void StartPoint::SetRoads(const std::vector<std::vector<Direction> > &l_roads) {
   m_roads = l_roads;
 }
 
-int StartPoint::GetLeftTurns() const { return static_cast<int>(m_invaderTurns.size()); }
+int StartPoint::GetLeftTurns() const { return static_cast<int>(m_invadeTurns.size()); }
+
+std::vector<InvadeTurnInfo> StartPoint::GetInvadeTurns() const {
+  return m_invadeTurns;
+}

@@ -34,11 +34,13 @@ public:
 
   int GetLeftTurns() const;
 
+  std::vector<InvadeTurnInfo> GetInvadeTurns() const;
+
 private:
   sf::Time m_totalCalmTime;
   sf::Time m_calmTime;
   std::pair<int, int> m_coordinate;
-  std::vector<InvadeTurnInfo> m_invaderTurns;
+  std::vector<InvadeTurnInfo> m_invadeTurns;
   std::vector<Figure> m_figures;
   std::vector<std::vector<Direction> > m_roads;
   std::vector<FigureInfo> m_figureInfos;
