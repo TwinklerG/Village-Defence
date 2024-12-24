@@ -3,7 +3,7 @@
 #include "EventManager.h"
 #include "../Widgets/Button.h"
 
-class State_MainMenu final : public BaseState {
+class State_MainMenu : public BaseState {
 public:
   explicit State_MainMenu(StateManager *l_stateManager);
 
@@ -21,9 +21,7 @@ public:
 
   void Draw() override;
 
-  void MouseClick(EventDetails *l_details);
-
-private:
+protected:
   sf::Font m_font;
 
   sf::Text m_title;

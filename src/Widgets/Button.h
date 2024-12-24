@@ -5,17 +5,17 @@
 namespace gl {
   class Button {
   public:
-    explicit Button(const std::string &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
+    explicit Button(const sf::String &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
                     unsigned int l_charSize,
                     const sf::Font &l_font, const std::function<void()> &l_callBack);
 
-    explicit Button(const std::string &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
+    explicit Button(const sf::String &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
                     unsigned int l_charSize,
                     const sf::Font &l_font,
                     const sf::Color &l_backColor, const sf::Color &l_textColor, const sf::Color &l_backHoverColor,
                     const sf::Color &l_textHoverColor, const std::function<void()> &l_callBack);
 
-    void OnCreate(const std::string &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
+    void OnCreate(const sf::String &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
                   unsigned int l_charSize,
                   const sf::Font &l_font,
                   const sf::Color &l_backColor, const sf::Color &l_textColor, const sf::Color &l_backHoverColor,
@@ -29,6 +29,14 @@ namespace gl {
     sf::Text GetText() const;
 
     void SetText(const sf::Text &l_text);
+
+    sf::Vector2f GetPosition() const;
+
+    void SetPosition(const sf::Vector2f &l_pos);
+
+    sf::Vector2f GetSize() const;
+
+    unsigned int GetCharSize() const;
 
   private:
     sf::RectangleShape m_rect;

@@ -1,7 +1,6 @@
 #include "State_Intro.h"
 #include "StateManager.h"
 #include "../Utils/Utils.hpp"
-#include <random>
 
 float State_Intro::m_AnimationTime = 1.0f;
 int State_Intro::m_SpritesSum = 20;
@@ -15,15 +14,15 @@ State_Intro::~State_Intro() = default;
 void State_Intro::OnCreate() {
   m_timePassed = 0.0f;
   const sf::Vector2u windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_font.loadFromFile("res/fonts/CONSOLAZ.TTF");
+  m_font.loadFromFile("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
   m_text.setFont(m_font);
-  m_text.setString({"Press SPACE to continue"});
+  m_text.setString(L"点击空格继续");
   m_text.setCharacterSize(windowSize.y / 50);
   const sf::FloatRect textRect = m_text.getLocalBounds();
   m_text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
   m_text.setPosition(static_cast<float>(windowSize.x) / 2.0f, static_cast<float>(windowSize.y) / 3.0f * 2);
   m_title.setFont(m_font);
-  m_title.setString("Village Defence");
+  m_title.setString(L"村庄保卫战");
   m_title.setCharacterSize(windowSize.y / 6);
   m_title.setOrigin(m_title.getLocalBounds().width / 2, m_title.getLocalBounds().height);
   m_title.setPosition(static_cast<float>(windowSize.x) / 2.0f, 0);

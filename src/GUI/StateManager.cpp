@@ -6,6 +6,7 @@
 #include "State_About.h"
 #include "State_Store.h"
 #include "State_Setting.h"
+#include "State_Load.h"
 
 StateManager::StateManager(SharedContext *l_shared) : m_shared(l_shared) {
   RegisterState<State_Intro>(StateType::Intro);
@@ -16,6 +17,7 @@ StateManager::StateManager(SharedContext *l_shared) : m_shared(l_shared) {
   RegisterState<State_About>(StateType::About);
   RegisterState<State_Store>(StateType::Store);
   RegisterState<State_Setting>(StateType::Setting);
+  RegisterState<State_Load>(StateType::Load);
 }
 
 StateManager::~StateManager() {

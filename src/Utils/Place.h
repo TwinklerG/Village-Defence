@@ -5,12 +5,8 @@
 
 class Tower final : public Element {
 public:
-  Tower();
-
-  Tower(const sf::Sprite &, const sf::Vector2u &);
-
-  Tower(const sf::Sprite &, const sf::Vector2u &, const sf::Time &, int = 1, float = 90, double range = 400, int = 50,
-        int red = 255, int green = 255, int blue = 0, double radius = 10);
+  explicit Tower(const sf::Sprite &, const sf::Vector2u &, const sf::Time &, int = 1, float = 90, double range = 400, int = 50,
+        int red = 255, int green = 255, int blue = 0, double radius = 10, int l_tag = 0);
 
   void Render(sf::RenderWindow *l_wind) const override;
 
@@ -21,10 +17,6 @@ public:
   std::shared_ptr<sf::CircleShape> GetCircle() const;
 
   void SetCircle(const std::shared_ptr<sf::CircleShape> &l_circle);
-
-  sf::Time GetClickCalmTime() const;
-
-  void SetClickCalmTime(const sf::Time &l_time);
 
   const int &GetAttackPoint() const;
 
@@ -38,6 +30,8 @@ public:
 
   const double &GetBulletRadius() const;
 
+  int GetTag() const;
+
   static sf::Time m_totalClickCalmTime;
   const sf::Time m_totalCalmTime;
 
@@ -45,12 +39,13 @@ private:
   sf::Time m_clamTime;
   int m_attackPoint;
   std::shared_ptr<sf::CircleShape> m_circle;
-  sf::Time m_clickCalmTime;
   double m_bulletRadius{};
   sf::Color m_bulletColor;
   float m_bulletSpeed{};
   double m_range{};
   int m_cost{};
+
+  int m_tag;
 };
 
 enum class PlaceType {

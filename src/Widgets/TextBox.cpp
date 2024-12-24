@@ -1,5 +1,8 @@
 #include "TextBox.h"
 
+#include <nlohmann/json.hpp>
+#include <iostream>
+
 namespace gl {
   TextBox::TextBox(const sf::Vector2f &l_pos, const sf::Vector2f &l_size, const int l_max, const sf::Font &l_font)
     : m_font(l_font), m_max(l_max) {
@@ -7,6 +10,18 @@ namespace gl {
     m_backup.setOrigin(m_backup.getSize().x / 2.0f, m_backup.getSize().y / 2.0f);
     m_backup.setPosition(l_pos);
     m_backup.setFillColor(sf::Color(0, 0, 0, 50));
+  }
+
+  TextBox::TextBox(const sf::Vector2f &l_pos, const sf::Vector2f &l_size, const int l_max, const sf::Font &l_font,
+                   const std::vector<std::string> &l_messages)
+    : m_font(l_font), m_max(l_max) {
+    m_backup = sf::RectangleShape(l_size);
+    m_backup.setOrigin(m_backup.getSize().x / 2.0f, m_backup.getSize().y / 2.0f);
+    m_backup.setPosition(l_pos);
+    m_backup.setFillColor(sf::Color(0, 0, 0, 50));
+    for (const auto& l_message : l_messages) {
+      AddText(l_message);
+    }
   }
 
   void TextBox::AddText(const std::string &l_textString) {
@@ -34,5 +49,13 @@ namespace gl {
     for (const auto &l_text: m_texts) {
       l_window.draw(l_text);
     }
+  }
+
+  std::vector<std::string> TextBox::GetMessages() const {
+    std::vector<std::string> ret(m_texts.size());
+    for (size_t i = 0; i < m_texts.size(); ++i) {
+      ret[i] = m_texts[i].getString();
+    }
+    return ret;
   }
 }

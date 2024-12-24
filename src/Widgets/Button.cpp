@@ -2,7 +2,7 @@
 #include "../Utils/Utils.hpp"
 
 namespace gl {
-  Button::Button(const std::string &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
+  Button::Button(const sf::String &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
                  const unsigned int l_charSize,
                  const sf::Font &l_font,
                  const std::function<void()> &l_callBack): m_isPressed(true) {
@@ -11,7 +11,7 @@ namespace gl {
              l_callBack);
   }
 
-  Button::Button(const std::string &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
+  Button::Button(const sf::String &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
                  const unsigned int l_charSize, const sf::Font &l_font,
                  const sf::Color &l_backColor, const sf::Color &l_textColor, const sf::Color &l_backHoverColor,
                  const sf::Color &l_textHoverColor, const std::function<void()> &l_callBack)
@@ -20,7 +20,7 @@ namespace gl {
              l_callBack);
   }
 
-  void Button::OnCreate(const std::string &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
+  void Button::OnCreate(const sf::String &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
                         const unsigned int l_charSize,
                         const sf::Font &l_font,
                         const sf::Color &l_backColor, const sf::Color &l_textColor, const sf::Color &l_backHoverColor,
@@ -79,5 +79,22 @@ namespace gl {
 
   void Button::SetText(const sf::Text &l_text) {
     m_text = l_text;
+  }
+
+  sf::Vector2f Button::GetPosition() const {
+    return m_rect.getPosition();
+  }
+
+  void Button::SetPosition(const sf::Vector2f &l_pos) {
+    m_rect.setPosition(l_pos);
+    m_text.setPosition(l_pos);
+  }
+
+  sf::Vector2f Button::GetSize() const {
+    return m_rect.getSize();
+  }
+
+  unsigned int Button::GetCharSize() const {
+    return m_text.getCharacterSize();
   }
 };

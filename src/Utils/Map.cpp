@@ -224,7 +224,8 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
                                                    l_towerInfo.m_red,
                                                    l_towerInfo.m_green,
                                                    l_towerInfo.m_blue,
-                                                   l_towerInfo.m_bulletRadius);
+                                                   l_towerInfo.m_bulletRadius,
+                                                   l_towerInfo.m_tag);
       m_selected.m_tower->GetSprite().setOrigin(
         static_cast<float>(l_choice.first.getTexture()->getSize().x / 2.0),
         static_cast<float>(l_choice.first.getTexture()->getSize().y / 2.0));
@@ -474,10 +475,20 @@ void Map::Save() {
   l_gameState["m_atomResolution"] = nlohmann::json::array({m_atomResolution.x, m_atomResolution.y});
   l_gameState["m_lives"] = m_lives;
   l_gameState["m_level"] = m_level;
-  std::vector<std::vector<int> > l_places(m_YRange, std::vector<int>(m_XRange));
-  for (int i = 0; i < m_YRange; ++i) {
-    for (int j = 0; j < m_XRange; ++j) {
-      l_places[i][j] = static_cast<int>(m_places[j][i].GetPlaceType());
+
+  // [PlaceType, [m_calmTime, m_tag]]
+  std::vector<std::vector<std::pair<int, std::pair<float, int> > > > l_places(
+    m_XRange, std::vector<std::pair<int, std::pair<float, int> > >(m_YRange));
+  for (int j = 0; j < m_YRange; ++j) {
+    for (int i = 0; i < m_XRange; ++i) {
+      l_places[i][j].first = static_cast<int>(m_places[i][j].GetPlaceType());
+      if (m_places[i][j].GetPlaceType() == PlaceType::Tower) {
+        l_places[i][j].second = {
+          m_places[i][j].GetTower()->GetCalmTime().asSeconds(), m_places[i][j].GetTower()->GetTag()
+        };
+      } else {
+        l_places[i][j].second = {-1, -1};
+      }
     }
   }
   l_gameState["m_places"] = l_places;
@@ -490,6 +501,22 @@ void Map::Save() {
       {"m_lives", l_fig->GetLives()},
     };
     l_gameState["m_figures"].emplace_back(l_figState);
+  }
+  l_gameState["m_bullets"] = {};
+  for (const auto &l_bullet: m_bullets) {
+    nlohmann::json l_bulletState = {
+      {"position", nlohmann::json::array({l_bullet.getPosition().x, l_bullet.getPosition().y})},
+      {"speed", l_bullet.GetSpeed()},
+      {"atk", l_bullet.GetAtk()},
+      {"radius", l_bullet.getRadius()},
+      {"rgba", l_bullet.GetRgba()},
+    };
+    for (int i = 0; i < m_figures.size(); ++i) {
+      if (m_figures[i] == l_bullet.GetTargetFigure()) {
+        l_bulletState["targetFigureIdx"] = i;
+      }
+    }
+    l_gameState["m_bullets"].emplace_back(l_bulletState);
   }
   l_gameState["m_startPoints"] = {};
   for (const auto &l_startPoint: m_startPoints) {
@@ -508,6 +535,16 @@ void Map::Save() {
       l_startPointState["m_invaderTurns"].emplace_back(t);
     }
     l_gameState["m_startPoints"].emplace_back(l_startPointState);
+  }
+  l_gameState["m_propBuff"] = {
+    {"m_accelerate", m_propBuff.m_accelerate},
+    {"m_decelerate", m_propBuff.m_decelerate},
+    {"m_countDown", m_propBuff.m_countDown},
+  };
+  // TODO Fix this Bug of TextBox
+  const auto l_messages = m_textBox->GetMessages();
+  for (const auto &l_message: l_messages) {
+    l_gameState["m_textBoxMessages"].push_back(l_message);
   }
   std::ofstream out("res/config/save.json");
   out << std::setw(2) << l_gameState;
@@ -559,16 +596,40 @@ bool Map::IsWin() const { return m_isWin; }
 
 Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
   : m_isWin(false),
+    m_propBuff(static_cast<double>(l_gameState["m_propBuff"]["m_accelerate"]),
+               static_cast<float>(l_gameState["m_propBuff"]["m_decelerate"]),
+               static_cast<float>(l_gameState["m_propBuff"]["m_countDown"])),
     m_resolution(l_gameState["m_resolution"]),
     m_atomResolution({l_gameState["m_atomResolution"][0], l_gameState["m_atomResolution"][1]}),
     m_level(l_gameState["m_level"]) {
   LoadMap();
   LoadProp();
   m_lives = l_gameState["m_lives"];
-  auto l_places = l_gameState["m_places"];
+  const auto &l_places = l_gameState["m_places"];
   for (int i = 0; i < m_YRange; ++i) {
     for (int j = 0; j < m_XRange; ++j) {
-      //TODO
+      //TODO: Rebuild towers
+      if (l_places[i][j][0] == static_cast<int>(PlaceType::Tower)) {
+        // TODO Build Tower. BUG
+        int l_tag = l_places[i][j][1][1];
+        m_places[i][j].GetTower()->SetCalmTime(sf::seconds(l_places[i][j][1][0]));
+      }
     }
   }
+  const auto &l_figures = l_gameState["m_figures"];
+  for (const auto &l_fig: l_figures) {
+    // TODO: Recreate the invaders
+  }
+  const auto &l_bullets = l_gameState["m_bullets"];
+  for (const auto &l_bullet: l_bullets) {
+    // TODO: Recreate the bullets
+  }
+  // TODO: Reconstruct TextBox
+  m_textBox = std::make_unique<gl::TextBox>(
+    sf::Vector2f(static_cast<float>(l_wind->getSize().x) / 5.0f * 4.0f,
+                 static_cast<float>(l_wind->getSize().y) / 10.0f),
+    sf::Vector2f(static_cast<float>(l_wind->getSize().x) / 5.0f * 2,
+                 static_cast<float>(l_wind->getSize().y) / 5.0f),
+    6,
+    m_fonts["arial"], l_gameState["m_textBoxMessages"]);
 }

@@ -31,6 +31,11 @@ struct PropBuff {
   PropBuff(): m_accelerate(1), m_decelerate(1), m_countDownSum(3) {
   }
 
+  PropBuff(const double l_accelerate, const double l_decelerate, const float l_countDown) : m_accelerate(l_accelerate),
+    m_decelerate(l_decelerate),
+    m_countDown(l_countDown), m_countDownSum(3) {
+  }
+
   void Reset() {
     m_accelerate = 1.0;
     m_decelerate = 1.0;
