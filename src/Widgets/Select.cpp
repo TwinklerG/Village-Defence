@@ -2,7 +2,7 @@
 #include "../Utils/Utils.hpp"
 
 namespace gl {
-  Select::Select(const std::string &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
+  Select::Select(const sf::String &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
                  const unsigned int l_charSize, const sf::Font &l_font,
                  std::vector<Button> l_choices)
     : m_isPressed(false) {
@@ -11,7 +11,7 @@ namespace gl {
              std::move(l_choices));
   }
 
-  Select::Select(const std::string &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
+  Select::Select(const sf::String &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
                  const unsigned int l_charSize, const sf::Font &l_font,
                  const sf::Color &l_backColor, const sf::Color &l_textColor, const sf::Color &l_backHoverColor,
                  const sf::Color &l_textHoverColor, std::vector<Button> l_choices)
@@ -20,7 +20,7 @@ namespace gl {
              std::move(l_choices));
   }
 
-  void Select::OnCreate(const std::string &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
+  void Select::OnCreate(const sf::String &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,
                         unsigned int l_charSize,
                         const sf::Font &l_font, const sf::Color &l_backColor, const sf::Color &l_textColor,
                         const sf::Color &l_backHoverColor, const sf::Color &l_textHoverColor,

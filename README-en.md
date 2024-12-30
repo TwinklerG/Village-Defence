@@ -27,7 +27,17 @@ release-vs.bat # or debug-vs.bat
 **Ubuntu:latest**
 
 ```bash
-sudo bash ./debug-ubuntu.sh
+apt-get update -y && apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype6-dev -y
+apt install gcc g++ cmake git -y
+bash ./release-ubuntu.sh
+```
+
+**Fedora41**
+
+```bash
+yum update -y && yum install freetype-devel libX11-devel libXcursor-devel libXrandr-devel mesa-libGL-devel systemd-devel openal-soft-devel libvorbis-devel libogg-devel flac-devel -y
+yum install gcc g++ cmake git -y
+bash ./release-fedora.sh
 ```
 
 ## Reference

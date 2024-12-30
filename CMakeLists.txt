@@ -37,8 +37,8 @@ else ()
 endif ()
 
 target_link_libraries(main PRIVATE sfml-graphics) # SFML/Graphics.hpp
-target_link_libraries(main PRIVATE sfml-audio) # support for SFML/Audio.hpp
-target_link_libraries(main PRIVATE nlohmann_json) # support JSON
+target_link_libraries(main PRIVATE sfml-audio) # SFML/Audio.hpp
+target_link_libraries(main PRIVATE nlohmann_json) # JSON
 target_compile_features(main PRIVATE cxx_std_17)
 
 if (WIN32)

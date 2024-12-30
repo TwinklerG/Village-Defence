@@ -9,7 +9,7 @@ State_Load::~State_Load() = default;
 void State_Load::OnCreate() {
   m_font.loadFromFile("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
   const sf::Vector2u l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_title = sf::Text(L"读取存档", m_font, static_cast<unsigned int>(l_windowSize.y) / 10);
+  m_title = sf::Text(L"读档", m_font, static_cast<unsigned int>(l_windowSize.y) / 10);
   m_title.setOrigin(m_title.getLocalBounds().width / 2.0f, m_title.getLocalBounds().height / 2.0f);
   m_title.setPosition(static_cast<float>(l_windowSize.x) / 2.0f, static_cast<float>(l_windowSize.y) / 10.0f * 2.0f);
   const auto l_size = sf::Vector2f(static_cast<float>(l_windowSize.x) / 3.0f,

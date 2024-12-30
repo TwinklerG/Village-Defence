@@ -16,6 +16,7 @@ enum class StateType {
   Store,
   Setting,
   Load,
+  Save,
 };
 
 using StateContainer = std::vector<std::pair<StateType, BaseState *> >;

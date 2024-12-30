@@ -9,7 +9,7 @@ State_Setting::~State_Setting() = default;
 
 void State_Setting::OnCreate() {
   const sf::Vector2u &l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_font.loadFromFile("res/fonts/CONSOLAB.TTF");
+  m_font.loadFromFile("res/fonts/LXGWWenKai-Regular.ttf");
   const auto l_pos = sf::Vector2f(static_cast<float>(l_windowSize.x) / 2.0f,
                                   static_cast<float>(l_windowSize.y) / 5.0f * 1.0f);
   const auto l_size = sf::Vector2f(static_cast<float>(l_windowSize.x) / 5.1f,
@@ -46,7 +46,7 @@ void State_Setting::OnCreate() {
                  m_stateMgr->SwitchTo(StateType::Intro);
                })
   };
-  m_select = std::make_unique<gl::Select>("Resolution", l_pos, l_size, l_windowSize.y / 18, m_font, l_options);
+  m_select = std::make_unique<gl::Select>(L"分辨率", l_pos, l_size, l_windowSize.y / 18, m_font, l_options);
   // Add KeyBindCallBind
   EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
   envMgr->AddCallback(StateType::Setting, "Key_Escape", &State_Setting::MainMenu, this);

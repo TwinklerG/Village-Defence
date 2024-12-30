@@ -12,9 +12,9 @@ void State_About::OnCreate() {
   envMgr->AddCallback(StateType::About, "Key_Escape", &State_About::MainMenu, this);
 
   const sf::RenderWindow *l_wind = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
-  m_font.loadFromFile("res/fonts/CONSOLAZ.TTF");
+  m_font.loadFromFile("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
   m_content.setFont(m_font);
-  m_content.setString("Village Defence\n\nCreated By Liang Gong & Powered by SFML\n");
+  m_content.setString(L"村庄保卫战\n\n龚亮创建 & SFML赋能\n\n\n\nVillage Defence\n\nCreated By Liang Gong & Powered by SFML\n");
   m_content.setCharacterSize(static_cast<unsigned int>(m_stateMgr->GetContext()->m_atomResolution.x) / 3 * 2);
   m_content.setFillColor(sf::Color::White);
   m_content.setOrigin(m_content.getLocalBounds().width / 2.0f, m_content.getLocalBounds().height / 2.0f);

@@ -58,7 +58,8 @@ void State_MainMenu::Activate() {
     m_buttons[0].SetText(l_text);
     m_buttons.pop_back();
     m_buttons.insert(m_buttons.begin() + 1, gl::Button(L"存档", m_buttons[0].GetPosition(), m_buttons[0].GetSize(),
-                                                       m_buttons[0].GetCharSize(), m_font, []() {
+                                                       m_buttons[0].GetCharSize(), m_font, [this]() {
+                                                         m_stateMgr->SwitchTo(StateType::Save);
                                                        }));
     const auto l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
     m_buttons[0].SetPosition(m_buttons[0].GetPosition() - sf::Vector2f(0, static_cast<float>(l_windowSize.y) / 10.0f));
