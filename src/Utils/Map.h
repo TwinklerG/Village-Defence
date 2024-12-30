@@ -77,6 +77,8 @@ private:
 
   void LoadProp();
 
+  static std::vector<TowerInfo> LoadTowerInfo();
+
   int m_lives{};
   bool m_isWin;
   sf::RectangleShape m_backup;

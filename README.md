@@ -13,13 +13,17 @@
 **MinGW + Ninja**
 
 ```cmd
-debug-ninja.bat
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -B "cmake-build-debug-ninja"
+cmake --build cmake-build-debug-ninja
+"./cmake-build-debug-ninja/main.exe"
 ```
 
 **Visual Studio**
 
 ```cmd
-release-vs.bat # or debug-vs.bat
+cmake -B cmake-build-debug-visual-studio -G "Visual Studio" -DBUILD_SHARED_LIBS=TRUE
+cmake --build cmake-build-debug-visual-studio --target main --config Debug
+"./cmake-build-debug-visual-studio/Debug/main.exe"
 ```
 
 ### Linux
@@ -29,7 +33,9 @@ release-vs.bat # or debug-vs.bat
 ```bash
 apt-get update -y && apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype6-dev -y
 apt install gcc g++ cmake git -y
-bash ./release-ubuntu.sh
+cmake -B build && \
+cmake --build build && \
+./build/main
 ```
 
 **Fedora41**
@@ -37,7 +43,9 @@ bash ./release-ubuntu.sh
 ```bash
 yum update -y && yum install freetype-devel libX11-devel libXcursor-devel libXrandr-devel mesa-libGL-devel systemd-devel openal-soft-devel libvorbis-devel libogg-devel flac-devel -y
 yum install gcc g++ cmake git -y
-bash ./release-fedora.sh
+cmake -B build -DCMAKE_MAKE_PROGRAM=ninja -G Ninja && \
+cmake --build build && \
+./build/main
 ```
 
 ## 参考

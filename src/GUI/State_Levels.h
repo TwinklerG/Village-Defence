@@ -30,6 +30,5 @@ private:
   std::vector<sf::RectangleShape> m_rects;
   std::vector<sf::Text> m_labels;
 
-  bool m_isMouseLeft{true};
   static int m_LevelSum;
 };

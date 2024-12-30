@@ -75,6 +75,7 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
     for (int i = 0; i < m_XRange; i++) {
       for (int j = 0; j < m_YRange; j++) {
+        // std::cout << i << " " << j << "\n";
         if (gl::checkMouseSelect(m_places[i][j], m_wind)) {
           if (m_selected.m_tower && m_selected.m_selectType == SelectType::Choice && (m_places[i][j].GetPlaceType() ==
                 PlaceType::Land || m_places[i][j].GetPlaceType() == PlaceType::Tower)) {
@@ -246,9 +247,11 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
   for (auto &l_label: m_labels) {
     l_label.Update(*m_wind);
   }
+  // std::cout << "Finish Update\n";
 }
 
 void Map::Render(sf::RenderWindow *l_wind) {
+  // std::cout << "Start Render0\n";
   m_wind->draw(m_backup);
   for (const auto &[fst, snd]: m_choices) {
     l_wind->draw(fst.first);
@@ -257,6 +260,7 @@ void Map::Render(sf::RenderWindow *l_wind) {
   for (const auto &l_label: m_labels) {
     l_label.Render(*m_wind);
   }
+  // std::cout << "Start Render1\n";
   for (int i = 0; i < m_XRange; i++) {
     for (int j = 0; j < m_YRange; j++) {
       m_places[i][j].Render(l_wind);
@@ -276,6 +280,7 @@ void Map::Render(sf::RenderWindow *l_wind) {
   }
   m_board->Render(l_wind);
   m_textBox->Render(*l_wind);
+  // std::cout << "Finish Render\n";
 }
 
 void Map::Reload() {
@@ -283,19 +288,9 @@ void Map::Reload() {
 }
 
 void Map::LoadMap() {
-  std::ifstream inTower("res/config/tower.json");
-  const nlohmann::json l_towerData = nlohmann::json::parse(inTower);
-  std::vector<TowerInfo> l_towerInfos;
-  for (const auto &d: l_towerData) {
-    l_towerInfos.push_back({
-      d["tag"], d["cost"], d["atk"], d["range"], d["calmTime"], d["speed"],
-      d["rgb"][0], d["rgb"][1], d["rgb"][2], d["bulletRadius"]
-    });
-  }
-  sort(l_towerInfos.begin(), l_towerInfos.end(), [](const TowerInfo &l_towerInfo1, const TowerInfo &l_towerInfo2) {
-    return l_towerInfo1.m_tag < l_towerInfo2.m_tag;
-  });
-  inTower.close();
+  // Load Tower Infos
+  const auto l_towerInfos = LoadTowerInfo();
+  // Load Map Data
   std::ifstream in("res/config/map" + std::to_string(m_level) + ".json");
   nlohmann::json l_mapData = nlohmann::json::parse(in);
   in.close();
@@ -469,8 +464,26 @@ void Map::LoadMap() {
   }
 }
 
+std::vector<TowerInfo> Map::LoadTowerInfo() {
+  std::ifstream inTower("res/config/tower.json");
+  const nlohmann::json l_towerData = nlohmann::json::parse(inTower);
+  std::vector<TowerInfo> l_towerInfos;
+  for (const auto &d: l_towerData) {
+    l_towerInfos.push_back({
+      d["tag"], d["cost"], d["atk"], d["range"], d["calmTime"], d["speed"],
+      d["rgb"][0], d["rgb"][1], d["rgb"][2], d["bulletRadius"]
+    });
+  }
+  sort(l_towerInfos.begin(), l_towerInfos.end(), [](const TowerInfo &l_towerInfo1, const TowerInfo &l_towerInfo2) {
+    return l_towerInfo1.m_tag < l_towerInfo2.m_tag;
+  });
+  inTower.close();
+  return l_towerInfos;
+}
+
 void Map::Save() {
   nlohmann::json l_gameState;
+  l_gameState["m_boardMoney"] = m_board->GetMoney();
   l_gameState["m_resolution"] = m_resolution;
   l_gameState["m_atomResolution"] = nlohmann::json::array({m_atomResolution.x, m_atomResolution.y});
   l_gameState["m_lives"] = m_lives;
@@ -499,6 +512,7 @@ void Map::Save() {
       {"m_increments", l_fig->GetIncrements()},
       {"m_mileage", l_fig->GetMileage()},
       {"m_lives", l_fig->GetLives()},
+      {"m_position", nlohmann::json::array({l_fig->GetSprite().getPosition().x, l_fig->GetSprite().getPosition().y})},
     };
     l_gameState["m_figures"].emplace_back(l_figState);
   }
@@ -602,34 +616,83 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
     m_resolution(l_gameState["m_resolution"]),
     m_atomResolution({l_gameState["m_atomResolution"][0], l_gameState["m_atomResolution"][1]}),
     m_level(l_gameState["m_level"]) {
+  m_wind = l_wind;
   LoadMap();
   LoadProp();
   m_lives = l_gameState["m_lives"];
+  m_selected.m_tower = nullptr;
+  // Load Tower Infos
+  const auto l_towerInfos = LoadTowerInfo();
+  // Load Invader Turns
+  std::vector<InvadeTurnInfo> l_invaderTurns;
+  // Load Map
   const auto &l_places = l_gameState["m_places"];
-  for (int i = 0; i < m_YRange; ++i) {
-    for (int j = 0; j < m_XRange; ++j) {
+  // m_places = std::vector<std::vector<Place> >(m_XRange, std::vector<Place>(m_YRange));
+  for (int j = 0; j < m_YRange; ++j) {
+    for (int i = 0; i < m_XRange; ++i) {
       //TODO: Rebuild towers
       if (l_places[i][j][0] == static_cast<int>(PlaceType::Tower)) {
-        // TODO Build Tower. BUG
-        int l_tag = l_places[i][j][1][1];
-        m_places[i][j].GetTower()->SetCalmTime(sf::seconds(l_places[i][j][1][0]));
+        // TODO Build Tower.
+        const int l_tag = l_places[i][j][1][1];
+        std::cout << l_tag << "\n";
+        if (m_textures.find("tower" + std::to_string(l_tag)) == m_textures.end()) {
+          m_textures["tower" + std::to_string(l_tag)].loadFromFile(
+            "res/img/tower/" + m_resolution + "/tower" + std::to_string(l_tag) + ".png");
+        }
+        const auto [l_choice, l_towerInfo] = m_choices[l_tag];
+        m_places[i][j].SetPlaceType(PlaceType::Tower);
+        m_places[i][j].SetTower(std::make_shared<Tower>(l_choice.first, l_choice.first.getTexture()->getSize(),
+                                                        sf::seconds(static_cast<float>(l_towerInfo.m_calmTime)),
+                                                        l_towerInfo.m_attackPoint,
+                                                        static_cast<float>(l_towerInfo.m_speed),
+                                                        l_towerInfo.m_range,
+                                                        l_towerInfo.m_cost,
+                                                        l_towerInfo.m_red, l_towerInfo.m_green, l_towerInfo.m_blue,
+                                                        l_towerInfo.m_bulletRadius,
+                                                        l_towerInfo.m_tag));
+        m_places[i][j].GetTower()->GetSprite().setOrigin(
+          static_cast<float>(m_textures["tower" + std::to_string(l_tag)].getSize().x) / 2.0f,
+          static_cast<float>(m_textures["tower" + std::to_string(l_tag)].getSize().y) / 2.0f);
+        m_places[i][j].GetTower()->GetSprite().setPosition(
+          m_atomResolution.x / 2.0f + m_atomResolution.x * static_cast<float>(i),
+          m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f + m_atomResolution.y / 2.0f + m_atomResolution.y
+          * static_cast<float>(j));
       }
     }
   }
   const auto &l_figures = l_gameState["m_figures"];
   for (const auto &l_fig: l_figures) {
     // TODO: Recreate the invaders
+    std::vector<Direction> l_increments;
+    std::transform(l_fig["m_increments"].begin(), l_fig["m_increments"].end(), std::back_inserter(l_increments),
+                   [](const int &l_increment) { return static_cast<Direction>(l_increment); });
+    const std::string l_figureName = "invader" + std::to_string(static_cast<int>(l_fig["m_tag"]));
+    if (m_textures.find(l_figureName) == m_textures.end()) {
+      m_textures[l_figureName].loadFromFile("res/img/invader/" + m_resolution + "/" + l_figureName + ".png");
+    }
+    sf::Sprite l_sp(m_textures[l_figureName]);
+    l_sp.setOrigin(static_cast<float>(m_textures[l_figureName].getSize().x / 2.0),
+                   static_cast<float>(m_textures[l_figureName].getSize().y / 2.0));
+    l_sp.setPosition(l_fig["m_position"][0], l_fig["m_position"][1]);
+    m_figures.push_back(std::make_shared<Figure>(l_fig["m_tag"], l_sp, l_sp.getTexture()->getSize(), l_increments,
+                                                 l_fig["m_lives"]));
+    std::cout << l_fig["m_increments"] << "\n";
   }
   const auto &l_bullets = l_gameState["m_bullets"];
   for (const auto &l_bullet: l_bullets) {
     // TODO: Recreate the bullets
   }
+  m_backup = sf::RectangleShape(sf::Vector2f(static_cast<float>(l_wind->getSize().x),
+                                             static_cast<float>(l_wind->getSize().y)));
+  m_backup.setFillColor(sf::Color(120, 120, 0));
+  m_board = std::make_unique<Board>(sf::Vector2f(m_atomResolution.x, m_atomResolution.y));
+  m_board->SetMoney(l_gameState["m_boardMoney"]);
   // TODO: Reconstruct TextBox
   m_textBox = std::make_unique<gl::TextBox>(
     sf::Vector2f(static_cast<float>(l_wind->getSize().x) / 5.0f * 4.0f,
                  static_cast<float>(l_wind->getSize().y) / 10.0f),
     sf::Vector2f(static_cast<float>(l_wind->getSize().x) / 5.0f * 2,
-                 static_cast<float>(l_wind->getSize().y) / 5.0f),
-    6,
-    m_fonts["arial"], l_gameState["m_textBoxMessages"]);
+                 static_cast<float>(l_wind->getSize().y) / 5.0f), 6, m_fonts["arial"],
+    l_gameState["m_textBoxMessages"]);
+  std::cout << "Load Finished!\n";
 }

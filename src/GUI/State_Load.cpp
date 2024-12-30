@@ -1,7 +1,7 @@
 #include "State_Load.h"
 #include "StateManager.h"
 
-State_Load::State_Load(StateManager *l_stateManager): State_MainMenu(l_stateManager) {
+State_Load::State_Load(StateManager *l_stateManager): BaseState(l_stateManager) {
 }
 
 State_Load::~State_Load() = default;
@@ -26,7 +26,17 @@ void State_Load::OnCreate() {
   });
   for (int i = 0; i < l_buttonInfos.size(); i++) {
     m_buttons.emplace_back(l_buttonInfos[i], l_pos + static_cast<float>(i) * l_delta, l_size, l_windowSize.y / 20,
-                           m_font, []() {
+                           m_font, [this]() {
+                             //TODO: Load Map Data Respectively
+                             if (m_stateMgr->HasState(StateType::Game)) {
+                               m_stateMgr->Remove(StateType::Game);
+                               m_stateMgr->ProcessRequests();
+                             }
+                             std::ifstream in("res/config/save.json");
+                             nlohmann::json l_mapData = nlohmann::json::parse(in);
+                             in.close();
+                             m_stateMgr->GetContext()->m_mapData = std::make_unique<nlohmann::json>(l_mapData);
+                             m_stateMgr->SwitchTo(StateType::Game);
                            });
   }
 
@@ -45,3 +55,21 @@ void State_Load::Update(const sf::Time &l_time) {
 void State_Load::MainMenu(EventDetails *l_details) {
   m_stateMgr->SwitchTo(StateType::MainMenu);
 }
+
+void State_Load::Draw() {
+  sf::RenderWindow *l_window = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
+  l_window->draw(m_title);
+  for (auto &l_button: m_buttons) {
+    l_button.UpdateRender(*l_window);
+  }
+}
+
+void State_Load::Activate() {
+  for (auto &l_button: m_buttons) {
+    l_button.SetIsPressed(true);
+  }
+}
+
+void State_Load::Deactivate() {
+}
+

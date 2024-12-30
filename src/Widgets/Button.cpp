@@ -97,4 +97,8 @@ namespace gl {
   unsigned int Button::GetCharSize() const {
     return m_text.getCharacterSize();
   }
+
+  void Button::SetIsPressed(bool l_isPressed) {
+    m_isPressed = l_isPressed;
+  }
 };

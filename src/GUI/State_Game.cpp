@@ -3,6 +3,13 @@
 
 State_Game::State_Game(StateManager *l_stateManager)
   : BaseState(l_stateManager) {
+  if (m_stateMgr->GetContext()->m_mapData) {
+    m_map = std::make_unique<Map>(m_stateMgr->GetContext()->m_wind->GetRenderWindow(),
+                                  *m_stateMgr->GetContext()->m_mapData);
+    std::cout << "Use Shared Context\n";
+    m_stateMgr->GetContext()->m_mapData = nullptr;
+    return;
+  }
   m_map = std::make_unique<Map>(m_stateMgr->GetContext()->m_wind->GetRenderWindow(),
                                 l_stateManager->GetContext()->m_level,
                                 l_stateManager->GetContext()->m_resolution,

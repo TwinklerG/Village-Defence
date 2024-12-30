@@ -38,6 +38,8 @@ namespace gl {
 
     unsigned int GetCharSize() const;
 
+    void SetIsPressed(bool l_isPressed);
+
   private:
     sf::RectangleShape m_rect;
     sf::Text m_text;
