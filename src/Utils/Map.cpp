@@ -75,7 +75,6 @@ void Map::Update(sf::RenderWindow *l_wind, const sf::Time &l_time) {
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
     for (int i = 0; i < m_XRange; i++) {
       for (int j = 0; j < m_YRange; j++) {
-        // std::cout << i << " " << j << "\n";
         if (gl::checkMouseSelect(m_places[i][j], m_wind)) {
           if (m_selected.m_tower && m_selected.m_selectType == SelectType::Choice && (m_places[i][j].GetPlaceType() ==
                 PlaceType::Land || m_places[i][j].GetPlaceType() == PlaceType::Tower)) {
@@ -621,8 +620,6 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
   LoadProp();
   m_lives = l_gameState["m_lives"];
   m_selected.m_tower = nullptr;
-  // Load Tower Infos
-  const auto l_towerInfos = LoadTowerInfo();
   // Load Invader Turns
   std::vector<InvadeTurnInfo> l_invaderTurns;
   // Load Map
@@ -657,12 +654,13 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
           m_atomResolution.x / 2.0f + m_atomResolution.x * static_cast<float>(i),
           m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f + m_atomResolution.y / 2.0f + m_atomResolution.y
           * static_cast<float>(j));
+        m_places[i][j].GetTower()->SetCalmTime(sf::seconds(l_places[i][j][1][0]));
       }
     }
   }
+  // Recreate the invaders
   const auto &l_figures = l_gameState["m_figures"];
   for (const auto &l_fig: l_figures) {
-    // TODO: Recreate the invaders
     std::vector<Direction> l_increments;
     std::transform(l_fig["m_increments"].begin(), l_fig["m_increments"].end(), std::back_inserter(l_increments),
                    [](const int &l_increment) { return static_cast<Direction>(l_increment); });
@@ -678,16 +676,24 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
                                                  l_fig["m_lives"]));
     std::cout << l_fig["m_increments"] << "\n";
   }
+  // Recreate the bullets
   const auto &l_bullets = l_gameState["m_bullets"];
   for (const auto &l_bullet: l_bullets) {
-    // TODO: Recreate the bullets
+    const sf::Vector2f l_pos = sf::Vector2f(l_bullet["position"][0], l_bullet["position"][1]);
+    sf::CircleShape l_circle(l_bullet["radius"]);
+    l_circle.setOrigin(l_circle.getRadius(), l_circle.getRadius());
+    l_circle.setPosition(l_pos);
+    std::vector<unsigned> l_rgba = l_bullet["rgba"];
+    std::cout << l_rgba[3] << std::endl;
+    l_circle.setFillColor(sf::Color(l_rgba[0], l_rgba[1], l_rgba[2], l_rgba[3]));
+    m_bullets.emplace_back(l_circle, m_figures[l_bullet["targetFigureIdx"]], l_bullet["speed"], l_bullet["atk"]);
   }
   m_backup = sf::RectangleShape(sf::Vector2f(static_cast<float>(l_wind->getSize().x),
                                              static_cast<float>(l_wind->getSize().y)));
   m_backup.setFillColor(sf::Color(120, 120, 0));
   m_board = std::make_unique<Board>(sf::Vector2f(m_atomResolution.x, m_atomResolution.y));
   m_board->SetMoney(l_gameState["m_boardMoney"]);
-  // TODO: Reconstruct TextBox
+  // Reconstruct TextBox
   m_textBox = std::make_unique<gl::TextBox>(
     sf::Vector2f(static_cast<float>(l_wind->getSize().x) / 5.0f * 4.0f,
                  static_cast<float>(l_wind->getSize().y) / 10.0f),

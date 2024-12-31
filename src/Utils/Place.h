@@ -5,8 +5,9 @@
 
 class Tower final : public Element {
 public:
-  explicit Tower(const sf::Sprite &, const sf::Vector2u &, const sf::Time &, int = 1, float = 90, double range = 400, int = 50,
-        int red = 255, int green = 255, int blue = 0, double radius = 10, int l_tag = 0);
+  explicit Tower(const sf::Sprite &, const sf::Vector2u &, const sf::Time &, int = 1, float = 90, double range = 400,
+                 int = 50,
+                 int red = 255, int green = 255, int blue = 0, double radius = 10, int l_tag = 0);
 
   void Render(sf::RenderWindow *l_wind) const override;
 
