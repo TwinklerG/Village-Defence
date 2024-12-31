@@ -14,11 +14,11 @@ namespace gl {
 
     void Render(sf::RenderWindow &l_window) const;
 
-    void SetTextString(const std::string &l_textString);
+    void SetTextString(const std::string &l_textString) const;
 
   private:
-    sf::Sprite m_sprite;
-    sf::Text m_text;
+    std::unique_ptr<sf::Sprite> m_sprite;
+    std::unique_ptr<sf::Text> m_text;
 
     std::function<void()> m_callBack;
     bool m_isPressed;

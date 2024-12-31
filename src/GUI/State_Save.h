@@ -17,6 +17,4 @@ public:
   void Deactivate() override;
 
   void Update(const sf::Time &l_time) override;
-
-  void MainMenu(EventDetails *l_details);
 };

@@ -19,11 +19,9 @@ public:
 
   void Deactivate() override;
 
-  void MainMenu(EventDetails *l_details);
-
 private:
   sf::Font m_font;
 
-  sf::Text m_title;
+  std::unique_ptr<sf::Text> m_title;
   std::vector<gl::Button> m_buttons;
 };

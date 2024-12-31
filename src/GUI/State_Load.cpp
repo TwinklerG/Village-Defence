@@ -1,17 +1,17 @@
 #include "State_Load.h"
 #include "StateManager.h"
 
-State_Load::State_Load(StateManager *l_stateManager): BaseState(l_stateManager) {
+State_Load::State_Load(StateManager *l_stateManager): BaseState(l_stateManager), m_title(nullptr) {
 }
 
 State_Load::~State_Load() = default;
 
 void State_Load::OnCreate() {
-  m_font.loadFromFile("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
+  m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
   const sf::Vector2u l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_title = sf::Text(L"读档", m_font, static_cast<unsigned int>(l_windowSize.y) / 10);
-  m_title.setOrigin(m_title.getLocalBounds().width / 2.0f, m_title.getLocalBounds().height / 2.0f);
-  m_title.setPosition(static_cast<float>(l_windowSize.x) / 2.0f, static_cast<float>(l_windowSize.y) / 10.0f * 2.0f);
+  m_title = std::make_unique<sf::Text>(m_font, L"读档", static_cast<unsigned int>(l_windowSize.y) / 10);
+  m_title->setOrigin({m_title->getLocalBounds().size.x / 2.0f, m_title->getLocalBounds().size.y / 2.0f});
+  m_title->setPosition({static_cast<float>(l_windowSize.x) / 2.0f, static_cast<float>(l_windowSize.y) / 10.0f * 2.0f});
   const auto l_size = sf::Vector2f(static_cast<float>(l_windowSize.x) / 3.0f,
                                    static_cast<float>(l_windowSize.y) / 10.2f);
   const auto l_pos = sf::Vector2f(static_cast<float>(l_windowSize.x) / 2.0f,
@@ -39,26 +39,20 @@ void State_Load::OnCreate() {
                              m_stateMgr->SwitchTo(StateType::Game);
                            });
   }
-
-  EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
-  envMgr->AddCallback(StateType::Load, "Key_Escape", &State_Load::MainMenu, this);
 }
 
 void State_Load::OnDestroy() {
-  EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
-  envMgr->RemoveCallback(StateType::Load, "Key_Escape");
 }
 
 void State_Load::Update(const sf::Time &l_time) {
-}
-
-void State_Load::MainMenu(EventDetails *l_details) {
-  m_stateMgr->SwitchTo(StateType::MainMenu);
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
+    m_stateMgr->SwitchTo(StateType::MainMenu);
+  }
 }
 
 void State_Load::Draw() {
   sf::RenderWindow *l_window = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
-  l_window->draw(m_title);
+  l_window->draw(*m_title);
   for (auto &l_button: m_buttons) {
     l_button.UpdateRender(*l_window);
   }

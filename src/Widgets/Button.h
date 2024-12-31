@@ -42,7 +42,7 @@ namespace gl {
 
   private:
     sf::RectangleShape m_rect;
-    sf::Text m_text;
+    std::shared_ptr<sf::Text> m_text;
     sf::Color m_backColor, m_textColor, m_backHoverColor, m_textHoverColor;
     std::function<void()> m_callBack;
     bool m_isPressed;

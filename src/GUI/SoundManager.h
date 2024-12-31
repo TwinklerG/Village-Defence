@@ -2,10 +2,10 @@
 #include <SFML/Audio.hpp>
 #include <unordered_map>
 
-class SoundManager
-{
+class SoundManager {
 public:
-  SoundManager();
+  //TODO Loss of Construction
+
   ~SoundManager();
 
   void Play(const std::string &l_soundName, float l_volume = 100, bool l_loop = false);

@@ -59,8 +59,6 @@ enum class PlaceType {
 
 class Place final : public Element {
 public:
-  Place();
-
   Place(const sf::Sprite &l_sp, const sf::Vector2u &l_size);
 
   Place(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const PlaceType &l_placeType);

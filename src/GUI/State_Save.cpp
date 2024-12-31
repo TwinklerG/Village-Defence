@@ -6,11 +6,11 @@ State_Save::State_Save(StateManager *l_stateManager): State_MainMenu(l_stateMana
 State_Save::~State_Save() = default;
 
 void State_Save::OnCreate() {
-  m_font.loadFromFile("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
+  m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
   const sf::Vector2u l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_title = sf::Text(L"存档", m_font, static_cast<unsigned int>(l_windowSize.y) / 10);
-  m_title.setOrigin(m_title.getLocalBounds().width / 2.0f, m_title.getLocalBounds().height / 2.0f);
-  m_title.setPosition(static_cast<float>(l_windowSize.x) / 2.0f, static_cast<float>(l_windowSize.y) / 10.0f * 2.0f);
+  m_title = std::make_unique<sf::Text>(m_font, L"存档", static_cast<unsigned int>(l_windowSize.y) / 10);
+  m_title->setOrigin({m_title->getLocalBounds().size.x / 2.0f, m_title->getLocalBounds().size.y / 2.0f});
+  m_title->setPosition({static_cast<float>(l_windowSize.x) / 2.0f, static_cast<float>(l_windowSize.y) / 10.0f * 2.0f});
   const auto l_size = sf::Vector2f(static_cast<float>(l_windowSize.x) / 3.0f,
                                    static_cast<float>(l_windowSize.y) / 10.2f);
   const auto l_pos = sf::Vector2f(static_cast<float>(l_windowSize.x) / 2.0f,
@@ -28,25 +28,19 @@ void State_Save::OnCreate() {
                            m_font, []() {
                            });
   }
-
-  EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
-  envMgr->AddCallback(StateType::Save, "Key_Escape", &State_Save::MainMenu, this);
 }
 
 void State_Save::OnDestroy() {
-  EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
-  envMgr->RemoveCallback(StateType::Save, "Key_Escape");
 }
 
 void State_Save::Update(const sf::Time &l_time) {
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
+    m_stateMgr->SwitchTo(StateType::MainMenu);
+  }
 }
 
 void State_Save::Activate() {
 }
 
 void State_Save::Deactivate() {
-}
-
-void State_Save::MainMenu(EventDetails *l_details) {
-  m_stateMgr->SwitchTo(StateType::MainMenu);
 }

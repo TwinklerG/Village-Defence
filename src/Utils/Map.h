@@ -60,7 +60,7 @@ public:
 
   void OnCreate(sf::RenderWindow *l_wind);
 
-  void Update(sf::RenderWindow *l_wind, const sf::Time &l_time);
+  void Update(const sf::RenderWindow *l_wind, const sf::Time &l_time);
 
   void Render(sf::RenderWindow *l_wind);
 
@@ -83,13 +83,13 @@ private:
   bool m_isWin;
   sf::RectangleShape m_backup;
   std::unique_ptr<Board> m_board;
-  std::vector<std::pair<std::pair<sf::Sprite, sf::Text>, TowerInfo> > m_choices;
+  std::vector<std::pair<std::pair<std::shared_ptr<sf::Sprite>, std::shared_ptr<sf::Text> >, TowerInfo> > m_choices;
   sf::RenderWindow *m_wind{};
   std::vector<std::pair<std::pair<int, int>, std::vector<Direction> > > m_roads;
   SelectInfo m_selected;
 
   // Main Objects
-  std::vector<std::vector<Place> > m_places;
+  std::vector<std::vector<std::shared_ptr<Place> > > m_places;
   std::vector<std::shared_ptr<Figure> > m_figures;
   std::vector<Bullet> m_bullets;
 

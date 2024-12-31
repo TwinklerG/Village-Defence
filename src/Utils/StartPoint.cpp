@@ -59,16 +59,19 @@ std::shared_ptr<Figure> StartPoint::Update(const sf::Time &l_elapsed) {
   }
   const std::string l_figureName = "invader" + std::to_string(tag);
   if (m_textures.find(l_figureName) == m_textures.end()) {
-    m_textures[l_figureName].loadFromFile("res/img/invader/" + m_resolution + "/" + l_figureName + ".png");
+    m_textures[l_figureName] = sf::Texture("res/img/invader/" + m_resolution + "/" + l_figureName + ".png");
   }
   sf::Sprite l_sp(m_textures[l_figureName]);
-  l_sp.setOrigin(static_cast<float>(m_textures[l_figureName].getSize().x / 2.0),
-                 static_cast<float>(m_textures[l_figureName].getSize().y / 2.0));
-  l_sp.setPosition(m_atomResolution.x / 2.0f
-                   + m_atomResolution.x * static_cast<float>(m_coordinate.first),
-                   m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f
-                   + m_atomResolution.y / 2.0f + m_atomResolution.y * static_cast<float>(m_coordinate.second));
-  return std::make_shared<Figure>(idx, l_sp, l_sp.getTexture()->getSize(),
+  l_sp.setOrigin({
+    static_cast<float>(m_textures[l_figureName].getSize().x / 2.0),
+    static_cast<float>(m_textures[l_figureName].getSize().y / 2.0)
+  });
+  l_sp.setPosition({
+    m_atomResolution.x / 2.0f + m_atomResolution.x * static_cast<float>(m_coordinate.first),
+    m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f + m_atomResolution.y / 2.0f + m_atomResolution.y *
+    static_cast<float>(m_coordinate.second)
+  });
+  return std::make_shared<Figure>(idx, l_sp, l_sp.getTexture().getSize(),
                                   m_roads[gl::RandInt(0, static_cast<int>(m_roads.size()) - 1)],
                                   m_figureInfos[tag].m_lives,
                                   static_cast<int>(m_figureInfos[tag].m_speed * l_speedBuff),

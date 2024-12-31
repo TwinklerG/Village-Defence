@@ -5,41 +5,28 @@ State_Paused::State_Paused(StateManager *l_stateManager) : BaseState(l_stateMana
 
 State_Paused::~State_Paused() = default;
 
-void State_Paused::OnCreate()
-{
+void State_Paused::OnCreate() {
   SetTransparent(true); // Set our transparency flag.
-  m_font.loadFromFile("res/fonts/arial.ttf");
-  m_text.setFont(m_font);
-  m_text.setString(sf::String("PAUSED"));
-  m_text.setCharacterSize(14);
-  m_text.setStyle(sf::Text::Bold);
+  m_font = sf::Font("res/fonts/arial.ttf");
+  m_text = std::make_unique<sf::Text>(m_font, "PAUSED", 14);
+  m_text->setStyle(sf::Text::Bold);
   const sf::Vector2u windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  const sf::FloatRect textRect = m_text.getLocalBounds();
-  m_text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-  m_text.setPosition(static_cast<float>(windowSize.x) / 2.0f, static_cast<float>(windowSize.y) / 2.0f);
+  m_text->setOrigin({m_text->getLocalBounds().position.x +m_text->getLocalBounds().size.x / 2.0f, m_text->getLocalBounds().position.y + m_text->getLocalBounds().size.y / 2.0f});
+  m_text->setPosition({static_cast<float>(windowSize.x) / 2.0f, static_cast<float>(windowSize.y) / 2.0f});
   m_rect.setSize(sf::Vector2f(windowSize));
-  m_rect.setPosition(0, 0);
+  m_rect.setPosition({0, 0});
   m_rect.setFillColor(sf::Color(0, 0, 0, 150));
-  EventManager *evMgr = m_stateMgr->GetContext()->m_eventManager;
-  evMgr->AddCallback(StateType::Paused, "Key_P", &State_Paused::Unpause, this);
 }
 
 void State_Paused::OnDestroy()
 {
-  EventManager *evMgr = m_stateMgr->GetContext()->m_eventManager;
-  evMgr->RemoveCallback(StateType::Paused, "Key_P");
 }
 
 void State_Paused::Draw()
 {
   sf::RenderWindow *l_wind = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
   l_wind->draw(m_rect);
-  l_wind->draw(m_text);
-}
-
-void State_Paused::Unpause(EventDetails *l_details)
-{
-  m_stateMgr->SwitchTo(StateType::Game);
+  l_wind->draw(*m_text);
 }
 
 void State_Paused::Activate() {}

@@ -1,4 +1,7 @@
 #include "Figure.h"
+
+#include <algorithm>
+
 #include "Utils.hpp"
 
 Figure::Figure(const int l_tag, const sf::Sprite &l_sp, const sf::Vector2u &l_size,
@@ -13,8 +16,10 @@ Figure::Figure(const int l_tag, const sf::Sprite &l_sp, const sf::Vector2u &l_si
     m_reward(l_reward),
     m_tag(l_tag) {
   m_livesBar = sf::RectangleShape(sf::Vector2f(static_cast<float>(m_size.x), 10));
-  m_livesBar.setPosition(static_cast<float>(getPosition().x - m_size.x / 2.0),
-                         static_cast<float>(getPosition().y - m_size.y / 2.0 + gl::RandInt(-5, 5)));
+  m_livesBar.setPosition({
+    static_cast<float>(getPosition().x - m_size.x / 2.0),
+    static_cast<float>(getPosition().y - m_size.y / 2.0 + gl::RandInt(-5, 5))
+  });
   m_livesBar.setOutlineColor(sf::Color::Black);
   m_livesBar.setOutlineThickness(2.0f);
   m_livesBar.setFillColor(sf::Color::Red);
@@ -32,28 +37,44 @@ void Figure::Update(const sf::Time &elapsed, const double l_ratio) {
   const float delta = elapsed.asSeconds() * static_cast<float>(m_speed) * static_cast<float>(l_ratio);
   switch (m_increments[static_cast<long long>(m_mileage / m_atomResolution.x)]) {
     case Direction::Right:
-      m_sprite.setPosition(m_sprite.getPosition().x + delta,
-                           m_sprite.getPosition().y);
-      m_livesBar.setPosition(m_livesBar.getPosition().x + delta,
-                             m_livesBar.getPosition().y);
+      m_sprite.setPosition({
+        m_sprite.getPosition().x + delta,
+        m_sprite.getPosition().y
+      });
+      m_livesBar.setPosition({
+        m_livesBar.getPosition().x + delta,
+        m_livesBar.getPosition().y
+      });
       break;
     case Direction::Down:
-      m_sprite.setPosition(m_sprite.getPosition().x,
-                           m_sprite.getPosition().y + delta);
-      m_livesBar.setPosition(m_livesBar.getPosition().x,
-                             m_livesBar.getPosition().y + delta);
+      m_sprite.setPosition({
+        m_sprite.getPosition().x,
+        m_sprite.getPosition().y + delta
+      });
+      m_livesBar.setPosition({
+        m_livesBar.getPosition().x,
+        m_livesBar.getPosition().y + delta
+      });
       break;
     case Direction::Left:
-      m_sprite.setPosition(m_sprite.getPosition().x - delta,
-                           m_sprite.getPosition().y);
-      m_livesBar.setPosition(m_livesBar.getPosition().x - delta,
-                             m_livesBar.getPosition().y);
+      m_sprite.setPosition({
+        m_sprite.getPosition().x - delta,
+        m_sprite.getPosition().y
+      });
+      m_livesBar.setPosition({
+        m_livesBar.getPosition().x - delta,
+        m_livesBar.getPosition().y
+      });
       break;
     case Direction::Up:
-      m_sprite.setPosition(m_sprite.getPosition().x,
-                           m_sprite.getPosition().y - delta);
-      m_livesBar.setPosition(m_livesBar.getPosition().x,
-                             m_livesBar.getPosition().y - delta);
+      m_sprite.setPosition({
+        m_sprite.getPosition().x,
+        m_sprite.getPosition().y - delta
+      });
+      m_livesBar.setPosition({
+        m_livesBar.getPosition().x,
+        m_livesBar.getPosition().y - delta
+      });
     default:
       break;
   }
@@ -71,6 +92,10 @@ double Figure::GetMileage() const {
   return m_mileage;
 }
 
+void Figure::SetMileage(const double l_mileage) {
+  m_mileage = l_mileage;
+}
+
 int Figure::GetLives() const { return m_lives; }
 
 void Figure::SetLives(const int l_lives) {
@@ -82,4 +107,8 @@ int Figure::GetReward() const { return m_reward; }
 
 int Figure::GetTag() const {
   return m_tag;
+}
+
+int Figure::GetSpeed() const {
+  return m_speed;
 }

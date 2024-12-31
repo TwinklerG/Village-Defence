@@ -2,7 +2,6 @@
 
 #include <utility>
 
-Element::Element() = default;
 Element::Element(sf::Sprite l_sp, const sf::Vector2u &l_size) : m_sprite(std::move(l_sp)), m_size(l_size) {}
 Element::~Element() = default;
 sf::Sprite &Element::GetSprite() { return m_sprite; }

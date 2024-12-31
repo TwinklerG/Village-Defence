@@ -1,25 +1,25 @@
 #include "TextBox.h"
 
 #include <nlohmann/json.hpp>
-#include <iostream>
+#include <utility>
 
 namespace gl {
-  TextBox::TextBox(const sf::Vector2f &l_pos, const sf::Vector2f &l_size, const int l_max, const sf::Font &l_font)
-    : m_font(l_font), m_max(l_max) {
+  TextBox::TextBox(const sf::Vector2f &l_pos, const sf::Vector2f &l_size, const int l_max, sf::Font l_font)
+    : m_font(std::move(l_font)), m_max(l_max) {
     m_backup = sf::RectangleShape(l_size);
-    m_backup.setOrigin(m_backup.getSize().x / 2.0f, m_backup.getSize().y / 2.0f);
+    m_backup.setOrigin({m_backup.getSize().x / 2.0f, m_backup.getSize().y / 2.0f});
     m_backup.setPosition(l_pos);
     m_backup.setFillColor(sf::Color(0, 0, 0, 50));
   }
 
-  TextBox::TextBox(const sf::Vector2f &l_pos, const sf::Vector2f &l_size, const int l_max, const sf::Font &l_font,
+  TextBox::TextBox(const sf::Vector2f &l_pos, const sf::Vector2f &l_size, const int l_max, sf::Font l_font,
                    const std::vector<std::string> &l_messages)
-    : m_font(l_font), m_max(l_max) {
+    : m_font(std::move(l_font)), m_max(l_max) {
     m_backup = sf::RectangleShape(l_size);
-    m_backup.setOrigin(m_backup.getSize().x / 2.0f, m_backup.getSize().y / 2.0f);
+    m_backup.setOrigin({m_backup.getSize().x / 2.0f, m_backup.getSize().y / 2.0f});
     m_backup.setPosition(l_pos);
     m_backup.setFillColor(sf::Color(0, 0, 0, 50));
-    for (const auto& l_message : l_messages) {
+    for (const auto &l_message: l_messages) {
       AddText(l_message);
     }
   }
@@ -31,16 +31,16 @@ namespace gl {
       }
       m_texts.erase(m_texts.begin());
     }
-    sf::Text l_text;
-    l_text.setFont(m_font);
-    l_text.setString(l_textString);
-    l_text.setCharacterSize(static_cast<unsigned int>(m_backup.getSize().y / static_cast<float>(m_max + 1) * 0.9f));
+    sf::Text l_text(m_font, l_textString,
+                    static_cast<unsigned int>(m_backup.getSize().y / static_cast<float>(m_max + 1) * 0.9f));
     const auto l_lcb = l_text.getLocalBounds();
-    l_text.setOrigin(l_lcb.left + l_lcb.width / 2.0f, l_lcb.top + l_lcb.height / 2.0f);
-    l_text.setPosition(m_backup.getPosition().x,
-                       m_backup.getPosition().y - m_backup.getSize().y / 2.0f +
-                       m_backup.getSize().y / static_cast<float>(m_max + 1) * static_cast<float>(
-                         1 + 1 * m_texts.size()));
+    l_text.setOrigin({l_lcb.position.x + l_lcb.size.x / 2.0f, l_lcb.position.y + l_lcb.size.y / 2.0f});
+    l_text.setPosition({
+      m_backup.getPosition().x,
+      m_backup.getPosition().y - m_backup.getSize().y / 2.0f +
+      m_backup.getSize().y / static_cast<float>(m_max + 1) * static_cast<float>(
+        1 + 1 * m_texts.size())
+    });
     m_texts.push_back(l_text);
   }
 

@@ -1,7 +1,5 @@
 #include "EndPoint.h"
 
-EndPoint::EndPoint() = default;
-
 EndPoint::EndPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size) : Element(l_sp, l_size) {
 }
 

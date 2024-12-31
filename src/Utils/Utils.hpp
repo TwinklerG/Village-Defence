@@ -38,16 +38,16 @@ namespace gl {
    */
   inline bool IsHover(const sf::Sprite &l_sprite, const sf::RenderWindow &l_window) {
     const sf::Vector2i l_mousePos = sf::Mouse::getPosition(l_window);
-    return static_cast<float>(l_mousePos.x) > l_sprite.getPosition().x - static_cast<float>(l_sprite.getTexture()->
+    return static_cast<float>(l_mousePos.x) > l_sprite.getPosition().x - static_cast<float>(l_sprite.getTexture().
              getSize()
              .x) / 2.0f &&
-           static_cast<float>(l_mousePos.x) < l_sprite.getPosition().x + static_cast<float>(l_sprite.getTexture()->
+           static_cast<float>(l_mousePos.x) < l_sprite.getPosition().x + static_cast<float>(l_sprite.getTexture().
              getSize()
              .x) / 2.0f &&
-           static_cast<float>(l_mousePos.y) > l_sprite.getPosition().y - static_cast<float>(l_sprite.getTexture()->
+           static_cast<float>(l_mousePos.y) > l_sprite.getPosition().y - static_cast<float>(l_sprite.getTexture().
              getSize()
              .y) / 2.0f &&
-           static_cast<float>(l_mousePos.y) < l_sprite.getPosition().y + static_cast<float>(l_sprite.getTexture()->
+           static_cast<float>(l_mousePos.y) < l_sprite.getPosition().y + static_cast<float>(l_sprite.getTexture().
              getSize()
              .y) / 2.0f;
   }
@@ -74,10 +74,10 @@ namespace gl {
    * @return whether Mouse selects Sprite
    */
   inline bool checkMouseSelectSprite(const sf::Sprite &l_sprite, const sf::RenderWindow *l_wind) {
-    return l_sprite.getPosition().x - l_sprite.getTexture()->getSize().x / 2.0 <= sf::Mouse::getPosition(*l_wind).x &&
-           l_sprite.getPosition().x + l_sprite.getTexture()->getSize().x / 2.0 >= sf::Mouse::getPosition(*l_wind).x &&
-           l_sprite.getPosition().y - l_sprite.getTexture()->getSize().y / 2.0 <= sf::Mouse::getPosition(*l_wind).y &&
-           l_sprite.getPosition().y + l_sprite.getTexture()->getSize().y / 2.0 >= sf::Mouse::getPosition(*l_wind).y;
+    return l_sprite.getPosition().x - l_sprite.getTexture().getSize().x / 2.0 <= sf::Mouse::getPosition(*l_wind).x &&
+           l_sprite.getPosition().x + l_sprite.getTexture().getSize().x / 2.0 >= sf::Mouse::getPosition(*l_wind).x &&
+           l_sprite.getPosition().y - l_sprite.getTexture().getSize().y / 2.0 <= sf::Mouse::getPosition(*l_wind).y &&
+           l_sprite.getPosition().y + l_sprite.getTexture().getSize().y / 2.0 >= sf::Mouse::getPosition(*l_wind).y;
   }
 
   /**
@@ -93,8 +93,7 @@ namespace gl {
   bool checkInRange(const T &source, const F &target, const double range) {
     return (source.getPosition().x - target.getPosition().x) * (source.getPosition().x - target.getPosition().x) + (
              source.getPosition().y - target.getPosition().y) * (source.getPosition().y - target.getPosition().y) <=
-           range
-           * range;
+           range * range;
   }
 
   /**

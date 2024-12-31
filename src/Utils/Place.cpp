@@ -1,8 +1,5 @@
 #include "Place.h"
 
-Place::Place(): m_tower(nullptr), m_placeType() {
-}
-
 Place::Place(const sf::Sprite &l_sp, const sf::Vector2u &l_size) : Element(l_sp, l_size), m_tower(nullptr),
                                                                    m_placeType() {
 }

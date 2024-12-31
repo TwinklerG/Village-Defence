@@ -1,5 +1,4 @@
 #include "Select.h"
-#include "../Utils/Utils.hpp"
 
 namespace gl {
   Select::Select(const sf::String &l_text, const sf::Vector2f &l_pos, const sf::Vector2f &l_size,

@@ -1,6 +1,5 @@
 #pragma once
 #include "BaseState.h"
-#include "EventManager.h"
 #include "../Widgets/Select.h"
 
 class State_Setting final : public BaseState {
@@ -23,8 +22,6 @@ public:
 
 private:
   void SaveResolution(int width, int height) const;
-
-  void MainMenu(EventDetails *l_details);
 
   std::unique_ptr<gl::Select> m_select;
 

@@ -1,6 +1,5 @@
 #pragma once
 #include "BaseState.h"
-#include "EventManager.h"
 #include "../Widgets/Button.h"
 
 class State_Intro final : public BaseState {
@@ -21,12 +20,10 @@ public:
 
   void Draw() override;
 
-  void Continue(EventDetails *l_details);
-
 private:
   sf::Font m_font;
-  sf::Text m_text;
-  sf::Text m_title;
+  std::unique_ptr<sf::Text> m_text;
+  std::unique_ptr<sf::Text> m_title;
 
   float m_timePassed{};
 

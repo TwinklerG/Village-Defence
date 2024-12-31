@@ -3,20 +3,20 @@
 
 int State_Levels::m_LevelSum = 4;
 
-State_Levels::State_Levels(StateManager *l_stateManager) : BaseState(l_stateManager) {
+State_Levels::State_Levels(StateManager *l_stateManager) : BaseState(l_stateManager), m_title(nullptr) {
 }
 
 State_Levels::~State_Levels() = default;
 
 void State_Levels::OnCreate() {
-  m_font.loadFromFile("res/fonts/CONSOLAB.TTF");
+  m_font = sf::Font("res/fonts/CONSOLAB.TTF");
   auto l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_title.setFont(m_font);
-  m_title.setString("Levels");
-  m_title.setCharacterSize(l_windowSize.y / 8);
-  m_title.setOrigin(m_title.getLocalBounds().width / 2, m_title.getLocalBounds().height / 2);
-  m_title.setPosition(static_cast<float>(m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize().x) / 2.0f,
-                      static_cast<float>(m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize().y) / 10.0f);
+  m_title = std::make_unique<sf::Text>(m_font, "Levels", l_windowSize.y / 8);
+  m_title->setOrigin({m_title->getLocalBounds().size.x / 2, m_title->getLocalBounds().size.y / 2});
+  m_title->setPosition({
+    static_cast<float>(m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize().x) / 2.0f,
+    static_cast<float>(m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize().y) / 10.0f
+  });
   for (int i = 0; i < m_LevelSum; ++i) {
     m_buttons.emplace_back(
       "Level " + std::to_string(i),
@@ -36,29 +36,23 @@ void State_Levels::OnCreate() {
       }
     );
   }
-
-  EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
-  envMgr->AddCallback(StateType::Levels, "Key_Escape", &State_Levels::MainMenu, this);
 }
 
 void State_Levels::OnDestroy() {
-  EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
-  envMgr->RemoveCallback(StateType::Levels, "Key_Escape");
 }
 
 void State_Levels::Update(const sf::Time &l_time) {
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
+    m_stateMgr->SwitchTo(StateType::MainMenu);
+  }
 }
 
 void State_Levels::Draw() {
   sf::RenderWindow *l_wind = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
-  l_wind->draw(m_title);
+  l_wind->draw(*m_title);
   for (auto &l_button: m_buttons) {
     l_button.UpdateRender(*l_wind);
   }
-}
-
-void State_Levels::MainMenu(EventDetails *l_details) {
-  m_stateMgr->SwitchTo(StateType::MainMenu);
 }
 
 void State_Levels::Activate() {

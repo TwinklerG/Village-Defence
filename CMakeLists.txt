@@ -6,7 +6,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 include(FetchContent)
 FetchContent_Declare(SFML
         GIT_REPOSITORY https://gitcode.com/gh_mirrors/sf/SFML.git # accelerate https://github.com/SFML/SFML.git
-        GIT_TAG 2.6.x
+        GIT_TAG 3.0.0
         GIT_SHALLOW ON
         EXCLUDE_FROM_ALL
         SYSTEM)
@@ -36,8 +36,8 @@ else ()
     file(COPY res DESTINATION ${CMAKE_BINARY_DIR}/)
 endif ()
 
-target_link_libraries(main PRIVATE sfml-graphics) # SFML/Graphics.hpp
-target_link_libraries(main PRIVATE sfml-audio) # SFML/Audio.hpp
+target_link_libraries(main PRIVATE SFML::Graphics) # SFML/Graphics.hpp
+target_link_libraries(main PRIVATE SFML::Audio) # SFML/Audio.hpp
 target_link_libraries(main PRIVATE nlohmann_json) # JSON
 target_compile_features(main PRIVATE cxx_std_17)
 

@@ -1,17 +1,20 @@
 #include "State_MainMenu.h"
+
+#include <iostream>
+
 #include "StateManager.h"
 
-State_MainMenu::State_MainMenu(StateManager *l_stateManager) : BaseState(l_stateManager) {
+State_MainMenu::State_MainMenu(StateManager *l_stateManager) : BaseState(l_stateManager), m_title(nullptr) {
 }
 
 State_MainMenu::~State_MainMenu() = default;
 
 void State_MainMenu::OnCreate() {
-  m_font.loadFromFile("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
+  m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
   const sf::Vector2u l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_title = sf::Text(L"主菜单", m_font, static_cast<unsigned int>(l_windowSize.y) / 10);
-  m_title.setOrigin(m_title.getLocalBounds().width / 2.0f, m_title.getLocalBounds().height / 2.0f);
-  m_title.setPosition(static_cast<float>(l_windowSize.x) / 2.0f, static_cast<float>(l_windowSize.y) / 10.0f * 2.0f);
+  m_title = std::make_unique<sf::Text>(m_font, L"主菜单", static_cast<unsigned int>(l_windowSize.y) / 10);
+  m_title->setOrigin({m_title->getLocalBounds().size.x / 2.0f, m_title->getLocalBounds().size.y / 2.0f});
+  m_title->setPosition({static_cast<float>(l_windowSize.x) / 2.0f, static_cast<float>(l_windowSize.y) / 10.0f * 2.0f});
   const auto l_size = sf::Vector2f(static_cast<float>(l_windowSize.x) / 3.0f,
                                    static_cast<float>(l_windowSize.y) / 10.2f);
   const auto l_pos = sf::Vector2f(static_cast<float>(l_windowSize.x) / 2.0f,
@@ -54,7 +57,7 @@ void State_MainMenu::Activate() {
     sf::Text l_text = m_buttons[0].GetText();
     l_text.setString(L"返回游戏");
     const auto l_lb = l_text.getLocalBounds();
-    l_text.setOrigin(l_lb.left + l_lb.width / 2.0f, l_lb.top + l_lb.height / 2.0f);
+    l_text.setOrigin({l_lb.position.x + l_lb.size.x / 2.0f, l_lb.position.y + l_lb.size.y / 2.0f});
     m_buttons[0].SetText(l_text);
     m_buttons.pop_back();
     m_buttons.insert(m_buttons.begin() + 1, gl::Button(L"存档", m_buttons[0].GetPosition(), m_buttons[0].GetSize(),
@@ -63,15 +66,15 @@ void State_MainMenu::Activate() {
                                                        }));
     const auto l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
     m_buttons[0].SetPosition(m_buttons[0].GetPosition() - sf::Vector2f(0, static_cast<float>(l_windowSize.y) / 10.0f));
-    m_title.setPosition(m_title.getPosition() - sf::Vector2f(0, static_cast<float>(l_windowSize.y) / 10.0f));
+    m_title->setPosition(m_title->getPosition() - sf::Vector2f(0, static_cast<float>(l_windowSize.y) / 10.0f));
   }
 }
 
 void State_MainMenu::Draw() {
-  sf::RenderWindow *window = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
-  window->draw(m_title);
+  sf::RenderWindow *l_window = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
+  l_window->draw(*m_title);
   for (auto &l_button: m_buttons) {
-    l_button.UpdateRender(*window);
+    l_button.UpdateRender(*l_window);
   }
 }
 

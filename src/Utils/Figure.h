@@ -27,6 +27,8 @@ public:
 
   double GetMileage() const;
 
+  void SetMileage(double l_mileage);
+
   int GetLives() const;
 
   void SetLives(int l_lives);
@@ -34,6 +36,8 @@ public:
   int GetReward() const;
 
   int GetTag() const;
+
+  int GetSpeed() const;
 
 private:
   sf::RectangleShape m_livesBar;

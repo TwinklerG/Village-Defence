@@ -3,8 +3,6 @@
 
 class EndPoint final : public Element {
 public:
-  EndPoint();
-
   EndPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size);
 
   EndPoint(const sf::Sprite &l_sp, const sf::Vector2u &l_size, const std::pair<int, int> &l_cor);

@@ -1,6 +1,5 @@
 #pragma once
 #include "BaseState.h"
-#include "EventManager.h"
 #include "../Widgets/Button.h"
 
 class State_MainMenu : public BaseState {
@@ -24,6 +23,6 @@ public:
 protected:
   sf::Font m_font;
 
-  sf::Text m_title;
+  std::unique_ptr<sf::Text> m_title;
   std::vector<gl::Button> m_buttons;
 };

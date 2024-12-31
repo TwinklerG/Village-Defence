@@ -7,7 +7,7 @@ public:
 
   explicit Board(const sf::Vector2f &l_size);
 
-  void Render(sf::RenderWindow *);
+  void Render(sf::RenderWindow *) const;
 
   int GetMoney() const;
 
@@ -15,8 +15,8 @@ public:
 
 private:
   sf::RectangleShape m_border;
-  sf::Text m_tip;
+  std::unique_ptr<sf::Text> m_tip;
   sf::Font m_font;
-  sf::Text m_moneyText;
+  std::unique_ptr<sf::Text> m_moneyText;
   int m_money;
 };

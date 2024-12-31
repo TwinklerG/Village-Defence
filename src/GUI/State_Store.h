@@ -1,7 +1,6 @@
 #pragma once
 #include <nlohmann/json.hpp>
 #include "BaseState.h"
-#include "EventManager.h"
 
 enum class PropType {
   DECELERATE,
@@ -33,11 +32,11 @@ public:
 
 private:
   sf::RectangleShape m_rect{};
-  sf::Text m_name;
-  sf::Text m_description;
+  std::shared_ptr<sf::Text> m_name;
+  std::shared_ptr<sf::Text> m_description;
   int m_cnt;
-  sf::Text m_cntText;
-  sf::Text m_priceText;
+  std::shared_ptr<sf::Text> m_cntText;
+  std::shared_ptr<sf::Text> m_priceText;
   int m_price;
   bool m_isMouseLeft{true};
 };
@@ -60,17 +59,15 @@ public:
 
   void Draw() override;
 
-  void MainMenu(EventDetails *l_details);
-
 private:
   void LoadJson();
 
   void SaveJson();
 
   sf::Font m_font;
-  sf::Text m_title;
+  std::unique_ptr<sf::Text> m_title;
   int m_coin{};
-  sf::Text m_coinText;
+  std::unique_ptr<sf::Text> m_coinText;
   std::vector<StoreChoice> m_choices;
   std::unordered_map<PropType, int> m_props;
 };

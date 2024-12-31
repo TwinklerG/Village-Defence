@@ -5,9 +5,9 @@ BgmManager::BgmManager() = default;
 BgmManager::~BgmManager() = default;
 
 void BgmManager::Play(const std::string &l_bgmName, const float l_volume, const int l_loop) {
-  m_music.openFromFile("res/audio/" + l_bgmName);
+  m_music = sf::Music("res/audio/" + l_bgmName);
   m_music.setVolume(l_volume);
-  m_music.setLoop(l_loop);
+  m_music.setLooping(l_loop);
   m_music.play();
 }
 

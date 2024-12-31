@@ -9,7 +9,7 @@ State_Setting::~State_Setting() = default;
 
 void State_Setting::OnCreate() {
   const sf::Vector2u &l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_font.loadFromFile("res/fonts/LXGWWenKai-Regular.ttf");
+  m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
   const auto l_pos = sf::Vector2f(static_cast<float>(l_windowSize.x) / 2.0f,
                                   static_cast<float>(l_windowSize.y) / 5.0f * 1.0f);
   const auto l_size = sf::Vector2f(static_cast<float>(l_windowSize.x) / 5.1f,
@@ -20,7 +20,7 @@ void State_Setting::OnCreate() {
                , l_windowSize.y / 22, m_font, [this]() {
                  m_stateMgr->RemoveAll();
                  m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
-                   {1200, 750, 32}, "Village Defence", sf::Style::Close
+                   sf::VideoMode{{1200, 750}, 32}, "Village Defence", sf::Style::Close
                  );
                  SaveResolution(1200, 750);
                  m_stateMgr->SwitchTo(StateType::Intro);
@@ -29,7 +29,7 @@ void State_Setting::OnCreate() {
                m_font, [this]() {
                  m_stateMgr->RemoveAll();
                  m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
-                   {1600, 1000, 32}
+                   sf::VideoMode{{1600, 1000}, 32}
                    , "Village Defence", sf::Style::Close
                  );
                  SaveResolution(1600, 1000);
@@ -39,7 +39,7 @@ void State_Setting::OnCreate() {
                m_font, [this]() {
                  m_stateMgr->RemoveAll();
                  m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
-                   {2000, 1250, 32}
+                   sf::VideoMode{{2000, 1250}, 32}
                    , "Village Defence", sf::Style::Close
                  );
                  SaveResolution(2000, 1250);
@@ -47,24 +47,20 @@ void State_Setting::OnCreate() {
                })
   };
   m_select = std::make_unique<gl::Select>(L"分辨率", l_pos, l_size, l_windowSize.y / 18, m_font, l_options);
-  // Add KeyBindCallBind
-  EventManager *envMgr = m_stateMgr->GetContext()->m_eventManager;
-  envMgr->AddCallback(StateType::Setting, "Key_Escape", &State_Setting::MainMenu, this);
 }
 
 void State_Setting::OnDestroy() {
 }
 
 void State_Setting::Update(const sf::Time &l_time) {
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
+    m_stateMgr->SwitchTo(StateType::MainMenu);
+  }
 }
 
 void State_Setting::Draw() {
   sf::RenderWindow &l_window = *m_stateMgr->GetContext()->m_wind->GetRenderWindow();
   m_select->UpdateRender(l_window);
-}
-
-void State_Setting::MainMenu(EventDetails *l_details) {
-  m_stateMgr->SwitchTo(StateType::MainMenu);
 }
 
 void State_Setting::Activate() {

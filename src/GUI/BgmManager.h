@@ -14,7 +14,7 @@ public:
 
   void Stop();
 
-  std::string GetBgmName() const;
+  [[nodiscard]] std::string GetBgmName() const;
 
 private:
   sf::Music m_music;

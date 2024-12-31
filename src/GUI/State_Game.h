@@ -1,6 +1,5 @@
 #pragma once
 #include "BaseState.h"
-#include "EventManager.h"
 #include "../Utils/Map.h"
 
 class State_Game final : public BaseState {
@@ -20,10 +19,6 @@ public:
   void Update(const sf::Time &l_time) override;
 
   void Draw() override;
-
-  void MainMenu(EventDetails *l_details);
-
-  void Pause(EventDetails *l_details);
 
 private:
   std::unique_ptr<Map> m_map;

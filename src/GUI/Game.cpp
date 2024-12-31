@@ -14,7 +14,6 @@ Game::Game() : m_stateManager(&m_context) {
     static_cast<float>(cfg["resolution"]["height"]) * 2.0f / 25.0f
   );
   m_context.m_wind = m_window;
-  m_context.m_eventManager = m_window->GetEventManager();
   BgmManager &l_bgmManager = m_context.m_bgmManager;
   l_bgmManager.Play("loading.wav", 100, true);
   m_stateManager.SwitchTo(StateType::Intro);
