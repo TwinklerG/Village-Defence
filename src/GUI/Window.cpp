@@ -16,6 +16,7 @@ void Window::Setup(const std::string &l_title, const sf::Vector2u &l_size) {
 
 void Window::Create() {
   m_window.create(sf::VideoMode{{m_windowSize.x, m_windowSize.y}, 32}, m_windowTitle, sf::Style::Close);
+  m_window.setFramerateLimit(60);
 }
 
 void Window::Destroy() { m_window.close(); }

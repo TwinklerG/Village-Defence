@@ -5,14 +5,14 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 include(FetchContent)
 FetchContent_Declare(SFML
-        GIT_REPOSITORY https://gitcode.com/gh_mirrors/sf/SFML.git # accelerate https://github.com/SFML/SFML.git
+        GIT_REPOSITORY https://gitcode.com/gh_mirrors/sf/SFML.git # mirror of https://github.com/SFML/SFML.git
         GIT_TAG 3.0.0
         GIT_SHALLOW ON
         EXCLUDE_FROM_ALL
         SYSTEM)
 FetchContent_MakeAvailable(SFML)
 FetchContent_Declare(JSON
-        GIT_REPOSITORY https://gitcode.com/gh_mirrors/js/json.git # accelerate https://github.com/nlohmann/json.git
+        GIT_REPOSITORY https://gitcode.com/gh_mirrors/js/json.git # mirror of https://github.com/nlohmann/json.git
         GIT_SHALLOW ON
         EXCLUDE_FROM_ALL
         SYSTEM)

@@ -4,6 +4,8 @@
 
 ## Quick Start
 
+Please use a compiler that supports C++17
+
 Recommended OS: Windows/Linux
 
 Recommended CMake generator: Visual Studio/Ninja
@@ -22,7 +24,7 @@ cmake --build cmake-build-debug-ninja
 
 ```cmd
 cmake -B cmake-build-debug-visual-studio -G "Visual Studio" -DBUILD_SHARED_LIBS=TRUE
-cmake --build cmake-build-debug-visual-studio --target main --config Debug
+cmake --build cmake-build-debug-visual-studio --target main
 "./cmake-build-debug-visual-studio/Debug/main.exe"
 ```
 
@@ -51,3 +53,9 @@ cmake --build build && \
 ## Reference
 
 Some basic framework codes under `src/GUI` are referenced from *SFML Game Development By Example* (Raimondas Pupius)
+
+## Open-source libraries used
+
+[SFML3.0.0](https://github.com/SFML/SFML.git)
+
+[JSON](https://github.com/nlohmann/json.git)

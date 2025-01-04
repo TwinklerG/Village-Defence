@@ -8,6 +8,7 @@
 #include "State_Setting.h"
 #include "State_Load.h"
 #include "State_Save.h"
+#include "State_Confirm.h"
 
 StateManager::StateManager(SharedContext *l_shared) : m_shared(l_shared) {
   RegisterState<State_Intro>(StateType::Intro);
@@ -20,6 +21,7 @@ StateManager::StateManager(SharedContext *l_shared) : m_shared(l_shared) {
   RegisterState<State_Setting>(StateType::Setting);
   RegisterState<State_Load>(StateType::Load);
   RegisterState<State_Save>(StateType::Save);
+  RegisterState<State_Confirm>(StateType::Confirm);
 }
 
 StateManager::~StateManager() {

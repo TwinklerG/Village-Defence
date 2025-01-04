@@ -747,5 +747,6 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
     sf::Vector2f(static_cast<float>(l_wind->getSize().x) / 5.0f * 2,
                  static_cast<float>(l_wind->getSize().y) / 5.0f), 6, m_fonts["arial"],
     l_gameState["m_textBoxMessages"]);
+  // TODO Reconstruct Start Points
   std::cout << "Load Finished!\n";
 }

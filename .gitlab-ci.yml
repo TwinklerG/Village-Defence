@@ -1,17 +1,20 @@
-image: ubuntu:latest
 stages:
-  - build
-before_script:
-  - apt-get update -y && apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype6-dev -y
-  - apt install gcc g++ cmake git -y 
-Linux GCC build Shared:
-  stage: build
-  script:
-    - cmake -B build -DBUILD_SHARED_LIBS=TRUE
-    - cmake --build build --config Release
+  - Linux GCC Build
 
-Linux GCC build Static:
-  stage: build
+Ubuntu:
+  image: ubuntu
+  stage: Linux GCC Build
   script:
-    - cmake -B build -DBUILD_SHARED_LIBS=FALSE
-    - cmake --build build --config Release
+    - apt update -y && apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype6-dev libxi-dev -y
+    - apt install gcc g++ cmake git -y
+    - cmake -B build && \
+    - cmake --build build
+
+Fedora:
+  image: fedora
+  stage: Linux GCC Build
+  script:
+    - yum update -y && yum install freetype-devel libX11-devel libXcursor-devel libXrandr-devel mesa-libGL-devel systemd-devel openal-soft-devel libvorbis-devel libogg-devel flac-devel libXi-devel -y
+    - yum install gcc g++ cmake git ninja -y
+    - cmake -B build -DCMAKE_MAKE_PROGRAM=ninja -G Ninja && \
+    - cmake --build build

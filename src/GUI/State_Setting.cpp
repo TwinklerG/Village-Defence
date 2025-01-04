@@ -1,5 +1,4 @@
 #include "State_Setting.h"
-
 #include "StateManager.h"
 
 State_Setting::State_Setting(StateManager *l_stateManager): BaseState(l_stateManager) {
@@ -22,6 +21,7 @@ void State_Setting::OnCreate() {
                  m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
                    sf::VideoMode{{1200, 750}, 32}, "Village Defence", sf::Style::Close
                  );
+                 m_stateMgr->GetContext()->m_wind->GetRenderWindow()->setFramerateLimit(60);
                  SaveResolution(1200, 750);
                  m_stateMgr->SwitchTo(StateType::Intro);
                }),
@@ -32,6 +32,7 @@ void State_Setting::OnCreate() {
                    sf::VideoMode{{1600, 1000}, 32}
                    , "Village Defence", sf::Style::Close
                  );
+                 m_stateMgr->GetContext()->m_wind->GetRenderWindow()->setFramerateLimit(60);
                  SaveResolution(1600, 1000);
                  m_stateMgr->SwitchTo(StateType::Intro);
                }),
@@ -42,6 +43,7 @@ void State_Setting::OnCreate() {
                    sf::VideoMode{{2000, 1250}, 32}
                    , "Village Defence", sf::Style::Close
                  );
+                 m_stateMgr->GetContext()->m_wind->GetRenderWindow()->setFramerateLimit(60);
                  SaveResolution(2000, 1250);
                  m_stateMgr->SwitchTo(StateType::Intro);
                })

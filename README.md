@@ -4,6 +4,8 @@
 
 ## 快速开始
 
+请使用支持C++17的编译器
+
 推荐操作系统: Windows/Linux
 
 推荐CMake生成器: Visual Studio/Ninja
@@ -22,7 +24,7 @@ cmake --build cmake-build-debug-ninja
 
 ```cmd
 cmake -B cmake-build-debug-visual-studio -G "Visual Studio" -DBUILD_SHARED_LIBS=TRUE
-cmake --build cmake-build-debug-visual-studio --target main --config Debug
+cmake --build cmake-build-debug-visual-studio --target main
 "./cmake-build-debug-visual-studio/Debug/main.exe"
 ```
 
@@ -31,7 +33,7 @@ cmake --build cmake-build-debug-visual-studio --target main --config Debug
 **Ubuntu:latest**
 
 ```bash
-apt-get update -y && apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype6-dev -y
+apt-get update -y && apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype6-dev libxi-dev -y
 apt install gcc g++ cmake git -y
 cmake -B build && \
 cmake --build build && \
@@ -41,7 +43,7 @@ cmake --build build && \
 **Fedora41**
 
 ```bash
-yum update -y && yum install freetype-devel libX11-devel libXcursor-devel libXrandr-devel mesa-libGL-devel systemd-devel openal-soft-devel libvorbis-devel libogg-devel flac-devel -y
+yum update -y && yum install freetype-devel libX11-devel libXcursor-devel libXrandr-devel mesa-libGL-devel systemd-devel openal-soft-devel libvorbis-devel libogg-devel flac-devel libxi-devel -y
 yum install gcc g++ cmake git -y
 cmake -B build -DCMAKE_MAKE_PROGRAM=ninja -G Ninja && \
 cmake --build build && \
@@ -51,3 +53,9 @@ cmake --build build && \
 ## 参考
 
 `src/GUI`下的部分基础框架代码参考自*SFML Game Development By Example*(Raimondas Pupius)
+
+## 使用到的开源库
+
+[SFML3.0.0](https://github.com/SFML/SFML.git)
+
+[JSON](https://github.com/nlohmann/json.git)

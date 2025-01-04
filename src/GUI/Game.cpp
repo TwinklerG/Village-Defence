@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include <iostream>
+
 float Game::m_FrameTime = 1.0f / 60.0f;
 
 Game::Game() : m_stateManager(&m_context) {
