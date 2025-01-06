@@ -9,17 +9,18 @@ State_Levels::State_Levels(StateManager *l_stateManager) : BaseState(l_stateMana
 State_Levels::~State_Levels() = default;
 
 void State_Levels::OnCreate() {
-  m_font = sf::Font("res/fonts/CONSOLAB.TTF");
-  auto l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_title = std::make_unique<sf::Text>(m_font, "Levels", l_windowSize.y / 8);
+  m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
+  const auto l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
+  m_title = std::make_unique<sf::Text>(m_font, L"关卡", l_windowSize.y / 8);
   m_title->setOrigin({m_title->getLocalBounds().size.x / 2, m_title->getLocalBounds().size.y / 2});
   m_title->setPosition({
     static_cast<float>(m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize().x) / 2.0f,
     static_cast<float>(m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize().y) / 10.0f
   });
+  std::vector<sf::String> l_levels{L"关卡一", L"关卡二", L"关卡三", L"关卡四", L"关卡五"};
   for (int i = 0; i < m_LevelSum; ++i) {
     m_buttons.emplace_back(
-      "Level " + std::to_string(i),
+      l_levels[i],
       sf::Vector2f(static_cast<float>(l_windowSize.x) / 2.0f,
                    static_cast<float>(l_windowSize.y) / 3.0f + static_cast<float>(i) * static_cast<float>(l_windowSize.
                      y) / 8.0f),

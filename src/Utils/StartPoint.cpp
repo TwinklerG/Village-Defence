@@ -26,6 +26,11 @@ void StartPoint::OnCreate() {
   }
 }
 
+void StartPoint::ResetInvadeTurns(const std::vector<InvadeTurnInfo> &l_invaderTurns) {
+  m_invadeTurns = l_invaderTurns;
+  OnCreate();
+}
+
 void StartPoint::SetCalmTime(const sf::Time &l_time) { m_calmTime = l_time; }
 const sf::Time &StartPoint::GetCalmTime() const { return m_calmTime; }
 

@@ -25,7 +25,7 @@ State_Store::State_Store(StateManager *l_stateManager)
 State_Store::~State_Store() = default;
 
 void State_Store::OnCreate() {
-  m_font = sf::Font("res/fonts/CONSOLAB.TTF");
+  m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
   m_title = std::make_unique<sf::Text>(m_font, "STORE", 100);
   m_title->setOrigin({m_title->getLocalBounds().size.x / 2.0f, m_title->getLocalBounds().size.y / 2.0f});
   m_title->setPosition({

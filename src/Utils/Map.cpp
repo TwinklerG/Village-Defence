@@ -520,6 +520,10 @@ std::vector<TowerInfo> Map::LoadTowerInfo() {
 }
 
 void Map::Save() {
+  // Get Local Time
+  time_t l_time;
+  time(&l_time);
+  std::cout << ctime(&l_time) << std::endl;
   nlohmann::json l_gameState;
   l_gameState["m_boardMoney"] = m_board->GetMoney();
   l_gameState["m_resolution"] = m_resolution;
@@ -658,19 +662,31 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
     m_level(l_gameState["m_level"]) {
   m_wind = l_wind;
   LoadMap();
+  // Load Invader Turns
+  std::vector<InvadeTurnInfo> l_invaderTurns;
+  const auto &l_startPointsInfo = l_gameState["m_startPoints"];
+  for (int i = 0; i < l_startPointsInfo.size(); ++i) {
+    std::vector<InvadeTurnInfo> l_invadeTurnInfos;
+    for (const auto &l_turn: l_startPointsInfo[i]["m_invaderTurns"]) {
+      const auto &l_calmTime = l_turn["m_calmTime"];
+      const auto &l_speedBuff = l_turn["m_speedBuff"];
+      std::vector<std::pair<int, int> > l_infos;
+      for (const auto &l_info: l_turn["m_infos"]) {
+        l_infos.emplace_back(l_info[0], l_info[1]);
+      }
+      l_invaderTurns.push_back({l_calmTime, l_speedBuff, l_infos});
+    }
+    m_startPoints[i].ResetInvadeTurns(l_invaderTurns);
+  }
   LoadProp();
   m_lives = l_gameState["m_lives"];
   m_selected.m_tower = nullptr;
-  // Load Invader Turns
-  std::vector<InvadeTurnInfo> l_invaderTurns;
   // Load Map
   const auto &l_places = l_gameState["m_places"];
   // m_places = std::vector<std::vector<Place> >(m_XRange, std::vector<Place>(m_YRange));
   for (int j = 0; j < m_YRange; ++j) {
     for (int i = 0; i < m_XRange; ++i) {
-      //TODO: Rebuild towers
       if (l_places[i][j][0] == static_cast<int>(PlaceType::Tower)) {
-        // TODO Build Tower.
         const int l_tag = l_places[i][j][1][1];
         std::cout << l_tag << "\n";
         if (m_textures.find("tower" + std::to_string(l_tag)) == m_textures.end()) {
@@ -747,6 +763,5 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
     sf::Vector2f(static_cast<float>(l_wind->getSize().x) / 5.0f * 2,
                  static_cast<float>(l_wind->getSize().y) / 5.0f), 6, m_fonts["arial"],
     l_gameState["m_textBoxMessages"]);
-  // TODO Reconstruct Start Points
   std::cout << "Load Finished!\n";
 }

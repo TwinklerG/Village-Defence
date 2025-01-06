@@ -20,6 +20,8 @@ public:
 
   void OnCreate();
 
+  void ResetInvadeTurns(const std::vector<InvadeTurnInfo> &l_invaderTurns);
+
   std::shared_ptr<Figure> Update(const sf::Time &l_elapsed);
 
   void SetCalmTime(const sf::Time &l_time);
