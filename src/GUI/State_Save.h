@@ -26,4 +26,5 @@ private:
   std::vector<gl::Button> m_buttons;
   sf::Font m_font;
   std::shared_ptr<gl::Confirm> m_confirm;
+  int m_toConfirm;
 };

@@ -40,6 +40,8 @@ namespace gl {
 
     void SetIsPressed(bool l_isPressed);
 
+    void SetCallBack(const std::function<void()> &l_callBack);
+
   private:
     sf::RectangleShape m_rect;
     std::shared_ptr<sf::Text> m_text;

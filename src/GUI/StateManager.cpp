@@ -76,12 +76,12 @@ void StateManager::Update(const sf::Time &l_time) {
 SharedContext *StateManager::GetContext() const { return m_shared; }
 
 bool StateManager::HasState(const StateType &l_type) {
+  if (const auto removed = std::find(m_toRemove.begin(), m_toRemove.end(), l_type); removed != m_toRemove.end()) {
+    return false;
+  }
   for (const auto &[fst, snd]: m_states) {
     if (fst == l_type) {
-      if (const auto removed = std::find(m_toRemove.begin(), m_toRemove.end(), l_type); removed == m_toRemove.end()) {
-        return true;
-      }
-      return false;
+      return true;
     }
   }
   return false;
@@ -91,7 +91,6 @@ void StateManager::Remove(const StateType &l_type) {
   m_toRemove.push_back(l_type);
 }
 
-// TODO: Restart
 void StateManager::RemoveAll() {
   m_states.clear();
 }

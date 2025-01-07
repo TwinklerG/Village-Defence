@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseState.h"
 #include "../Utils/Map.h"
+#include "../Widgets/Settlement.h"
 
 class State_Game final : public BaseState {
 public:
@@ -21,5 +22,12 @@ public:
   void Draw() override;
 
 private:
+  void Winner(int l_level);
+
+  void YouLose(int l_level);
+
   std::unique_ptr<Map> m_map;
+
+  std::shared_ptr<gl::Settlement> m_settlement;
+  sf::Font m_font;
 };

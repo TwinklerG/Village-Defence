@@ -18,32 +18,39 @@ void State_Setting::OnCreate() {
     gl::Button("(1200, 750)", l_pos + 1.0f * l_delta, l_size
                , l_windowSize.y / 22, m_font, [this]() {
                  m_stateMgr->RemoveAll();
-                 m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
-                   sf::VideoMode{{1200, 750}, 32}, "Village Defence", sf::Style::Close
-                 );
-                 m_stateMgr->GetContext()->m_wind->GetRenderWindow()->setFramerateLimit(60);
+                 auto &l_window = *m_stateMgr->GetContext()->m_wind->GetRenderWindow();
+                 l_window.create(sf::VideoMode{{1200, 750}, 32}, "Village Defence", sf::Style::Close);
+                 l_window.setFramerateLimit(60);
+                 l_window.setPosition({
+                   static_cast<int>(sf::VideoMode::getDesktopMode().size.x / 2 - l_window.getSize().x / 2),
+                   static_cast<int>(sf::VideoMode::getDesktopMode().size.y / 2 - l_window.getSize().y / 2)
+                 });
                  SaveResolution(1200, 750);
                  m_stateMgr->SwitchTo(StateType::Intro);
                }),
     gl::Button("(1600, 1000)", l_pos + 2.0f * l_delta, l_size, l_windowSize.y / 22,
                m_font, [this]() {
                  m_stateMgr->RemoveAll();
-                 m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
-                   sf::VideoMode{{1600, 1000}, 32}
-                   , "Village Defence", sf::Style::Close
-                 );
-                 m_stateMgr->GetContext()->m_wind->GetRenderWindow()->setFramerateLimit(60);
+                 auto &l_window = *m_stateMgr->GetContext()->m_wind->GetRenderWindow();
+                 l_window.create(sf::VideoMode{{1600, 1000}, 32}, "Village Defence", sf::Style::Close);
+                 l_window.setFramerateLimit(60);
+                 l_window.setPosition({
+                   static_cast<int>(sf::VideoMode::getDesktopMode().size.x / 2 - l_window.getSize().x / 2),
+                   static_cast<int>(sf::VideoMode::getDesktopMode().size.y / 2 - l_window.getSize().y / 2)
+                 });
                  SaveResolution(1600, 1000);
                  m_stateMgr->SwitchTo(StateType::Intro);
                }),
     gl::Button("(2000, 1250)", l_pos + 3.0f * l_delta, l_size, l_windowSize.y / 22,
                m_font, [this]() {
                  m_stateMgr->RemoveAll();
-                 m_stateMgr->GetContext()->m_wind->GetRenderWindow()->create(
-                   sf::VideoMode{{2000, 1250}, 32}
-                   , "Village Defence", sf::Style::Close
-                 );
-                 m_stateMgr->GetContext()->m_wind->GetRenderWindow()->setFramerateLimit(60);
+                 auto &l_window = *m_stateMgr->GetContext()->m_wind->GetRenderWindow();
+                 l_window.create(sf::VideoMode{{2000, 1250}, 32}, "Village Defence", sf::Style::Close);
+                 l_window.setFramerateLimit(60);
+                 l_window.setPosition({
+                   static_cast<int>(sf::VideoMode::getDesktopMode().size.x / 2 - l_window.getSize().x / 2),
+                   static_cast<int>(sf::VideoMode::getDesktopMode().size.y / 2 - l_window.getSize().y / 2)
+                 });
                  SaveResolution(2000, 1250);
                  m_stateMgr->SwitchTo(StateType::Intro);
                })

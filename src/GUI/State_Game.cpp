@@ -3,7 +3,7 @@
 #include "StateManager.h"
 
 State_Game::State_Game(StateManager *l_stateManager)
-  : BaseState(l_stateManager) {
+  : BaseState(l_stateManager), m_map(nullptr), m_settlement(nullptr) {
   if (m_stateMgr->GetContext()->m_mapData) {
     m_map = std::make_unique<Map>(m_stateMgr->GetContext()->m_wind->GetRenderWindow(),
                                   *m_stateMgr->GetContext()->m_mapData);
@@ -26,30 +26,76 @@ void State_Game::OnDestroy() {
 }
 
 void State_Game::Update(const sf::Time &l_time) {
-  m_map->Update(m_stateMgr->GetContext()->m_wind->GetRenderWindow(), l_time);
-  if (m_map->GetLives() <= 0) {
-    // m_stateMgr->GetContext()->m_soundManager.Play("you_lose.ogg", 10);
-    m_stateMgr->Remove(StateType::Game);
-    m_stateMgr->SwitchTo(StateType::MainMenu);
-  } else if (m_map->IsWin()) {
-    // m_stateMgr->GetContext()->m_soundManager.Play("winner.ogg", 30);
-    m_stateMgr->Remove(StateType::Game);
-    m_stateMgr->SwitchTo(StateType::MainMenu);
-  } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
-    m_stateMgr->SwitchTo(StateType::MainMenu);
+  if (m_map) {
+    m_map->Update(m_stateMgr->GetContext()->m_wind->GetRenderWindow(), l_time);
+    if (m_map->GetLives() <= 0) {
+      m_stateMgr->GetContext()->m_soundManager.Play("you_lose.ogg", 30);
+      m_map = nullptr;
+      YouLose(m_stateMgr->GetContext()->m_level);
+    } else if (m_map->IsWin()) {
+      m_stateMgr->GetContext()->m_soundManager.Play("winner.ogg", 30);
+      m_map = nullptr;
+      Winner(m_stateMgr->GetContext()->m_level);
+    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
+      m_stateMgr->SwitchTo(StateType::MainMenu);
+    }
+  }
+  if (m_settlement) {
+    m_settlement->Update(l_time);
   }
 }
 
 void State_Game::Draw() {
-  m_map->Render(m_stateMgr->GetContext()->m_wind->GetRenderWindow());
+  const auto l_window = m_stateMgr->GetContext()->m_wind->GetRenderWindow();
+  if (m_map) {
+    m_map->Render(l_window);
+  }
+  if (m_settlement) {
+    m_settlement->Render(*l_window);
+  }
 }
 
 void State_Game::Activate() {
-  m_map->Reload();
+  if (m_map) {
+    m_map->Reload();
+  }
   m_stateMgr->GetContext()->m_bgmManager.Play("battle.mp3", 8, true);
 }
 
 void State_Game::Deactivate() {
-  m_map->Save();
+  if (m_map) {
+    m_map->Save();
+  }
   m_stateMgr->GetContext()->m_bgmManager.Play("loading.wav", 100, true);
+}
+
+void State_Game::Winner(int l_level) {
+  std::fstream in("res/config/map" + std::to_string(l_level) + ".json");
+  nlohmann::json data = nlohmann::json::parse(in);
+  in.close();
+  const auto invadeTurns = data["invaderTurns"];
+  std::unordered_map<int, int> l_infos;
+  for (const auto &invaderTurn: invadeTurns) {
+    for (const auto &l_info: invaderTurn["invaders"]) {
+      l_infos[l_info["type"]] += static_cast<int>(l_info["num"]);
+    }
+  }
+  m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
+  m_settlement = std::make_shared<gl::Settlement>(
+    sf::String(L"胜利"), l_infos, sf::Vector2f(m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize()),
+    m_stateMgr->GetContext()->m_resolution, m_font, [this]() {
+      m_stateMgr->Remove(StateType::Game);
+      m_stateMgr->SwitchTo(StateType::MainMenu);
+    });
+}
+
+void State_Game::YouLose(int l_level) {
+  m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
+  std::unordered_map<int, int> l_infos;
+  m_settlement = std::make_shared<gl::Settlement>(
+    sf::String(L"败北"), l_infos, sf::Vector2f(m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize()),
+    m_stateMgr->GetContext()->m_resolution, m_font, [this]() {
+      m_stateMgr->Remove(StateType::Game);
+      m_stateMgr->SwitchTo(StateType::MainMenu);
+    });
 }

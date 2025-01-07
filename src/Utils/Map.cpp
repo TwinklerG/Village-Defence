@@ -259,11 +259,9 @@ void Map::Update(const sf::RenderWindow *l_wind, const sf::Time &l_time) {
   for (auto &l_label: m_labels) {
     l_label.Update(*m_wind);
   }
-  // std::cout << "Finish Update\n";
 }
 
 void Map::Render(sf::RenderWindow *l_wind) {
-  // std::cout << "Start Render0\n";
   m_wind->draw(m_backup);
   for (const auto &[fst, snd]: m_choices) {
     l_wind->draw(*fst.first);
@@ -272,7 +270,6 @@ void Map::Render(sf::RenderWindow *l_wind) {
   for (const auto &l_label: m_labels) {
     l_label.Render(*m_wind);
   }
-  // std::cout << "Start Render1\n";
   for (int i = 0; i < m_XRange; i++) {
     for (int j = 0; j < m_YRange; j++) {
       m_places[i][j]->Render(l_wind);
@@ -292,7 +289,6 @@ void Map::Render(sf::RenderWindow *l_wind) {
   }
   m_board->Render(l_wind);
   m_textBox->Render(*l_wind);
-  // std::cout << "Finish Render\n";
 }
 
 void Map::Reload() {
@@ -520,10 +516,6 @@ std::vector<TowerInfo> Map::LoadTowerInfo() {
 }
 
 void Map::Save() {
-  // Get Local Time
-  time_t l_time;
-  time(&l_time);
-  std::cout << ctime(&l_time) << std::endl;
   nlohmann::json l_gameState;
   l_gameState["m_boardMoney"] = m_board->GetMoney();
   l_gameState["m_resolution"] = m_resolution;
@@ -599,14 +591,13 @@ void Map::Save() {
     {"m_decelerate", m_propBuff.m_decelerate},
     {"m_countDown", m_propBuff.m_countDown},
   };
-  // TODO Fix this Bug of TextBox
   const auto l_messages = m_textBox->GetMessages();
   for (const auto &l_message: l_messages) {
     l_gameState["m_textBoxMessages"].push_back(l_message);
   }
-  std::ofstream out("res/config/save.json");
+  std::ofstream out("res/archive/tmp.json");
   out << std::setw(2) << l_gameState;
-  std::cout << "Save Finished!\n";
+  std::cout << "Save tmp Finished!\n";
 }
 
 void Map::LoadProp() {
@@ -637,7 +628,7 @@ void Map::LoadProp() {
                               out << std::setw(4) << data;
                               out.close();
                               m_labels[i].SetTextString(std::to_string(static_cast<int>(data["props"][i]["stock"])));
-                              std::cout << data["props"][i]["stock"] << "\n";
+                              // std::cout << data["props"][i]["stock"] << "\n";
                               if (data["props"][i]["name"] == "ACCELERATE") {
                                 m_propBuff.m_accelerate = 3;
                               } else if (data["props"][i]["name"] == "DECELERATE") {
@@ -688,7 +679,7 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
     for (int i = 0; i < m_XRange; ++i) {
       if (l_places[i][j][0] == static_cast<int>(PlaceType::Tower)) {
         const int l_tag = l_places[i][j][1][1];
-        std::cout << l_tag << "\n";
+        // std::cout << l_tag << "\n";
         if (m_textures.find("tower" + std::to_string(l_tag)) == m_textures.end()) {
           m_textures["tower" + std::to_string(l_tag)] = sf::Texture(
             "res/img/tower/" + m_resolution + "/tower" + std::to_string(l_tag) + ".png");
@@ -710,8 +701,8 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
         });
         m_places[i][j]->GetTower()->GetSprite().setPosition({
           m_atomResolution.x / 2.0f + m_atomResolution.x * static_cast<float>(i),
-          m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f + m_atomResolution.y / 2.0f + m_atomResolution.y
-          * static_cast<float>(j)
+          m_atomResolution.y * static_cast<float>(m_YRange) / 4.0f + m_atomResolution.y / 2.0f + m_atomResolution.y *
+          static_cast<float>(j)
         });
         m_places[i][j]->GetTower()->SetCalmTime(sf::seconds(l_places[i][j][1][0]));
       }
@@ -737,7 +728,7 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
                                                  l_fig["m_lives"], l_fig["m_speed"], l_fig["m_reward"],
                                                  m_atomResolution));
     m_figures.back()->SetMileage(l_fig["m_mileage"]);
-    std::cout << l_fig["m_increments"] << "\n";
+    // std::cout << l_fig["m_increments"] << "\n";
   }
   // Recreate the bullets
   const auto &l_bullets = l_gameState["m_bullets"];
@@ -747,7 +738,7 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
     l_circle.setOrigin({l_circle.getRadius(), l_circle.getRadius()});
     l_circle.setPosition(l_pos);
     std::vector<unsigned> l_rgba = l_bullet["rgba"];
-    std::cout << l_rgba[3] << std::endl;
+    // std::cout << l_rgba[3] << std::endl;
     l_circle.setFillColor(sf::Color(l_rgba[0], l_rgba[1], l_rgba[2], l_rgba[3]));
     m_bullets.emplace_back(l_circle, m_figures[l_bullet["targetFigureIdx"]], l_bullet["speed"], l_bullet["atk"]);
   }

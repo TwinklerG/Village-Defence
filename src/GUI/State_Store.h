@@ -12,7 +12,7 @@ PropType sToPropType(const std::string &s);
 
 class StoreChoice {
 public:
-  StoreChoice(const std::string &l_name, const std::string &l_description, int l_price,
+  StoreChoice(const std::string &l_name, const sf::String &l_description, int l_price,
               const sf::Vector2f &l_size, const sf::Vector2f &l_pos,
               const sf::Font &l_font, int l_cnt = 0);
 

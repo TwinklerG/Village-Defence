@@ -17,6 +17,10 @@ void Window::Setup(const std::string &l_title, const sf::Vector2u &l_size) {
 void Window::Create() {
   m_window.create(sf::VideoMode{{m_windowSize.x, m_windowSize.y}, 32}, m_windowTitle, sf::Style::Close);
   m_window.setFramerateLimit(60);
+  m_window.setPosition({
+    static_cast<int>(sf::VideoMode::getDesktopMode().size.x / 2 - m_window.getSize().x / 2),
+    static_cast<int>(sf::VideoMode::getDesktopMode().size.y / 2 - m_window.getSize().y / 2)
+  });
 }
 
 void Window::Destroy() { m_window.close(); }

@@ -1,5 +1,6 @@
 #pragma once
 #include "State_MainMenu.h"
+#include "../Widgets/Confirm.h"
 
 class State_Load final : public BaseState {
 public:
@@ -24,4 +25,7 @@ private:
 
   std::unique_ptr<sf::Text> m_title;
   std::vector<gl::Button> m_buttons;
+
+  std::shared_ptr<gl::Confirm> m_confirm;
+  int m_toConfirm;
 };

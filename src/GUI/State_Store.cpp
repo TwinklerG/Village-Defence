@@ -26,7 +26,7 @@ State_Store::~State_Store() = default;
 
 void State_Store::OnCreate() {
   m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
-  m_title = std::make_unique<sf::Text>(m_font, "STORE", 100);
+  m_title = std::make_unique<sf::Text>(m_font, L"商店", 100);
   m_title->setOrigin({m_title->getLocalBounds().size.x / 2.0f, m_title->getLocalBounds().size.y / 2.0f});
   m_title->setPosition({
     static_cast<float>(m_stateMgr->GetContext()->m_wind->GetWindowSize().x) / 2.0f,
@@ -40,7 +40,7 @@ void State_Store::LoadJson() {
   nlohmann::json data = nlohmann::json::parse(in);
   m_coin = data["coin"];
   const sf::Vector2u l_windSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
-  m_coinText = std::make_unique<sf::Text>(m_font, "Coin: " + std::to_string(m_coin), 40);
+  m_coinText = std::make_unique<sf::Text>(m_font, sf::String(L"硬币: ") + sf::String(std::to_string(m_coin)), 40);
   m_coinText->setOrigin({m_coinText->getLocalBounds().size.x, 0});
   m_coinText->setPosition({
     static_cast<float>(l_windSize.x) - m_coinText->getLocalBounds().size.x / 2.0f,
@@ -53,7 +53,7 @@ void State_Store::LoadJson() {
   }
   for (int i = 0; i < goods.size(); ++i) {
     auto &good = goods[i];
-    m_choices.emplace_back(good["name"], good["description"], good["price"],
+    m_choices.emplace_back(good["name"], std::string(good["description"]), good["price"],
                            sf::Vector2f(static_cast<float>(l_windSize.x) / 13.0f * 3.0f,
                                         static_cast<float>(l_windSize.y) / 3.0f * 2.0f)
                            , sf::Vector2f(static_cast<float>(l_windSize.x) / 13.0f * static_cast<float>(2.5f + 4.0 * i),
@@ -126,7 +126,7 @@ void State_Store::SaveJson() {
   out.close();
 }
 
-StoreChoice::StoreChoice(const std::string &l_name, const std::string &l_description, const int l_price,
+StoreChoice::StoreChoice(const std::string &l_name, const sf::String &l_description, const int l_price,
                          const sf::Vector2f &l_size, const sf::Vector2f &l_pos,
                          const sf::Font &l_font, const int l_cnt)
   : m_name(nullptr), m_description(nullptr), m_cntText(nullptr), m_priceText(nullptr) {
@@ -137,25 +137,25 @@ StoreChoice::StoreChoice(const std::string &l_name, const std::string &l_descrip
   m_name = std::make_shared<sf::Text>(l_font, l_name, 50);
   m_name->setOrigin({m_name->getLocalBounds().size.x / 2.0f, m_name->getLocalBounds().size.y / 2.0f});
   m_name->setPosition({l_pos.x, l_pos.y - l_size.y / 2.0f + m_name->getLocalBounds().size.y});
-  std::string tmp;
-  for (int i = 0; i < l_description.size(); ++i) {
-    if (i > 0 && l_description[i] == '\\' && l_description[i + 1] == 'n') {
-      tmp += '\n';
-      ++i;
-      continue;
-    }
-    tmp += l_description[i];
-  }
-  m_description = std::make_shared<sf::Text>(l_font, tmp, 50);
+  // std::wstring tmp;
+  // for (int i = 0; i < l_description.getSize(); ++i) {
+  //   if (i > 0 && l_description[i] == '\\' && l_description[i + 1] == 'n') {
+  //     tmp += '\n';
+  //     ++i;
+  //     continue;
+  //   }
+  //   tmp += l_description[i];
+  // }
+  m_description = std::make_shared<sf::Text>(l_font, l_description, 50);
   m_description->setOrigin({m_description->getLocalBounds().size.x / 2, m_description->getLocalBounds().size.y / 2});
   m_description->setPosition({l_pos.x, l_pos.y + 35});
   m_description->setLineSpacing(1.0f);
   m_cnt = l_cnt;
-  m_cntText = std::make_shared<sf::Text>(l_font, "Left: " + std::to_string(l_cnt), 40);
+  m_cntText = std::make_shared<sf::Text>(l_font, sf::String(L"剩余: ") + sf::String(std::to_string(l_cnt)), 40);
   m_cntText->setOrigin({m_cntText->getLocalBounds().size.x / 2.0f, m_cntText->getLocalBounds().size.y / 2.0f});
   m_cntText->setPosition({l_pos.x, l_pos.y + l_size.y / 4.0f - m_cntText->getLocalBounds().size.y / 2.0f});
   m_price = l_price;
-  m_priceText = std::make_shared<sf::Text>(l_font, "price: " + std::to_string(l_price), 50);
+  m_priceText = std::make_shared<sf::Text>(l_font, sf::String(L"价格: ") + sf::String(std::to_string(l_price)), 50);
   m_priceText->setOrigin({m_priceText->getLocalBounds().size.x / 2, m_priceText->getLocalBounds().size.y / 2});
   m_priceText->setPosition({l_pos.x, l_pos.y + l_size.y / 2.0f - m_priceText->getLocalBounds().size.y});
 }
@@ -176,7 +176,7 @@ bool StoreChoice::Update(const sf::RenderWindow *l_wind) {
       m_isMouseLeft = true;
       ret = true;
       ++m_cnt;
-      m_cntText->setString("Left: " + std::to_string(m_cnt));
+      m_cntText->setString(sf::String(L"剩余: ") + sf::String(std::to_string(m_cnt)));
     }
     m_rect.setFillColor(sf::Color::White);
     m_name->setFillColor(sf::Color::Black);

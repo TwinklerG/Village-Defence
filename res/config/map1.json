@@ -12,57 +12,7 @@
       "invaders": [
         {
           "type": 0,
-          "num": 10
-        }
-      ]
-    },
-    {
-      "calmTime": 0.8,
-      "buff": 1.1,
-      "invaders": [
-        {
-          "type": 0,
-          "num": 15
-        },
-        {
-          "type": 1,
-          "num": 5
-        }
-      ]
-    },
-    {
-      "calmTime": 0.6,
-      "buff": 2,
-      "invaders": [
-        {
-          "type": 0,
-          "num": 20
-        },
-        {
-          "type": 1,
-          "num": 15
-        },
-        {
-          "type": 2,
-          "num": 10
-        }
-      ]
-    },
-    {
-      "calmTime": 0.4,
-      "buff": 2.5,
-      "invaders": [
-        {
-          "type": 0,
-          "num": 30
-        },
-        {
-          "type": 1,
-          "num": 20
-        },
-        {
-          "type": 2,
-          "num": 20
+          "num": 1
         }
       ]
     }

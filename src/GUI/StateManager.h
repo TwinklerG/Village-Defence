@@ -62,7 +62,9 @@ private:
 
   // Members.
   SharedContext *m_shared;
-  StateContainer m_states;
   TypeContainer m_toRemove;
   StateFactory m_stateFactory;
+
+public:
+  StateContainer m_states;
 };

@@ -1,6 +1,9 @@
 #pragma once
+#include <thread>
+
 #include "BaseState.h"
 #include "../Widgets/Button.h"
+#include "../Widgets/Toast.h"
 
 class State_MainMenu : public BaseState {
 public:
@@ -25,4 +28,6 @@ protected:
 
   std::unique_ptr<sf::Text> m_title;
   std::vector<gl::Button> m_buttons;
+
+  std::shared_ptr<gl::Toast> m_toast;
 };

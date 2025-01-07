@@ -4,7 +4,7 @@
 
 class SoundManager {
 public:
-  //TODO Loss of Construction
+  SoundManager();
 
   ~SoundManager();
 
@@ -12,5 +12,5 @@ public:
 
 private:
   std::unordered_map<std::string, sf::SoundBuffer> m_buffers;
-  sf::Sound m_sound;
+  std::shared_ptr<sf::Sound> m_sound;
 };

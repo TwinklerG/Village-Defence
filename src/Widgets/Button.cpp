@@ -33,7 +33,8 @@ namespace gl {
     // Text
     m_text = std::make_shared<sf::Text>(l_font, l_text, l_charSize);
     const sf::FloatRect rect = m_text->getLocalBounds();
-    m_text->setOrigin({rect.position.x + rect.size.x / 2.0f, rect.position.y + rect.size.y / 2.0f});
+    // m_text->setOrigin({rect.position.x + rect.size.x / 2.0f, rect.position.y + rect.size.y / 2.0f});
+    m_text->setOrigin({rect.size.x / 2.0f, rect.size.y / 2.0f});
     m_text->setPosition(l_pos);
     m_text->setFillColor(l_backColor);
     // Color
@@ -97,5 +98,9 @@ namespace gl {
 
   void Button::SetIsPressed(bool l_isPressed) {
     m_isPressed = l_isPressed;
+  }
+
+  void Button::SetCallBack(const std::function<void()> &l_callBack) {
+    m_callBack = l_callBack;
   }
 };
