@@ -1,14 +1,11 @@
 #include "Game.h"
 
-#include <iostream>
-
-float Game::m_FrameTime = 1.0f / 60.0f;
-
 Game::Game() : m_stateManager(&m_context) {
   std::ifstream config("res/config/config.json");
   nlohmann::json cfg = nlohmann::json::parse(config);
   m_window = std::make_shared<Window>("Village Defence",
-                                      sf::Vector2u(cfg["resolution"]["width"], cfg["resolution"]["height"]));
+                                      sf::Vector2u(cfg["resolution"]["width"], cfg["resolution"]["height"]),
+                                      cfg["framerateLimit"]);
   m_stateManager.GetContext()->m_resolution = to_string(cfg["resolution"]["width"]) + "_" + to_string(
                                                 cfg["resolution"]["height"]);
   m_stateManager.GetContext()->m_atomResolution = sf::Vector2f(
@@ -24,11 +21,8 @@ Game::Game() : m_stateManager(&m_context) {
 Game::~Game() = default;
 
 void Game::Update() {
-  if (m_elapsed >= sf::seconds(m_FrameTime)) {
-    m_window->Update(); // Update window events.
-    m_stateManager.Update(sf::seconds(m_FrameTime));
-    m_elapsed -= sf::seconds(m_FrameTime);
-  }
+  m_window->Update(); // Update window events.
+  m_stateManager.Update(m_elapsed);
 }
 
 void Game::Render() {
@@ -40,7 +34,7 @@ void Game::Render() {
 std::shared_ptr<Window> Game::GetWindow() { return m_window; }
 
 sf::Time Game::GetElapsed() const { return m_elapsed; }
-void Game::RestartClock() { m_elapsed += m_clock.restart(); }
+void Game::RestartClock() { m_elapsed = m_clock.restart(); }
 
 void Game::LateUpdate() {
   m_stateManager.ProcessRequests();

@@ -103,4 +103,12 @@ namespace gl {
   void Button::SetCallBack(const std::function<void()> &l_callBack) {
     m_callBack = l_callBack;
   }
+
+  void Button::SetColor(const sf::Color &l_backColor, const sf::Color &l_textColor, const sf::Color &l_backHoverColor,
+                        const sf::Color &l_textHoverColor) {
+    m_backColor = l_backColor;
+    m_textColor = l_textColor;
+    m_backHoverColor = l_backHoverColor;
+    m_textHoverColor = l_textHoverColor;
+  }
 };

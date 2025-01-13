@@ -28,6 +28,4 @@ private:
 
   SharedContext m_context;
   StateManager m_stateManager;
-
-  static float m_FrameTime;
 };

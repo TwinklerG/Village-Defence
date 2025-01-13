@@ -42,6 +42,9 @@ namespace gl {
 
     void SetCallBack(const std::function<void()> &l_callBack);
 
+    void SetColor(const sf::Color &l_backColor, const sf::Color &l_textColor, const sf::Color &l_backHoverColor,
+                  const sf::Color &l_textHoverColor);
+
   private:
     sf::RectangleShape m_rect;
     std::shared_ptr<sf::Text> m_text;

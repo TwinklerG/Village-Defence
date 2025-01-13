@@ -72,6 +72,7 @@ void State_MainMenu::Activate() {
   std::cout << (m_buttons.back().GetText().getString() == L"返回游戏" ? "exist" : "not-exist") << " " << m_stateMgr->
       HasState(StateType::Game) << "\n";
   if (m_buttons.back().GetText().getString() != L"返回游戏" && m_stateMgr->HasState(StateType::Game)) {
+    m_buttons.pop_back();
     const auto l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
     m_buttons.emplace_back(
       L"返回游戏", sf::Vector2f(static_cast<float>(l_windowSize.x) / 10.0f, static_cast<float>(l_windowSize.y) / 10.0f),
@@ -82,6 +83,13 @@ void State_MainMenu::Activate() {
       });
   } else if (m_buttons.back().GetText().getString() == L"返回游戏" && !m_stateMgr->HasState(StateType::Game)) {
     m_buttons.pop_back();
+    const auto l_windowSize = m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize();
+    m_buttons.emplace_back(
+      L"设置", sf::Vector2f(static_cast<float>(l_windowSize.x) / 10.0f * 9, static_cast<float>(l_windowSize.y) / 10.0f),
+      sf::Vector2f(static_cast<float>(l_windowSize.x) / 10.0f, static_cast<float>(l_windowSize.y) / 10.0f),
+      l_windowSize.y / 30, m_font, [this]() {
+        this->m_stateMgr->SwitchTo(StateType::Setting);
+      });
   }
 }
 

@@ -23,9 +23,11 @@ namespace gl {
 
     void UpdateRender(sf::RenderWindow &l_window);
 
+    void SetIdx(int l_idx);
+
   private:
     std::unique_ptr<Button> m_label;
     std::vector<Button> m_options;
-    bool m_isPressed;
+    int m_idx;
   };
 };

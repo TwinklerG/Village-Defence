@@ -1,6 +1,19 @@
 #pragma once
 #include "BaseState.h"
+#include "../Widgets/Confirm.h"
 #include "../Widgets/Select.h"
+
+struct WindowConfig {
+  sf::Vector2u m_windowSize;
+  int m_framerateLimit{};
+
+  WindowConfig() = default;
+
+  WindowConfig(const sf::Vector2u &l_windowSize, const int l_framerateLimit)
+    : m_windowSize(l_windowSize),
+      m_framerateLimit(l_framerateLimit) {
+  }
+};
 
 class State_Setting final : public BaseState {
 public:
@@ -21,9 +34,12 @@ public:
   void Draw() override;
 
 private:
-  void SaveResolution(int width, int height) const;
+  void LoadConfig();
 
-  std::unique_ptr<gl::Select> m_select;
+  void SaveResolution() const;
 
+  std::vector<gl::Select> m_select;
+  WindowConfig m_config;
+  std::shared_ptr<gl::Confirm> m_confirm;
   sf::Font m_font;
 };

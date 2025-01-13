@@ -1,8 +1,14 @@
 #include <optional>
 #include "Window.h"
 
-Window::Window() { Setup("Window", sf::Vector2u(640, 480)); }
-Window::Window(const std::string &l_title, const sf::Vector2u &l_size) { Setup(l_title, l_size); }
+Window::Window()
+  : m_framerateLimit(60) { Setup("Window", sf::Vector2u(640, 480)); }
+
+Window::Window(const std::string &l_title, const sf::Vector2u &l_size, const int l_framerateLimit)
+  : m_framerateLimit(l_framerateLimit) {
+  Setup(l_title, l_size);
+}
+
 Window::~Window() { Destroy(); }
 
 void Window::Setup(const std::string &l_title, const sf::Vector2u &l_size) {
@@ -16,7 +22,7 @@ void Window::Setup(const std::string &l_title, const sf::Vector2u &l_size) {
 
 void Window::Create() {
   m_window.create(sf::VideoMode{{m_windowSize.x, m_windowSize.y}, 32}, m_windowTitle, sf::Style::Close);
-  m_window.setFramerateLimit(60);
+  m_window.setFramerateLimit(m_framerateLimit);
   m_window.setPosition({
     static_cast<int>(sf::VideoMode::getDesktopMode().size.x / 2 - m_window.getSize().x / 2),
     static_cast<int>(sf::VideoMode::getDesktopMode().size.y / 2 - m_window.getSize().y / 2)

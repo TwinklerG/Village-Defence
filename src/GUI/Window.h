@@ -7,7 +7,7 @@ class Window {
 public:
   Window();
 
-  Window(const std::string &l_title, const sf::Vector2u &l_size);
+  Window(const std::string &l_title, const sf::Vector2u &l_size, int l_framerateLimit);
 
   ~Window();
 
@@ -36,6 +36,7 @@ private:
 
   sf::RenderWindow m_window;
   sf::Vector2u m_windowSize;
+  int m_framerateLimit;
   std::string m_windowTitle;
   bool m_isDone{};
   bool m_isFullscreen{};
