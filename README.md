@@ -6,11 +6,15 @@
 
 请使用支持C++17的编译器
 
-推荐操作系统: Windows/Linux
+推荐操作系统: Linux/Windows
 
-推荐CMake生成器: Visual Studio/Ninja
+推荐CMake生成器: Ninja
 
 ### Windows
+
+由于项目使用最新的SFML3.0，因此推荐采用官方提供的编译工具，详见[https://www.sfml-dev.org/download/sfml/3.0.0/](https://www.sfml-dev.org/download/sfml/3.0.0/)
+
+**注意**：本项目包含中文字符，请不要使用MSBuild(Visual Studio)进行构建
 
 **MinGW + Ninja**
 
@@ -18,14 +22,6 @@
 cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -B "cmake-build-debug-ninja"
 cmake --build cmake-build-debug-ninja
 "./cmake-build-debug-ninja/main.exe"
-```
-
-**Visual Studio**
-
-```cmd
-cmake -B cmake-build-debug-visual-studio -G "Visual Studio" -DBUILD_SHARED_LIBS=TRUE
-cmake --build cmake-build-debug-visual-studio --target main
-"./cmake-build-debug-visual-studio/Debug/main.exe"
 ```
 
 ### Linux

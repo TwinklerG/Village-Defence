@@ -1,4 +1,4 @@
-<h1 style="text-align: center">Villege Defence</h1>
+<h1 style="text-align: center">Village Defence</h1>
 
 <div style="text-align: center;"><a href="./README.md">[简体中文]</a>|[English]</div>
 
@@ -6,13 +6,16 @@
 
 Please use a compiler that supports C++17
 
-Recommended OS: Windows/Linux
+Recommended operating system: Linux/Windows
 
-Recommended CMake generator: Visual Studio/Ninja
+Recommended CMake generator: Ninja
 
 ### Windows
 
-**MinGW + Ninja**
+Since the project uses the latest SFML3.0, it is recommended to use the official compilation tool,
+see [https://www.sfml-dev.org/download/sfml/3.0.0/](https://www.sfml-dev.org/download/sfml/3.0.0/) for details
+
+**Note**: This project contains Chinese characters, please do not use MSBuild (Visual Studio) to build**MinGW + Ninja**
 
 ```cmd
 cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -B "cmake-build-debug-ninja"
@@ -20,20 +23,12 @@ cmake --build cmake-build-debug-ninja
 "./cmake-build-debug-ninja/main.exe"
 ```
 
-**Visual Studio**
-
-```cmd
-cmake -B cmake-build-debug-visual-studio -G "Visual Studio" -DBUILD_SHARED_LIBS=TRUE
-cmake --build cmake-build-debug-visual-studio --target main
-"./cmake-build-debug-visual-studio/Debug/main.exe"
-```
-
 ### Linux
 
 **Ubuntu:latest**
 
 ```bash
-apt-get update -y && apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype6-dev -y
+apt-get update -y && apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype6-dev libxi-dev -y
 apt install gcc g++ cmake git -y
 cmake -B build && \
 cmake --build build && \
@@ -43,7 +38,7 @@ cmake --build build && \
 **Fedora41**
 
 ```bash
-yum update -y && yum install freetype-devel libX11-devel libXcursor-devel libXrandr-devel mesa-libGL-devel systemd-devel openal-soft-devel libvorbis-devel libogg-devel flac-devel -y
+yum update -y && yum install freetype-devel libX11-devel libXcursor-devel libXrandr-devel mesa-libGL-devel systemd-devel openal-soft-devel libvorbis-devel libogg-devel flac-devel libxi-devel -y
 yum install gcc g++ cmake git -y
 cmake -B build -DCMAKE_MAKE_PROGRAM=ninja -G Ninja && \
 cmake --build build && \
@@ -54,7 +49,7 @@ cmake --build build && \
 
 Some basic framework codes under `src/GUI` are referenced from *SFML Game Development By Example* (Raimondas Pupius)
 
-## Open-source libraries used
+## Open source libraries used
 
 [SFML3.0.0](https://github.com/SFML/SFML.git)
 
