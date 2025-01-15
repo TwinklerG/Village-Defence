@@ -22,7 +22,7 @@ Board::Board() {
   m_moneyText->setPosition({m_border.getPosition().x, m_border.getSize().y / 3 * 2});
 }
 
-Board::Board(const sf::Vector2f &l_size) {
+Board::Board(const sf::Vector2f &l_size, const unsigned int l_charSize) {
   m_money = 150;
   m_font = sf::Font("res/fonts/arial.ttf");
   m_border = sf::RectangleShape(l_size);
@@ -34,7 +34,7 @@ Board::Board(const sf::Vector2f &l_size) {
     m_border.getSize().x / 2 + m_border.getOutlineThickness(),
     m_border.getSize().y / 2 + m_border.getOutlineThickness()
   });
-  m_tip = std::make_unique<sf::Text>(m_font, "Money", 30);
+  m_tip = std::make_unique<sf::Text>(m_font, "Money", l_charSize);
   m_tip->setFillColor(sf::Color::White);
   m_tip->setOrigin({m_tip->getLocalBounds().size.x / 2, m_tip->getLocalBounds().size.y / 2});
   m_tip->setPosition({m_border.getPosition().x, m_border.getSize().y / 3});

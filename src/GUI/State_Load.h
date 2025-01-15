@@ -26,6 +26,8 @@ private:
   std::unique_ptr<sf::Text> m_title;
   std::vector<gl::Button> m_buttons;
 
+  std::shared_ptr<gl::Toast> m_toast;
+
   std::shared_ptr<gl::Confirm> m_confirm;
   int m_toConfirm;
 };

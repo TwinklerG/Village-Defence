@@ -19,7 +19,7 @@
     "atk": 2,
     "range": 4.5,
     "calmTime": 0.8,
-    "speed": 350,
+    "speed": 400,
     "rgb": [
       255,
       255,
@@ -46,7 +46,7 @@
     "cost": 250,
     "atk": 2,
     "range": 2,
-    "calmTime": 0.1,
+    "calmTime": 0.15,
     "speed": 800,
     "rgb": [
       0,

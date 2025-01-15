@@ -1,20 +1,20 @@
 [
   {
     "tag": 0,
-    "lives": 5,
-    "speed": 90,
+    "lives": 6,
+    "speed": 110,
     "reward": 20
   },
   {
     "tag": 1,
-    "lives": 3,
+    "lives": 4,
     "speed": 180,
     "reward": 20
   },
   {
     "tag": 2,
-    "lives": 10,
-    "speed": 60,
-    "reward": 40
+    "lives": 20,
+    "speed": 110,
+    "reward": 20
   }
 ]

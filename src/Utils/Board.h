@@ -5,7 +5,7 @@ class Board {
 public:
   Board();
 
-  explicit Board(const sf::Vector2f &l_size);
+  explicit Board(const sf::Vector2f &l_size, unsigned int l_charSize);
 
   void Render(sf::RenderWindow *) const;
 

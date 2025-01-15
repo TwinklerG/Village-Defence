@@ -14,7 +14,7 @@ Game::Game() : m_stateManager(&m_context) {
   );
   m_context.m_wind = m_window;
   BgmManager &l_bgmManager = m_context.m_bgmManager;
-  l_bgmManager.Play("loading.wav", 100, true);
+  l_bgmManager.Play("loading.wav", 1000, true);
   m_stateManager.SwitchTo(StateType::Intro);
 }
 

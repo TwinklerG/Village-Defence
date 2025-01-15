@@ -50,8 +50,23 @@ cmake --build build && \
 
 `src/GUI`下的部分基础框架代码参考自*SFML Game Development By Example*(Raimondas Pupius)
 
-## 使用到的开源库
+## 开源库的使用
 
 [SFML3.0.0](https://github.com/SFML/SFML.git)
 
 [JSON](https://github.com/nlohmann/json.git)
+
+# 版权资源的使用
+
+插图取自
+
+- [Lots of free 2d tiles and sprites by Hyptosis](https://opengameart.org/content/lots-of-free-2d-tiles-and-sprites-by-hyptosis)
+
+背景音乐取自
+
+- [Loading Screen Loop](https://opengameart.org/content/loading-screen-loop)
+- [Battle Theme A](https://opengameart.org/content/battle-theme-a)
+
+音效取自
+
+- [Voiceover Pack: Fighter (40+ taunts)](https://opengameart.org/content/voiceover-pack-fighter-40-taunts)

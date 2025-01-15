@@ -37,7 +37,8 @@ void State_Load::OnCreate() {
                              });
     } else {
       m_buttons.emplace_back(l_buttonInfos[i], l_pos + static_cast<float>(i) * l_delta, l_size, l_windowSize.y / 25,
-                             m_font, []() {
+                             m_font, [this, l_windowSize]() {
+                               m_toast = std::make_shared<gl::Toast>(L"此存档为空", m_font, l_windowSize);
                              });
     }
   }
@@ -49,6 +50,9 @@ void State_Load::OnDestroy() {
 void State_Load::Update(const sf::Time &l_time) {
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
     m_stateMgr->SwitchTo(StateType::MainMenu);
+  }
+  if (m_toast && m_toast->Update(l_time)) {
+    m_toast = nullptr;
   }
 }
 
@@ -74,6 +78,9 @@ void State_Load::Draw() {
       m_confirm = nullptr;
       m_toConfirm = -1;
     }
+  }
+  if (m_toast) {
+    m_toast->Render(*l_window);
   }
 }
 

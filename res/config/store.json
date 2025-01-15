@@ -14,12 +14,12 @@
   ],
   "props": [
     {
-      "name": "DECELERATE",
+      "name": "ACCELERATE",
       "stock": 0
     },
     {
-      "name": "ACCELERATE",
-      "stock": 3
+      "name": "DECELERATE",
+      "stock": 0
     }
   ]
 }

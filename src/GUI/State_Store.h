@@ -1,6 +1,12 @@
 #pragma once
 #include <nlohmann/json.hpp>
 #include "BaseState.h"
+#include "../Widgets/Toast.h"
+#include "../Widgets/Confirm.h"
+
+namespace gl {
+  class Confirm;
+}
 
 enum class PropType {
   DECELERATE,
@@ -12,11 +18,16 @@ PropType sToPropType(const std::string &s);
 
 class StoreChoice {
 public:
-  StoreChoice(const std::string &l_name, const sf::String &l_description, int l_price,
+  StoreChoice(const sf::String &l_name, const sf::Vector2f &l_size, const sf::Vector2f &l_pos, const sf::Font &l_font);
+
+  StoreChoice(const sf::String &l_name, const sf::String &l_description, int l_price,
               const sf::Vector2f &l_size, const sf::Vector2f &l_pos,
               const sf::Font &l_font, int l_cnt = 0);
 
   ~StoreChoice();
+
+  void OnCreate(const sf::String &l_name, const sf::String &l_description, const sf::Vector2f &l_size,
+                const sf::Vector2f &l_pos, const sf::Font &l_font);
 
   bool Update(const sf::RenderWindow *l_wind);
 
@@ -28,7 +39,9 @@ public:
 
   void SetIsMouseLeft(bool l_mouseLeft);
 
-  std::string GetPropName() const;
+  sf::String GetPropName() const;
+
+  void SetCnt(int l_cnt);
 
 private:
   sf::RectangleShape m_rect{};
@@ -70,4 +83,6 @@ private:
   std::unique_ptr<sf::Text> m_coinText;
   std::vector<StoreChoice> m_choices;
   std::unordered_map<PropType, int> m_props;
+  std::shared_ptr<gl::Toast> m_toast;
+  std::shared_ptr<gl::Confirm> m_confirm;
 };

@@ -15,8 +15,8 @@
       ]
     },
     {
-      "calmTime": 0.8,
-      "buff": 1.2,
+      "calmTime": 0.6,
+      "buff": 1.5,
       "invaders": [
         {
           "type": 0,
