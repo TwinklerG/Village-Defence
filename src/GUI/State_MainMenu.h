@@ -1,11 +1,10 @@
 #pragma once
-#include <thread>
 
 #include "BaseState.h"
 #include "../Widgets/Button.h"
 #include "../Widgets/Toast.h"
 
-class State_MainMenu : public BaseState {
+class State_MainMenu final : public BaseState {
 public:
   explicit State_MainMenu(StateManager *l_stateManager);
 

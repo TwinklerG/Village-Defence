@@ -74,8 +74,8 @@ void State_Save::Draw() {
       time(&l_time);
       m_stateMgr->SwitchTo(StateType::MainMenu);
       outlineData[std::to_string(m_toConfirm)] = std::string(
-                                                   "Level " + std::to_string(m_stateMgr->GetContext()->m_level) + "\n")
-                                                 + std::string(ctime(&l_time));
+                                                   "Level " + std::to_string(m_stateMgr->GetContext()->m_level + 1) +
+                                                   "\n") + std::string(ctime(&l_time));
       in.close();
       out.open("res/archive/outline.json");
       out << std::setw(2) << outlineData;
@@ -88,22 +88,6 @@ void State_Save::Draw() {
 }
 
 void State_Save::Activate() {
-  // std::ifstream in("res/archive/outline.json");
-  // nlohmann::json data = nlohmann::json::parse(in);
-  // std::vector<sf::String> l_buttonInfos;
-  // for (int i = 0; i < 5; ++i) {
-  //   if (data.find(std::to_string(i)) == data.end()) {
-  //     l_buttonInfos.emplace_back(L"空");
-  //   } else {
-  //     std::string tmp = data[std::to_string(i)];
-  //     l_buttonInfos.emplace_back(tmp);
-  //   }
-  // }
-  // for (int i = 0; i < l_buttonInfos.size(); i++) {
-  //   if (m_buttons[i].GetText().getString() != l_buttonInfos[i]) {
-  //     m_buttons[i].GetText().setString(l_buttonInfos[i]);
-  //   }
-  // }
 }
 
 void State_Save::Deactivate() {

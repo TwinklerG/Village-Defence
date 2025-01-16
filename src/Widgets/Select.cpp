@@ -49,4 +49,4 @@ namespace gl {
   void Select::SetIdx(const int l_idx) {
     m_idx = l_idx;
   }
-};
+}

@@ -1,7 +1,6 @@
 #pragma once
 #include <functional>
 #include <SFML/Graphics.hpp>
-#include "../Utils/Utils.hpp"
 
 namespace gl {
   class Label {

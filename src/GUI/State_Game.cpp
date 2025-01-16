@@ -3,27 +3,29 @@
 #include <iostream>
 
 State_Game::State_Game(StateManager *l_stateManager)
-    : BaseState(l_stateManager), m_map(nullptr), m_settlement(nullptr) {
+  : BaseState(l_stateManager), m_map(nullptr), m_settlement(nullptr) {
   if (m_stateMgr->GetContext()->m_mapData) {
     m_map = std::make_unique<Map>(
-        m_stateMgr->GetContext()->m_wind->GetRenderWindow(),
-        *m_stateMgr->GetContext()->m_mapData);
+      m_stateMgr->GetContext()->m_wind->GetRenderWindow(),
+      *m_stateMgr->GetContext()->m_mapData);
     std::cout << "Use Shared Context\n";
+    m_stateMgr->GetContext()->m_level = (*m_stateMgr->GetContext()->m_mapData)["m_level"];
     m_stateMgr->GetContext()->m_mapData = nullptr;
     return;
   }
-  m_map =
-      std::make_unique<Map>(m_stateMgr->GetContext()->m_wind->GetRenderWindow(),
-                            l_stateManager->GetContext()->m_level,
-                            l_stateManager->GetContext()->m_resolution,
-                            l_stateManager->GetContext()->m_atomResolution);
+  m_map = std::make_unique<Map>(m_stateMgr->GetContext()->m_wind->GetRenderWindow(),
+                                l_stateManager->GetContext()->m_level,
+                                l_stateManager->GetContext()->m_resolution,
+                                l_stateManager->GetContext()->m_atomResolution);
 }
 
 State_Game::~State_Game() = default;
 
-void State_Game::OnCreate() {}
+void State_Game::OnCreate() {
+}
 
-void State_Game::OnDestroy() {}
+void State_Game::OnDestroy() {
+}
 
 void State_Game::Update(const sf::Time &l_time) {
   if (m_map) {
@@ -75,22 +77,22 @@ void State_Game::Winner(int l_level) {
   in.close();
   const auto invadeTurns = data["invaderTurns"];
   std::unordered_map<int, int> l_infos;
-  for (const auto &invaderTurn : invadeTurns) {
-    for (const auto &l_info : invaderTurn["invaders"]) {
+  for (const auto &invaderTurn: invadeTurns) {
+    for (const auto &l_info: invaderTurn["invaders"]) {
       l_infos[l_info["type"]] += static_cast<int>(l_info["num"]);
     }
   }
   m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
   m_settlement = std::make_shared<gl::Settlement>(
-      sf::String(L"    胜利\n硬币+" +
-                 sf::String(std::to_string((l_level + 1) * 10))),
-      l_infos,
-      sf::Vector2f(
-          m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize()),
-      m_stateMgr->GetContext()->m_resolution, m_font, [this]() {
-        m_stateMgr->Remove(StateType::Game);
-        m_stateMgr->SwitchTo(StateType::MainMenu);
-      });
+    sf::String(L"    胜利\n硬币+" +
+               sf::String(std::to_string((l_level + 1) * 10))),
+    l_infos,
+    sf::Vector2f(
+      m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize()),
+    m_stateMgr->GetContext()->m_resolution, m_font, [this]() {
+      m_stateMgr->Remove(StateType::Game);
+      m_stateMgr->SwitchTo(StateType::MainMenu);
+    });
   std::ifstream inStore("res/config/store.json");
   nlohmann::json data_store = nlohmann::json::parse(inStore);
   inStore.close();
@@ -105,11 +107,11 @@ void State_Game::YouLose(int l_level) {
   m_font = sf::Font("res/fonts/YeZiGongChangShanHaiMingChao-2.ttf");
   std::unordered_map<int, int> l_infos;
   m_settlement = std::make_shared<gl::Settlement>(
-      sf::String(L"      败北\n请多用道具"), l_infos,
-      sf::Vector2f(
-          m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize()),
-      m_stateMgr->GetContext()->m_resolution, m_font, [this]() {
-        m_stateMgr->Remove(StateType::Game);
-        m_stateMgr->SwitchTo(StateType::MainMenu);
+    sf::String(L"      败北\n请多用道具"), l_infos,
+    sf::Vector2f(
+      m_stateMgr->GetContext()->m_wind->GetRenderWindow()->getSize()),
+    m_stateMgr->GetContext()->m_resolution, m_font, [this]() {
+      m_stateMgr->Remove(StateType::Game);
+      m_stateMgr->SwitchTo(StateType::MainMenu);
     });
 }

@@ -1,4 +1,5 @@
 #include "Label.h"
+#include "../Utils/Utils.hpp"
 
 namespace gl {
   Label::Label(const sf::Texture &l_texture, const sf::Vector2f &l_pos,

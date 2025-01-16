@@ -128,6 +128,7 @@ void State_Store::Draw() {
   if (m_confirm) {
     if (const gl::ConfirmType l_confirmType = m_confirm->UpdateRender(l_window);
       l_confirmType == gl::ConfirmType::CONFIRM) {
+      m_stateMgr->GetContext()->m_soundManager.Play("coins.ogg", 100);
       m_stateMgr->Remove(StateType::Store);
       m_stateMgr->SwitchTo(StateType::MainMenu);
       m_confirm = nullptr;

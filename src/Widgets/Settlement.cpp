@@ -61,11 +61,11 @@ namespace gl {
     for (int i = 0; i < m_sprites.size(); ++i) {
       const sf::Vector2u l_spSize = m_sprites[i].getTexture().getSize();
       const sf::Vector2f l_spPos = m_sprites[i].getPosition();
-      if ((l_spPos.x + static_cast<float>(l_spSize.x) > static_cast<float>(m_windowSize.x) && m_increments[i].x > 0) ||
+      if ((l_spPos.x + static_cast<float>(l_spSize.x) > m_windowSize.x && m_increments[i].x > 0) ||
           (l_spPos.x < 0 && m_increments[i].x < 0)) {
         m_increments[i].x = -m_increments[i].x;
       }
-      if ((l_spPos.y + static_cast<float>(l_spSize.y) > static_cast<float>(m_windowSize.y) && m_increments[i].y > 0) ||
+      if ((l_spPos.y + static_cast<float>(l_spSize.y) > m_windowSize.y && m_increments[i].y > 0) ||
           (l_spPos.y < 0 && m_increments[i].y < 0)) {
         m_increments[i].y = -m_increments[i].y;
       }

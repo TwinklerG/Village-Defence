@@ -21,9 +21,10 @@
 **MinGW + Ninja**
 
 ```cmd
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -B "cmake-build-debug-ninja"
+cmake -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -B "cmake-build-debug-ninja"
 cmake --build cmake-build-debug-ninja
-"./cmake-build-debug-ninja/main.exe"
+cd cmake-build-debug-ninja
+./main.exe
 ```
 
 ### Linux
@@ -35,7 +36,8 @@ apt-get update -y && apt-get install libxrandr-dev libxcursor-dev libudev-dev li
 apt install gcc g++ cmake git -y
 cmake -B build && \
 cmake --build build && \
-./build/main
+cd build
+./main
 ```
 
 **Fedora41**
@@ -45,7 +47,8 @@ yum update -y && yum install freetype-devel libX11-devel libXcursor-devel libXra
 yum install gcc g++ cmake git -y
 cmake -B build -DCMAKE_MAKE_PROGRAM=ninja -G Ninja && \
 cmake --build build && \
-./build/main
+cd build
+./main
 ```
 
 ## 参考

@@ -30,7 +30,7 @@ Tower::Tower(const sf::Sprite &l_sp,
              const sf::Vector2u &l_size,
              const sf::Time &l_ct, const int l_atk, const float l_bSpeed, const double range, const int l_cost,
              const int red, const int green, const int blue, const double radius,
-             int l_tag)
+             const int l_tag)
   : Element(l_sp, l_size),
     m_totalCalmTime(l_ct),
     m_clamTime(sf::seconds(0)),

@@ -6,7 +6,7 @@
 
 int main() {
 #ifdef _WIN32
-  // 隐藏控制台窗口
+  // hide console
   FreeConsole();
 #endif
 

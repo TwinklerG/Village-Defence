@@ -1,7 +1,3 @@
-//
-// Created by gl on 1/7/25.
-//
-
 #include "Toast.h"
 
 namespace gl {

@@ -170,7 +170,6 @@ void Map::Update(const sf::RenderWindow *l_wind, const sf::Time &l_time) {
               continue;
             }
             const std::shared_ptr<Tower> l_tower = m_places[i][j]->GetTower();
-            // TODO: Change radius according to the resolution
             sf::CircleShape cs(static_cast<float>(l_tower->GetBulletRadius() *
                                                   m_atomResolution.x / 8));
             cs.setFillColor(l_tower->GetBulletColor());
@@ -773,7 +772,6 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
     for (int i = 0; i < m_XRange; ++i) {
       if (l_places[i][j][0] == static_cast<int>(PlaceType::Tower)) {
         const int l_tag = l_places[i][j][1][1];
-        // std::cout << l_tag << "\n";
         if (m_textures.find("tower" + std::to_string(l_tag)) ==
             m_textures.end()) {
           m_textures["tower" + std::to_string(l_tag)] =
@@ -838,7 +836,6 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
       l_fig["m_lives"], l_fig["m_speed"], l_fig["m_reward"],
       m_atomResolution));
     m_figures.back()->SetMileage(l_fig["m_mileage"]);
-    // std::cout << l_fig["m_increments"] << "\n";
   }
   // Recreate the bullets
   const auto &l_bullets = l_gameState["m_bullets"];
@@ -849,7 +846,6 @@ Map::Map(sf::RenderWindow *l_wind, const nlohmann::json &l_gameState)
     l_circle.setOrigin({l_circle.getRadius(), l_circle.getRadius()});
     l_circle.setPosition(l_pos);
     std::vector<unsigned> l_rgba = l_bullet["rgba"];
-    // std::cout << l_rgba[3] << std::endl;
     l_circle.setFillColor(
       sf::Color(l_rgba[0], l_rgba[1], l_rgba[2], l_rgba[3]));
     m_bullets.emplace_back(l_circle, m_figures[l_bullet["targetFigureIdx"]],
