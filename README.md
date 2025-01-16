@@ -12,6 +12,8 @@
 
 ### Windows
 
+请预先安装[ninja](https://github.com/ninja-build/ninja/releases)
+
 由于项目使用最新的SFML3.0，因此推荐采用官方提供的编译工具，详见[https://www.sfml-dev.org/download/sfml/3.0.0/](https://www.sfml-dev.org/download/sfml/3.0.0/)
 
 **注意**：本项目包含中文字符，请不要使用MSBuild(Visual Studio)进行构建
@@ -58,15 +60,15 @@ cmake --build build && \
 
 # 版权资源的使用
 
-插图取自
+**贴图**取自
 
 - [Lots of free 2d tiles and sprites by Hyptosis](https://opengameart.org/content/lots-of-free-2d-tiles-and-sprites-by-hyptosis)
 
-背景音乐取自
+**背景音乐**取自
 
 - [Loading Screen Loop](https://opengameart.org/content/loading-screen-loop)
 - [Battle Theme A](https://opengameart.org/content/battle-theme-a)
 
-音效取自
+**音效**取自
 
 - [Voiceover Pack: Fighter (40+ taunts)](https://opengameart.org/content/voiceover-pack-fighter-40-taunts)

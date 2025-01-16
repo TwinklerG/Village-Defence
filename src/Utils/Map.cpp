@@ -21,7 +21,7 @@ Map::Map(sf::RenderWindow *l_wind, const int l_level, std::string l_resolutions,
 Map::~Map() = default;
 
 void Map::OnCreate(sf::RenderWindow *l_wind) {
-  m_lives = 5;
+  m_lives = 8;
   m_backup =
       sf::RectangleShape(sf::Vector2f(static_cast<float>(l_wind->getSize().x),
                                       static_cast<float>(l_wind->getSize().y)));
@@ -163,7 +163,8 @@ void Map::Update(const sf::RenderWindow *l_wind, const sf::Time &l_time) {
             }
             const std::shared_ptr<Tower> l_tower = m_places[i][j]->GetTower();
             // TODO: Change radius according to the resolution
-            sf::CircleShape cs(static_cast<float>(l_tower->GetBulletRadius()));
+            sf::CircleShape cs(static_cast<float>(l_tower->GetBulletRadius() *
+                                                  m_atomResolution.x / 8));
             cs.setFillColor(l_tower->GetBulletColor());
             cs.setPosition(m_places[i][j]->getPosition());
             cs.setOrigin({cs.getRadius(), cs.getRadius()});

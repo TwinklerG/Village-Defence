@@ -83,9 +83,6 @@ void State_MainMenu::OnCreate() {
 void State_MainMenu::OnDestroy() {}
 
 void State_MainMenu::Activate() {
-  // std::cout << (m_buttons.back().GetText().getString() == L"返回游戏" ?
-  // "exist" : "not-exist") << " " << m_stateMgr-> HasState(StateType::Game) <<
-  // "\n";
   if (m_buttons.back().GetText().getString() != L"返回游戏" &&
       m_stateMgr->HasState(StateType::Game)) {
     m_buttons.pop_back();

@@ -59,14 +59,14 @@ void State_Game::Activate() {
   if (m_map) {
     m_map->Reload();
   }
-  m_stateMgr->GetContext()->m_bgmManager.Play("battle.mp3", 100, true);
+  m_stateMgr->GetContext()->m_bgmManager.Play("battle.mp3", 20, true);
 }
 
 void State_Game::Deactivate() {
   if (m_map) {
     m_map->Save();
   }
-  m_stateMgr->GetContext()->m_bgmManager.Play("loading.wav", 1000, true);
+  m_stateMgr->GetContext()->m_bgmManager.Play("loading.wav", 200, true);
 }
 
 void State_Game::Winner(int l_level) {

@@ -2,19 +2,19 @@
   {
     "tag": 0,
     "lives": 6,
-    "speed": 110,
+    "speed": 11,
     "reward": 20
   },
   {
     "tag": 1,
     "lives": 4,
-    "speed": 180,
+    "speed": 18,
     "reward": 20
   },
   {
     "tag": 2,
     "lives": 20,
-    "speed": 110,
+    "speed": 11,
     "reward": 20
   }
 ]

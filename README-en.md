@@ -57,15 +57,15 @@ Some basic framework codes under `src/GUI` are referenced from *SFML Game Develo
 
 # Use of Copyrighted Resources
 
-textures from
+**textures** from
 
 - [Lots of free 2d tiles and sprites by Hyptosis](https://opengameart.org/content/lots-of-free-2d-tiles-and-sprites-by-hyptosis)
 
-bgm from
+**bgm** from
 
 - [Loading Screen Loop](https://opengameart.org/content/loading-screen-loop)
 - [Battle Theme A](https://opengameart.org/content/battle-theme-a)
 
-sound effects from
+**sound effects** from
 
 - [Voiceover Pack: Fighter (40+ taunts)](https://opengameart.org/content/voiceover-pack-fighter-40-taunts)
