@@ -1,6 +1,19 @@
-<h1 style="text-align: center">村庄保卫战</h1>
+<h1 align="center">村庄保卫战</h1>
 
-<div style="text-align: center;">[简体中文]|<a href="./README-en.md">[English]</a></div>
+<div align="center">[简体中文]|<a href="./README-en.md">[English]</a></div>
+
+<p align="center">
+  <img alt="GitHub" src="https://img.shields.io/github/license/TwinklerG/Village-Defence">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/TwinklerG/Village-Defence">	
+  <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/TwinklerG/Village-Defence">
+  <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/TwinklerG/Village-Defence">
+  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/TwinklerG/Village-Defence">
+  <img alt="GitHub stars" src="https://img.shields.io/github/stars/TwinklerG/Village-Defence">
+  <img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/TwinklerG/Village-Defence/total">
+  <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TwinklerG/Village-Defence">
+  <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/TwinklerG/Village-Defence">
+  <img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen">
+</p>
 
 ## 快速开始
 
